@@ -2,8 +2,7 @@
 #coding:utf-8
 
 import os
-
-ROOT_PATH=os.path.abspath(os.pardir)
+ROOT_PATH=os.path.abspath(os.path.join(os.pardir, os.pardir))
 BUILD_PATH= os.getcwd()
 TIME_FORMAT = '%Y%m%d%H%M'
 DATE_FORMAT = '%y%m%d'
