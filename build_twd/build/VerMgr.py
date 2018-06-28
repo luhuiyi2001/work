@@ -132,6 +132,8 @@ class VerMgr():
     def hyInitVersionPath():
         if cmp(Model.mkType, HY_MK_TYPE_IMAGE) == 0:
             allVerFiles = ConfigUtil.readConfigInfo(Model.verFileConfPath, HY_IMG)
+        elif cmp(Model.mkType, HY_MK_TYPE_PTGEN) == 0:
+            allVerFiles = ConfigUtil.readConfigInfo(Model.verFileConfPath, HY_PTGEN)
         else:
             allVerFiles = ConfigUtil.readConfigInfo(Model.verFileConfPath, HY_COMMON)
             allVerFiles.update(ConfigUtil.readConfigInfo(Model.verFileConfPath, Model.platform))
