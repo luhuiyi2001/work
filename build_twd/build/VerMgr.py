@@ -34,12 +34,14 @@ class VerMgr():
         for verFile in Model.verZipFiles:
             if not (os.path.exists(verFile)):
                 print verFile + ' isn\'t exists!'
-            subprocess.call('zip -rj ' + zipPath + ' ' + verFile, shell = True)
+            else:
+                subprocess.call('zip -rj ' + zipPath + ' ' + verFile, shell = True)
 
         for verFile in Model.verFiles:
             if not (os.path.exists(verFile)):
                 print verFile + ' isn\'t exists!'
-            subprocess.call('cp -rvf ' + verFile + ' ' + Model.verPath, shell = True)
+            else:
+                subprocess.call('cp -rvf ' + verFile + ' ' + Model.verPath, shell = True)
         
     @staticmethod
     def getPtName():

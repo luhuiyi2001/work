@@ -29,8 +29,10 @@ class Make():
             elif cmp(Model.platform, HY_PLATFORM_MT6577) == 0:
                 res = subprocess.call("./tyMk.py user n ", shell = True)
             elif cmp(Model.platform, HY_PLATFORM_MT6580) == 0 or cmp(Model.platform, HY_PLATFORM_MT6582_L0) == 0:
-                res = subprocess.call("./tyMk.py n ", shell = True)
-                #source build/envsetup.sh && lunch full_b906-user && 
+                hyMkFile = os.path.join(Model.srcPath, 'hyMkAll.sh')
+                tmplHyMkFile = os.path.join(BUILD_PATH, Model.makeLmnoPath)
+                subprocess.call('cp -vf ' + tmplHyMkFile + ' ' + hyMkFile, shell = True)
+                res = subprocess.call("./hyMkAll.sh " + Model.project, shell = True)
             else:
                 exit(1)
         print res

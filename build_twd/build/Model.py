@@ -91,6 +91,7 @@ class Model():
         Model.verFileConfPath = configInfo[HY_OP_PATH_VER_FILE_CONF]
         Model.dirTmplProjConf = configInfo[HY_OP_DIR_TMPL_PROJ_CONF]
         Model.dirTmplZztemp = configInfo[HY_OP_DIR_TMPL_ZZTEMP]
+        Model.makeLmnoPath = configInfo[HY_OP_PATH_MAKE_LMNO_SH]
         Model.dirVerRepl = os.path.join(BUILD_PATH, configInfo[HY_OP_DIR_VERSION_REPL])
         Model.verRootPath = os.path.join(ROOT_PATH, configInfo[HY_OP_DIR_VERSION]) #../versions
         #Model.buildVerDir = os.path.join(BUILD_PATH, Model.dirVerRepl) #data/version_repl
