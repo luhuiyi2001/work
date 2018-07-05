@@ -44,9 +44,12 @@ class BakMgr():
         if (os.path.exists(tyProjectConfigPath)):
             subprocess.call('cp -rf ' + tyProjectConfigPath + ' ' + configPath, shell = True)
         
-        configProjectConfigPath = os.path.join(Model.srcPath, 'twd/config/ProjectConfig.mk')
+        configProjectConfigPath = os.path.join(Model.srcPath, 'twd', 'config', 'ProjectConfig.mk')
         if (os.path.exists(configProjectConfigPath)):
-            subprocess.call('cp -rf ' + configProjectConfigPath + ' ' + configPath, shell = True)
+            tmpTwdConfigPath = os.path.join(configPath, 'twd', 'config')
+            if not (os.path.exists(tmpTwdConfigPath)):
+                os.makedirs(tmpTwdConfigPath)
+            subprocess.call('cp -rf ' + configProjectConfigPath + ' ' + tmpTwdConfigPath, shell = True)
         
         #custName
         if not Model.custName in HY_CUST_NAME_NEUTRAL:

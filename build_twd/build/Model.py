@@ -69,14 +69,21 @@ class Model():
     def hyReadBuildConfig():
         print '-------- hyReadBuildConfig'
         Model.hyReadTyProjectConfig(Model.tyProjConfPath)
-        if cmp(Model.custName, HY_ZZTEMP) == 0:
-            mDestZZDir = os.path.join(Model.custCustomPath, HY_ZZTEMP)
-            mDestZZProjectConfig = os.path.join(mDestZZDir, Model.zzProjConf)
-            Model.hyReadZZTempConfig(mDestZZProjectConfig)
-        else:
+        
+        if isEmpty(Model.custName):
             Model.custCommon = ''
             Model.custCustom = ''
-    
+        #    Model.custName = Model.neutralName
+        custNameProjConfigPath = ''
+        custCommonPath = os.path.join(Model.custCommonPath, Model.custName, Model.zzProjConf)
+        if os.path.exists(custCommonPath):
+            custNameProjConfigPath = custCommonPath
+        custCustomPath = os.path.join(Model.custCustomPath, Model.custName, Model.zzProjConf)
+        if os.path.exists(custCustomPath):
+            custNameProjConfigPath = custCustomPath
+        if not isEmpty(custNameProjConfigPath):
+            Model.hyReadZZTempConfig(custNameProjConfigPath)
+        
     @staticmethod
     def hyInitConfigInfo():
         #Config Info
@@ -121,6 +128,7 @@ class Model():
         Model.custCommonDir = hyReadValueWithExit(platformInfo, HY_OP_CUST_COMMON_DIR)
         Model.custCustomDir = hyReadValueWithExit(platformInfo, HY_OP_CUST_CUSTOM_DIR)
         Model.zzProjConf = hyReadValueWithExit(platformInfo, HY_OP_FILE_ZZ_PROJ_CONF)
+        Model.neutralName = hyReadValueWithExit(platformInfo, HY_OP_NEUTRAL_NAME)
 
     @staticmethod
     def hyInitConfKeyInfo():
@@ -161,7 +169,7 @@ class Model():
         tySetEnv(zzConfPath)
         Model.custCommon = tyGetEnv(Model.keyCustCommon, '')
         Model.custCustom = tyGetEnv(Model.keyCustCustom, '')
-        print Model.custCommon,Model.custCustom
+        #print Model.custCommon,Model.custCustom
         if Model.custCommon:
             Model.custCommon = Model.custCommon.split(',')
         if Model.custCustom:

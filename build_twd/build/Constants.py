@@ -94,6 +94,7 @@ HY_OP_CUST_BOARD_DIR = 'cust_board_dir'
 HY_OP_CUST_COMMON_DIR = 'cust_common_dir'
 HY_OP_CUST_CUSTOM_DIR = 'cust_custom_dir'
 HY_OP_FILE_ZZ_PROJ_CONF = 'zz_proj_conf'
+HY_OP_NEUTRAL_NAME = 'neutral_name'
 
 HY_REPL_BOARD = '[HY_BOARD]'
 HY_REPL_CUST_NAME = '[HY_CUST_NAME]'

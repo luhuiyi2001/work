@@ -93,8 +93,8 @@ class SrcMgr():
             exit(1)
             
         if not Model.custName in HY_CUST_NAME_NEUTRAL and cmp(Model.custName, HY_ZZTEMP) != 0:
-            custCommonPath = os.path.join(Model.srcPath, Model.custCommonDir, Model.custName)
-            custCustomPath = os.path.join(Model.srcPath, Model.custCustomDir, Model.custName)
+            custCommonPath = os.path.join(Model.custCommonPath, Model.custName)
+            custCustomPath = os.path.join(Model.custCustomPath, Model.custName)
             if not os.path.exists(custCommonPath) and not os.path.exists(custCustomPath):
                 print 'custName is error: ' + str(Model.custName)
                 exit(1)

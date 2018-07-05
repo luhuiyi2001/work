@@ -138,7 +138,11 @@ class VerMgr():
             allVerFiles = ConfigUtil.readConfigInfo(Model.verFileConfPath, HY_PTGEN)
         else:
             allVerFiles = ConfigUtil.readConfigInfo(Model.verFileConfPath, HY_COMMON)
-            allVerFiles.update(ConfigUtil.readConfigInfo(Model.verFileConfPath, Model.platform))
+            verFilesWithPlatform = ConfigUtil.readConfigInfo(Model.verFileConfPath, Model.platform)
+            allVerFiles.update(verFilesWithPlatform)
+            verFilesWithProduct = ConfigUtil.readConfigInfo(Model.verFileConfPath, Model.product)
+            if verFilesWithProduct:
+                allVerFiles.update(verFilesWithProduct)
         outPath = os.path.join(Model.srcPath, 'out/target/product', Model.project)
         
         noZipKeys = ''

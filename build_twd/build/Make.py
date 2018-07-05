@@ -35,8 +35,10 @@ class Make():
                 res = subprocess.call("./hyMkAll.sh " + Model.project, shell = True)
             else:
                 exit(1)
-        print res
-        
+        #print res
         os.chdir(BUILD_PATH)
-        print os.getcwd()
+        #print os.getcwd()
+        if res != 0:
+            print 'Make Failed!'
+            exit(1)
 
