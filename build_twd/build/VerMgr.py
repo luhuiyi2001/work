@@ -61,7 +61,7 @@ class VerMgr():
             elif cmp(value, 'no') == 0:
                 return HY_PART_TYPE_DOUBLE
         
-        if cmp(Model.platform, HY_PLATFORM_MT6582) == 0:
+        if cmp(Model.platform, HY_PLATFORM_MT6582) == 0 or cmp(Model.platform, HY_PLATFORM_MT6582_92) == 0:
             ptType = HY_PART_TYPE_SINGLE
         else:
             ptType = HY_PART_TYPE_DOUBLE
