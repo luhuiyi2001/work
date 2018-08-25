@@ -143,6 +143,9 @@ class VerMgr():
             verFilesWithProduct = ConfigUtil.readConfigInfo(Model.verFileConfPath, Model.product)
             if verFilesWithProduct:
                 allVerFiles.update(verFilesWithProduct)
+            verFilesWithBoard = ConfigUtil.readConfigInfo(Model.verFileConfPath, Model.customBoard)
+            if verFilesWithBoard:
+                allVerFiles.update(verFilesWithBoard)
         outPath = os.path.join(Model.srcPath, 'out/target/product', Model.project)
         
         noZipKeys = ''
