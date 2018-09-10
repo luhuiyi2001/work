@@ -14,7 +14,7 @@ TWD_LCM = [HY_LCM]
 TWD_SIM = 
 
 #default B15, options: B1/B125/B258/B18/MODEM_2G_706/MODEM_2G_86V
-TWD_BAND = B125
+TWD_BAND = [HY_BAND]
 
 #default internal, options: AMPEXT/null
 TWD_AMP = AMPEXT

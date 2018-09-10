@@ -39,6 +39,12 @@ class SrcMgr():
                     else:
                         line = line.replace(HY_REPL_LCM, '')
                 
+                if HY_REPL_BAND in line:
+                    if Model.band:
+                        line = line.replace(HY_REPL_BAND, Model.band)
+                    else:
+                        line = line.replace(HY_REPL_BAND, '')
+                        
                 if HY_REPL_CUST_COMMON in line:
                     if Model.custCommon:
                         line = line.replace(HY_REPL_CUST_COMMON, Model.custCommon)

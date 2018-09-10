@@ -35,7 +35,7 @@ class Model():
         Model.lcm = hyReadValueWithEmpty(versionInfo, HY_OP_LCM)
         Model.customBoard = hyReadValueWithEmpty(versionInfo, HY_OP_BOARD)
         Model.custName = hyReadValueWithEmpty(versionInfo, HY_OP_CUST_NAME)
-        Model.band = 'B125' #TY0706
+        Model.band = hyReadValueWithEmpty(versionInfo, HY_OP_BAND)
         Model.custCommon = hyReadValueWithEmpty(versionInfo, HY_OP_CUST_COMMON)
         Model.custCustom = hyReadValueWithEmpty(versionInfo, HY_OP_CUST_CUSTOM)
         inputLog = []
@@ -160,7 +160,7 @@ class Model():
         Model.ng = tyGetEnv(Model.keyNg, '')
         Model.lcm = tyGetEnv(Model.keyLcm, '')
         Model.custName = tyGetEnv(Model.keyCustName, '')
-        Model.band = 'B125' #TY0706
+        Model.band = tyGetEnv(Model.keyBand, 'B125')
         print Model.customBoard,Model.ng,Model.lcm,Model.custName
         
         

@@ -69,9 +69,16 @@ class VerMgr():
         
     @staticmethod
     def getNgName():
-        ngName = HY_NG_TYPE_3G
+        if cmp(Model.platform, HY_PLATFORM_MT6582_92) == 0:
+            ngName = HY_NG_TYPE_2G
+        else:
+            ngName = HY_NG_TYPE_3G
+            
         if cmp(Model.ng, HY_NG_TYPE_2G) == 0 or cmp(Model.ng, HY_K1001_COM_MODEM_2G) == 0:
             ngName = HY_NG_TYPE_2G
+        elif cmp(Model.ng, HY_K1001_MODEM_3G) == 0:
+            ngName = HY_NG_TYPE_3G
+            
         return ngName
         
     @staticmethod
@@ -124,6 +131,7 @@ class VerMgr():
                         mInfoList.append(tmpRenameValue)
         verName = '_'.join(mInfoList)
         verName = verName.replace('CameraSupport_', '')
+        verName = verName.replace('MODEM_2G_706', '')
         
         Model.zipFileName = verName
         Model.verPath = os.path.join(Model.verRootPath, Model.custom + Model.cnName, time.strftime(TIME_FORMAT) + '_' + verName)
