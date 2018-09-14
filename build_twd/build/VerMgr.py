@@ -132,6 +132,7 @@ class VerMgr():
         verName = '_'.join(mInfoList)
         verName = verName.replace('CameraSupport_', '')
         verName = verName.replace('MODEM_2G_706', '')
+        verName = verName.replace('LCD_1024_600_K0708', 'K0708_1024x600')
         
         Model.zipFileName = verName
         Model.verPath = os.path.join(Model.verRootPath, Model.custom + Model.cnName, time.strftime(TIME_FORMAT) + '_' + verName)
