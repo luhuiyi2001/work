@@ -133,10 +133,10 @@ class VerMgr():
         verName = verName.replace('CameraSupport_', '')
         verName = verName.replace('MODEM_2G_706', '')
         verName = verName.replace('LCD_1024_600_K0708', 'K0708_1024x600')
-        verName = verName.replace('K1001-800X1280-Support', 'K1001_800X1280_82普通版')
         verName = verName.replace('K1001-800X1280-Support_PG', 'K1001_800X1280_82苹果版')
-        verName = verName.replace('K1001_800X1280_Support', 'K1001_800X1280_92普通版')
+        verName = verName.replace('K1001-800X1280-Support', 'K1001_800X1280_82普通版')
         verName = verName.replace('K1001_800X1280_Support_PG', 'K1001_800X1280_92苹果版')
+        verName = verName.replace('K1001_800X1280_Support', 'K1001_800X1280_92普通版')
         
         Model.zipFileName = verName
         Model.verPath = os.path.join(Model.verRootPath, Model.custom + Model.cnName, time.strftime(TIME_FORMAT) + '_' + verName)
