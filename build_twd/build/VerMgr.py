@@ -98,13 +98,19 @@ class VerMgr():
         mInfoList = []
         verName = Model.verForm
         verName = verName.replace(HY_VER_REPL_PRODUCT, Model.product)
-        verName = verName.replace(HY_VER_REPL_BOARD, Model.customBoard)
         verName = verName.replace(HY_VER_REPL_NG, Model.ngName)
         verName = verName.replace(HY_VER_REPL_BAND, Model.band)
         verName = verName.replace(HY_VER_REPL_LCM, Model.lcmName)
         verName = verName.replace(HY_VER_REPL_SIM, Model.simName)
         verName = verName.replace(HY_VER_REPL_TIME, time.strftime(DATE_FORMAT))
         verName = verName.replace(HY_VER_REPL_SDCARD, Model.ptName)
+        
+        tmpBoardRenameValue = Model.renameInfo.get(Model.customBoard.lower())
+        if tmpBoardRenameValue == None:
+            verName = verName.replace(HY_VER_REPL_BOARD, Model.customBoard)
+        elif tmpBoardRenameValue != '':
+            verName = verName.replace(HY_VER_REPL_BOARD, tmpBoardRenameValue)
+        
         mInfoList.append(verName)
         if not Model.custName in HY_CUST_NAME_NEUTRAL:
             if cmp(Model.custName, HY_ZZTEMP) == 0:
@@ -132,11 +138,11 @@ class VerMgr():
         verName = '_'.join(mInfoList)
         verName = verName.replace('CameraSupport_', '')
         verName = verName.replace('MODEM_2G_706', '')
-        verName = verName.replace('LCD_1024_600_K0708', 'K0708_1024x600')
-        verName = verName.replace('K1001-800X1280-Support_PG', 'K1001_800X1280_82苹果版')
-        verName = verName.replace('K1001-800X1280-Support', 'K1001_800X1280_82普通版')
-        verName = verName.replace('K1001_800X1280_Support_PG', 'K1001_800X1280_92苹果版')
-        verName = verName.replace('K1001_800X1280_Support', 'K1001_800X1280_92普通版')
+        #verName = verName.replace('LCD_1024_600_K0708', 'K0708_1024x600')
+        #verName = verName.replace('K1001-800X1280-Support_PG', 'K1001_800X1280_82苹果版')
+        #verName = verName.replace('K1001-800X1280-Support', 'K1001_800X1280_82普通版')
+        #verName = verName.replace('K1001_800X1280_Support_PG', 'K1001_800X1280_92苹果版')
+        #verName = verName.replace('K1001_800X1280_Support', 'K1001_800X1280_92普通版')
         
         Model.zipFileName = verName
         Model.verPath = os.path.join(Model.verRootPath, Model.custom + Model.cnName, time.strftime(TIME_FORMAT) + '_' + verName)
@@ -149,6 +155,8 @@ class VerMgr():
             allVerFiles = ConfigUtil.readConfigInfo(Model.verFileConfPath, HY_IMG)
         elif cmp(Model.mkType, HY_MK_TYPE_PTGEN) == 0:
             allVerFiles = ConfigUtil.readConfigInfo(Model.verFileConfPath, HY_PTGEN)
+        elif cmp(Model.mkType, HY_MK_TYPE_LOGO) == 0:
+            allVerFiles = ConfigUtil.readConfigInfo(Model.verFileConfPath, HY_LOGO)
         else:
             allVerFiles = ConfigUtil.readConfigInfo(Model.verFileConfPath, HY_COMMON)
             verFilesWithPlatform = ConfigUtil.readConfigInfo(Model.verFileConfPath, Model.platform)
