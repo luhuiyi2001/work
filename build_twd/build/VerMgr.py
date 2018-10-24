@@ -70,7 +70,10 @@ class VerMgr():
     @staticmethod
     def getNgName():
         if cmp(Model.platform, HY_PLATFORM_MT6582_92) == 0:
-            ngName = HY_NG_TYPE_2G
+            if cmp(Model.customBoard, 'K1001_800X1280_Support_3G') == 0 or cmp(Model.customBoard, 'K1001_800X1280_Support_PG_3G') == 0:
+                ngName = HY_NG_TYPE_3G
+            else:
+                ngName = HY_NG_TYPE_2G
         else:
             ngName = HY_NG_TYPE_3G
             

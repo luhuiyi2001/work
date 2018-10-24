@@ -16,6 +16,8 @@ class Make():
         if cmp(Model.mkType, HY_MK_TYPE_IMAGE) == 0:
             if cmp(Model.platform, HY_PLATFORM_MT6572) == 0 or cmp(Model.platform, HY_PLATFORM_MT6582) == 0:
                 res = subprocess.call("./mkt_user.sh c && ./mkt_user.sh r lk k && ./mkt_user.sh bootimage && ./mkt_user.sh recoveryimage && ./mkt_user.sh r dr libcam.paramsmgr", shell = True)
+            elif cmp(Model.platform, HY_PLATFORM_MT6582_92) == 0:
+                res = subprocess.call("./tyMk.py n lk k && ./tyMk.py bootimage && ./tyMk.py recoveryimage && ./tyMk.py r dr libcam.paramsmgr", shell = True)
             else:
                 exit(1)
         elif cmp(Model.mkType, HY_MK_TYPE_LOGO) == 0:
