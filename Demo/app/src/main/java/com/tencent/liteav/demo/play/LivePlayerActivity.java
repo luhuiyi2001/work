@@ -530,7 +530,7 @@ public class LivePlayerActivity extends Activity implements ITXLivePlayListener,
     }
 
     private boolean startPlay() {
-        String playUrl = "http://36147.runde.pro/live/36147_b3edfe86a4.flv";//mRtmpUrlView.getText().toString();
+        String playUrl = "rtmp://://://aqm.runde.pro:1935/live/36147_1";//mRtmpUrlView.getText().toString();
 
         if (!checkPlayUrl(playUrl)) {
             return false;

@@ -645,6 +645,13 @@ public class LivePublisherActivity extends Activity implements View.OnClickListe
             mLivePusher.resumePusher();
             mLivePusher.resumeBGM();
         }
+
+        mMainHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                doRtmp();
+            }
+        }, 1000);
     }
 
     @Override
@@ -659,6 +666,7 @@ public class LivePublisherActivity extends Activity implements View.OnClickListe
             mLivePusher.pauseBGM();
         }
 
+        doRtmp();
     }
 
 	@Override
@@ -745,15 +753,30 @@ public class LivePublisherActivity extends Activity implements View.OnClickListe
         return true;
     }
 
-    private  boolean startPublishRtmp() {
-        String rtmpUrl = "rtmp://36147.livepush.myqcloud.com/live/36147_b3edfe86a4?bizid=36147&txSecret=7c21a22812439c2b64ba60d7b98afe3e&txTime=5BE5AEFF";
-        String inputUrl = mRtmpUrlView.getText().toString();
-        if (!TextUtils.isEmpty(inputUrl)) {
-            String url[] = inputUrl.split("###");
-            if (url.length > 0) {
-                rtmpUrl = url[0];
+    public void doRtmp() {
+        if (mVideoPublish) {
+            stopPublishRtmp();
+        } else {
+            if(mVideoSrc == VIDEO_SRC_CAMERA){
+                FixOrAdjustBitrate();  //根据设置确定是“固定”还是“自动”码率
             }
+            else{
+                //录屏横竖屏采用两种分辨率，和摄像头推流逻辑不一样
+            }
+            mVideoPublish = startPublishRtmp();
         }
+    }
+
+    private  boolean startPublishRtmp() {
+
+        String rtmpUrl = getIntent().getStringExtra("PUSH_URL");
+//        String inputUrl = mRtmpUrlView.getText().toString();
+//        if (!TextUtils.isEmpty(inputUrl)) {
+//            String url[] = inputUrl.split("###");
+//            if (url.length > 0) {
+//                rtmpUrl = url[0];
+//            }
+//        }
 
         if (TextUtils.isEmpty(rtmpUrl) || (!rtmpUrl.trim().toLowerCase().startsWith("rtmp://"))) {
             Toast.makeText(getApplicationContext(), "推流地址不合法，目前支持rtmp推流!", Toast.LENGTH_SHORT).show();

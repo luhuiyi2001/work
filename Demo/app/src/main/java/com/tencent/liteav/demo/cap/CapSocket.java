@@ -2,13 +2,11 @@ package com.tencent.liteav.demo.cap;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 public class CapSocket {
 
@@ -36,7 +34,7 @@ public class CapSocket {
 			mSocket = new Socket(CapConfig.SERVER_IP, CapConfig.SERVER_PORT);
 			// 客户端socket在接收数据时，有两种超时：1. 连接服务器超时，即连接超时；2. 连接服务器成功后，接收服务器数据超时，即接收超时
 			// 设置 socket 读取数据流的超时时间
-			mSocket.setSoTimeout(5000);
+			mSocket.setSoTimeout(0);
 			// 发送数据包，默认为 false，即客户端发送数据采用 Eagle 算法；
 			// 但是对于实时交互性高的程序，建议其改为 true，即关闭 Nagle 算法，客户端每发送一次数据，无论数据包大小都会将这些数据发送出去
 			mSocket.setTcpNoDelay(true);
@@ -73,12 +71,11 @@ public class CapSocket {
 	}
 	
 	public void send(String msg) {
-		CLog.d(TAG, "send");
 		if (mSocket == null) {
-			CLog.d(TAG, "mSocket == null");
+			CLog.d(TAG, "send - mSocket == null");
 			return;
 		}
-		
+		CLog.d(TAG, "send - isConnected = " + mSocket.isConnected() + ", isClosed = " + mSocket.isClosed());
 		try {
 			if (mSocket.isConnected() && !mSocket.isClosed()) {
 				// 向服务器端写数据，写入一个缓冲区
@@ -95,21 +92,20 @@ public class CapSocket {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			CLog.e(TAG, "send = " + e.getMessage());
 		}
 	}
 
 	public void receive() {
-		CLog.d(TAG, "receive - start");
 		if (mSocket == null) {
-			CLog.d(TAG, "mSocket == null");
+			CLog.d(TAG, "receive - mSocket == null");
 			return;
 		}
-
+		CLog.d(TAG, "receive - isConnected = " + mSocket.isConnected() + ", isClosed = " + mSocket.isClosed());
 		/* * * * * * * * * * Socket 客户端读取服务器端响应数据 * * * * * * * * * */
 		try {
 			// serverSocket.isConnected 代表是否连接成功过
 			// 判断 Socket 是否处于连接状态
-			CLog.d(TAG, "receive = [ " + mSocket.isConnected() + ", " + mSocket.isClosed() + " ]");
 			if (mSocket.isConnected() && !mSocket.isClosed()) {
 				// 缓冲区
 //				byte[] buffer = new byte[mReadIS.available()];
@@ -130,12 +126,10 @@ public class CapSocket {
 				// 关闭网络
 				mSocket.close();
 			}
-		} catch (UnknownHostException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+			CLog.e(TAG, "receive = " + e.getMessage());
 		}
-		CLog.d(TAG, "receive - end");
 	}
 	
 	public void close() {
@@ -153,6 +147,7 @@ public class CapSocket {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			CLog.e(TAG, "close = " + e.getMessage());
 		}
 	}
 	

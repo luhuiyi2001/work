@@ -1,10 +1,13 @@
 package com.tencent.liteav.demo.cap;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
+import android.net.wifi.ScanResult;
 
 import com.google.gson.Gson;
+import com.tencent.liteav.demo.cap.wifi.WifiAdmin;
 
 
 public class CapInfoManager {
@@ -23,9 +26,12 @@ public class CapInfoManager {
 	private CapInfoManager() {
 		
 	}
-	
+
+	private WifiAdmin mWifiMgr = null;
+
 	public void setContext(Context context) {
 		mContext = context;
+		mWifiMgr = new WifiAdmin(context);
 	}
 	
 	
@@ -61,15 +67,16 @@ public class CapInfoManager {
 		CapInfoRequest req = new CapInfoRequest();
 		req.act = CapConstants.REQ_ACT_CA_UPLOAD_WIFI_LIST;
 		req.device_id = "adaa-dadna-daa";
-		WifiInfo wifiInfo = new WifiInfo();
-		wifiInfo.status = 0;
-		wifiInfo.spot = "wifi1";
-		wifiInfo.pwd = 1;
-		wifiInfo.intensity = "123";
-		if (req.wifi_list == null) {
-			req.wifi_list = new ArrayList<WifiInfo>();
-		}
-		req.wifi_list.add(wifiInfo);
+//		WifiInfo wifiInfo = new WifiInfo();
+//		wifiInfo.status = 0;
+//		wifiInfo.spot = "wifi1";
+//		wifiInfo.pwd = 1;
+//		wifiInfo.intensity = "123";
+//		if (req.wifi_list == null) {
+//			req.wifi_list = new ArrayList<WifiInfo>();
+//		}
+//		req.wifi_list.add(wifiInfo);
+		req.wifi_list = getWifiList();
 		return new Gson().toJson(req);
 		//return "{\"act\":\"ca_upload_wifi_list\",\"device_id\":\"adaa-dadna-daa\",\"wifi_list\":[{\"spot\":\"wifi1\",\"status\":0,\"pwd\":\"1\",\"intensity\":\"123\"}],\"status\":false}";
 	}
@@ -84,4 +91,29 @@ public class CapInfoManager {
 		return new Gson().toJson(req);
 		//return "{\"act\":\"ca_report_wifi_connect_status\",\"device_id\":\"adaa-dadna-daa\",\"spot\":\"wifi1\",\"status\":false,\"msg\":\"密码错误！\"}";
 	}
+
+	public List<WifiInfo> getWifiList() {
+		if (mWifiMgr == null) {
+			return null;
+		}
+		mWifiMgr.openWifi();
+		mWifiMgr.startScan();
+		CLog.i(TAG, "getWifiList = " + mWifiMgr.lookUpScan().toString());
+		List<ScanResult> scanWifiList = mWifiMgr.getWifiList();
+		if (scanWifiList.size() == 0) {
+			return null;
+		}
+		List<WifiInfo> wifiList = new ArrayList<WifiInfo>();
+		for (int i = 0; i < scanWifiList.size(); i++) {
+			ScanResult curResult = scanWifiList.get(i);
+			WifiInfo wifiInfo = new WifiInfo();
+			wifiInfo.spot = curResult.SSID;
+			//wifiInfo.pwd = curResult.isPasspointNetwork() ? 1 : 0;
+			wifiInfo.intensity = curResult.capabilities;
+			wifiInfo.status = 0;
+			wifiList.add(wifiInfo);
+		}
+		return wifiList;
+	}
+
 }

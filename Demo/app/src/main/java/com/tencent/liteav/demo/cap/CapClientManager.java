@@ -19,12 +19,17 @@ public class CapClientManager implements OnReceiveMsgListener {
 	private HeartbeatTimer mBeatTimer;
 	private long mLastReceiveTime = 0;
 	private CapSocket mClient;
-	
+	private OnReceiveEventListener mListener;
+
 	public static CapClientManager getInstance() {
 		if (sMgr == null) {
 			sMgr = new CapClientManager();
 		}
 		return sMgr;
+	}
+
+	public void setOnReceiveEventListener(OnReceiveEventListener listener) {
+		mListener = listener;
 	}
 
 	private CapClientManager() {
@@ -51,27 +56,42 @@ public class CapClientManager implements OnReceiveMsgListener {
 		if (TextUtils.isEmpty(msg)) {
 			return;
 		}
-		
+
 		mLastReceiveTime = System.currentTimeMillis();
         try {
-			CapInfoResponse resp = (CapInfoResponse)new Gson().fromJson(msg, CapInfoResponse.class);
+			CapInfoResponse resp = new Gson().fromJson(msg, CapInfoResponse.class);
 			if (CapConstants.RES_CMD_CA_LOGIN.equals(resp.cmd)) {
-				
+				if (mListener != null) {
+					mListener.onLogin(resp);
+				}
 			} else if (CapConstants.RES_CMD_CA_REPORT_LOCATION.equals(resp.cmd)) {
-				
+				if (mListener != null) {
+					mListener.onLocation(resp);
+				}
 			} else if (CapConstants.RES_CMD_CA_SOS.equals(resp.cmd)) {
-				
+				if (mListener != null) {
+					mListener.onSOS(resp);
+				}
 			} else if (CapConstants.RES_CMD_SERVER_PUSH_OPEN_RTSP.equals(resp.cmd)) {
-				
+				if (mListener != null) {
+					mListener.onOpenRTSP(resp);
+				}
 			} else if (CapConstants.RES_CMD_SERVER_PUSH_STOP_RTSP.equals(resp.cmd)) {
-				
+				if (mListener != null) {
+					mListener.onStopRTSP(resp);
+				}
 			} else if (CapConstants.RES_CMD_SERVER_PULL_WIFI_LIST.equals(resp.cmd)) {
-				
+				if (mListener != null) {
+					mListener.onPullWifiList(resp);
+				}
 			} else if (CapConstants.RES_CMD_SERVER_PUSH_CONNECT_WIFI.equals(resp.cmd)) {
-				
+				if (mListener != null) {
+					mListener.onConnWifi(resp);
+				}
 			}
 		} catch (JsonSyntaxException e) {
 			e.printStackTrace();
+			CLog.e(TAG, e.getMessage());
 		}
 	}
 	
@@ -92,9 +112,9 @@ public class CapClientManager implements OnReceiveMsgListener {
 			public void run() {
 				if (mClient.connect()) {
 					CLog.d(TAG, "Connect Success!");
-					
+					mClient.send(CapInfoManager.getInstance().getLoginReqMsg());
 					startReceiveThread();
-					startHeartbeatTimer();
+					//startHeartbeatTimer();
 				} else {
 					CLog.d(TAG, "Connect Failed!");
 				}
@@ -127,7 +147,7 @@ public class CapClientManager implements OnReceiveMsgListener {
 	/**
 	 * 启动心跳
 	 */
-	private void startHeartbeatTimer() {
+	public void startHeartbeatTimer() {
 		CLog.d(TAG, "startHeartbeatTimer");
 		if (mBeatTimer == null) {
 			mBeatTimer = new HeartbeatTimer();
