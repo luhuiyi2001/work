@@ -1,4 +1,4 @@
-package com.tencent.liteav.demo.cap;
+package com.tencent.liteav.demo.cap.common;
 
 import android.util.Log;
 

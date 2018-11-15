@@ -1,12 +1,17 @@
-package com.tencent.liteav.demo.cap;
+package com.tencent.liteav.demo.cap.manager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiManager;
 
 import com.google.gson.Gson;
+import com.tencent.liteav.demo.cap.common.CLog;
+import com.tencent.liteav.demo.cap.common.CapConstants;
+import com.tencent.liteav.demo.cap.socket.CapInfoRequest;
+import com.tencent.liteav.demo.cap.socket.WifiInfo;
 import com.tencent.liteav.demo.cap.wifi.WifiAdmin;
 
 
@@ -27,11 +32,11 @@ public class CapInfoManager {
 		
 	}
 
-	private WifiAdmin mWifiMgr = null;
+//	private WifiAdmin mWifiMgr = null;
 
 	public void setContext(Context context) {
 		mContext = context;
-		mWifiMgr = new WifiAdmin(context);
+//		mWifiMgr = new WifiAdmin(context);
 	}
 	
 	
@@ -63,7 +68,7 @@ public class CapInfoManager {
 		//return "{\"act\":\"ca_sos\",\"device_id\":\"adaa-dadna-daa\",\"x_point\":\"123.34\",\"y_point\":\"23.12\",\"status\":false}";
 	}
 	
-	public String getWifiListReqMsg() {
+	public String getWifiListReqMsg(Context context) {
 		CapInfoRequest req = new CapInfoRequest();
 		req.act = CapConstants.REQ_ACT_CA_UPLOAD_WIFI_LIST;
 		req.device_id = "adaa-dadna-daa";
@@ -76,7 +81,7 @@ public class CapInfoManager {
 //			req.wifi_list = new ArrayList<WifiInfo>();
 //		}
 //		req.wifi_list.add(wifiInfo);
-		req.wifi_list = getWifiList();
+		req.wifi_list = getWifiList(context);
 		return new Gson().toJson(req);
 		//return "{\"act\":\"ca_upload_wifi_list\",\"device_id\":\"adaa-dadna-daa\",\"wifi_list\":[{\"spot\":\"wifi1\",\"status\":0,\"pwd\":\"1\",\"intensity\":\"123\"}],\"status\":false}";
 	}
@@ -92,10 +97,11 @@ public class CapInfoManager {
 		//return "{\"act\":\"ca_report_wifi_connect_status\",\"device_id\":\"adaa-dadna-daa\",\"spot\":\"wifi1\",\"status\":false,\"msg\":\"密码错误！\"}";
 	}
 
-	public List<WifiInfo> getWifiList() {
-		if (mWifiMgr == null) {
-			return null;
-		}
+	private List<WifiInfo> getWifiList(Context context) {
+//		if (mWifiMgr == null) {
+//			return null;
+//		}
+		WifiAdmin mWifiMgr = new WifiAdmin(context);
 		mWifiMgr.openWifi();
 		mWifiMgr.startScan();
 		CLog.i(TAG, "getWifiList = " + mWifiMgr.lookUpScan().toString());
@@ -108,9 +114,9 @@ public class CapInfoManager {
 			ScanResult curResult = scanWifiList.get(i);
 			WifiInfo wifiInfo = new WifiInfo();
 			wifiInfo.spot = curResult.SSID;
-			//wifiInfo.pwd = curResult.isPasspointNetwork() ? 1 : 0;
-			wifiInfo.intensity = curResult.capabilities;
-			wifiInfo.status = 0;
+			wifiInfo.pwd = curResult.capabilities.contains("WPA") ? 1 : 0;
+			wifiInfo.intensity = WifiManager.calculateSignalLevel(curResult.level, 5);
+			wifiInfo.status = mWifiMgr.isExsits(curResult.SSID) != null ? 1 : 0;
 			wifiList.add(wifiInfo);
 		}
 		return wifiList;

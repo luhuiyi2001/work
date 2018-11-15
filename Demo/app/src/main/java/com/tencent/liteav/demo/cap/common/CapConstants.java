@@ -1,4 +1,4 @@
-package com.tencent.liteav.demo.cap;
+package com.tencent.liteav.demo.cap.common;
 
 public class CapConstants {
 
@@ -15,4 +15,12 @@ public class CapConstants {
     public static final String REQ_ACT_CA_REPORT_LOCATION = "ca_report_location";
     public static final String REQ_ACT_CA_UPLOAD_WIFI_LIST = "ca_upload_wifi_list";
     public static final String REQ_ACT_CA_REPORT_WIFI_CONNECT_STATUS = "ca_report_wifi_connect_status";
+
+    public static final String ACTION_UPDATE_STATE_INFO = "com.android.runde.ACTION_UPDATE_STATE_INFO";
+    public static final String ACTION_START_PUBLISH = "com.android.runde.ACTION_START_PUBLISH";
+    public static final String ACTION_STOP_PUBLISH = "com.android.runde.ACTION_STOP_PUBLISH";
+    public static final String EXTRA_UPDATE_STATE_INFO = "update_info";
+    public static final String EXTRA_PUSH_URL = "push_url";
+
+
 }

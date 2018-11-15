@@ -1,5 +1,9 @@
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="app_icon_size">96dp</dimen>
+    <dimen name="btn_all_app_wight">78dip</dimen>
+    <dimen name="btn_all_app_height">65dip</dimen>
+    <dimen name="publish_video_size">240dp</dimen>
     <!-- umeng -->
     <dimen name="titlebar">54dp</dimen>
 

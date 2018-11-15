@@ -1,4 +1,9 @@
-package com.tencent.liteav.demo.cap;
+package com.tencent.liteav.demo.cap.socket;
+
+import com.tencent.liteav.demo.cap.common.CLog;
+import com.tencent.liteav.demo.cap.common.CapConfig;
+import com.tencent.liteav.demo.cap.manager.CapStateInfoManager;
+import com.tencent.liteav.demo.cap.listener.OnReceiveMsgListener;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -28,6 +33,7 @@ public class CapSocket {
 			return false;
 		}
 		try {
+			CapStateInfoManager.getInstance().update("socket start to connect");
 			/* * * * * * * * * * 客户端 Socket 通过构造方法连接服务器 * * * * * * * * * */
 			// 客户端 Socket 可以通过指定 IP 地址或域名两种方式来连接服务器端,实际最终都是通过 IP 地址来连接服务器
 			// 新建一个Socket，指定其IP地址及端口号
@@ -60,6 +66,7 @@ public class CapSocket {
 			mReadIS = mSocket.getInputStream();
 			
 			if (mSocket.isConnected()) {
+				CapStateInfoManager.getInstance().update("socket is connected");
 				return true;
 			} else {
 				close();
@@ -85,6 +92,7 @@ public class CapSocket {
 				mSendBW.write(msg + "\r\n");
 				// 发送缓冲区中数据 - 前面说调用 flush() 无效，可能是调用的方法不对吧！
 				mSendBW.flush();
+				CapStateInfoManager.getInstance().update("socket send = " + msg);
 				CLog.i(TAG, "send = " + msg);
 			} else {
 				// 关闭网络
@@ -117,6 +125,7 @@ public class CapSocket {
 				
 	            BufferedReader br = new BufferedReader(new InputStreamReader(mReadIS));
 	            String msg = br.readLine();
+				CapStateInfoManager.getInstance().update("socket receive = " + msg);
 				// 日志中输出
 				CLog.i(TAG, "receive = " + msg);
 				if (mListener != null) {
@@ -133,6 +142,7 @@ public class CapSocket {
 	}
 	
 	public void close() {
+		CapStateInfoManager.getInstance().update("socket close");
 		CLog.d(TAG, "close");
 		try {
 			if (mReadIS != null) {

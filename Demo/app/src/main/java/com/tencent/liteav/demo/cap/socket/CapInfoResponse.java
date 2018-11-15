@@ -1,4 +1,4 @@
-package com.tencent.liteav.demo.cap;
+package com.tencent.liteav.demo.cap.socket;
 
 public class CapInfoResponse {
     public String cmd;

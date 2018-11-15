@@ -1,4 +1,4 @@
-package com.tencent.liteav.demo.cap;
+package com.tencent.liteav.demo.cap.util;
 
 import java.util.Timer;
 import java.util.TimerTask;

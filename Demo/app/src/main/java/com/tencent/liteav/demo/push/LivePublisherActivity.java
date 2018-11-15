@@ -105,7 +105,7 @@ public class LivePublisherActivity extends Activity implements View.OnClickListe
 
     private Handler          mHandler = new Handler();
 
-    private Bitmap           mBitmap;
+//    private Bitmap           mBitmap;
 
     private static final int VIDEO_SRC_CAMERA = 0;
     private static final int VIDEO_SRC_SCREEN = 1;
@@ -165,7 +165,7 @@ public class LivePublisherActivity extends Activity implements View.OnClickListe
         mLivePushConfig.setBeautyFilter(mBeautyLevel, mWhiteningLevel, mRuddyLevel);
         mLivePusher.setConfig(mLivePushConfig);
 
-        mBitmap         = decodeResource(getResources(),R.drawable.watermark);
+        //mBitmap         = decodeResource(getResources(),R.drawable.watermark);
 
         mRotationObserver = new RotationObserver(new Handler());
         mRotationObserver.startObserver();
@@ -787,7 +787,7 @@ public class LivePublisherActivity extends Activity implements View.OnClickListe
             mCaptureView.setVisibility(View.VISIBLE);
         }
         // demo默认不加水印
-        mLivePushConfig.setWatermark(mBitmap, 0.02f, 0.05f, 0.2f);
+        //mLivePushConfig.setWatermark(mBitmap, 0.02f, 0.05f, 0.2f);
 
         int customModeType = 0;
 

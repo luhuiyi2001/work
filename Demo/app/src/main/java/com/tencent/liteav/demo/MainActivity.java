@@ -1,8 +1,6 @@
 package com.tencent.liteav.demo;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
@@ -17,8 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.tencent.liteav.demo.cap.CapClientManager;
-import com.tencent.liteav.demo.cap.CapInfoManager;
 import com.tencent.liteav.demo.common.widget.expandableadapter.BaseExpandableRecyclerViewAdapter;
 import com.tencent.liteav.demo.liveroom.ui.LiveRoomActivity;
 import com.tencent.liteav.demo.play.LivePlayerActivity;
@@ -46,33 +42,33 @@ public class MainActivity extends Activity {
     private RecyclerView mRvList;
     private MainExpandableAdapter mAdapter;
 
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if ("com.ty.action.test".equals(intent.getAction())) {
-                test(intent);
-            }
-        }
-    };
+//    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            if ("com.ty.action.test".equals(intent.getAction())) {
+//                test(intent);
+//            }
+//        }
+//    };
 
-    private void test(Intent intent) {
-        int api = intent.getIntExtra("api", -1);
-        Log.e("luhuiyi","test = " + api);
-        if (api == 0) {
-            CapClientManager.getInstance().onStart();
-        } else if (api == 1) {
-            CapClientManager.getInstance().onSend(CapInfoManager.getInstance().getLoginReqMsg());
-        } else if (api == 2) {
-            CapClientManager.getInstance().onSend(CapInfoManager.getInstance().getLocationReqMsg());
-        } else if (api == 3) {
-            CapClientManager.getInstance().onSend(CapInfoManager.getInstance().getSosReqMsg());
-        } else if (api == 4) {
-            CapClientManager.getInstance().onSend(CapInfoManager.getInstance().getWifiConnReqMsg());
-        } else if (api == 5) {
-            CapClientManager.getInstance().onSend(CapInfoManager.getInstance().getWifiListReqMsg());
-        }
-
-    }
+//    private void test(Intent intent) {
+//        int api = intent.getIntExtra("api", -1);
+//        Log.e("luhuiyi","test = " + api);
+//        if (api == 0) {
+//            CapClientManager.getInstance().onStart();
+//        } else if (api == 1) {
+//            CapClientManager.getInstance().onSend(CapInfoManager.getInstance().getLoginReqMsg());
+//        } else if (api == 2) {
+//            CapClientManager.getInstance().onSend(CapInfoManager.getInstance().getLocationReqMsg());
+//        } else if (api == 3) {
+//            CapClientManager.getInstance().onSend(CapInfoManager.getInstance().getSosReqMsg());
+//        } else if (api == 4) {
+//            CapClientManager.getInstance().onSend(CapInfoManager.getInstance().getWifiConnReqMsg());
+//        } else if (api == 5) {
+//            CapClientManager.getInstance().onSend(CapInfoManager.getInstance().getWifiListReqMsg());
+//        }
+//
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,14 +165,14 @@ public class MainActivity extends Activity {
 
         IntentFilter filter = new IntentFilter();
         filter.addAction("com.ty.action.test");
-        registerReceiver(mReceiver, filter);
+//        registerReceiver(mReceiver, filter);
     }
 
     @Override
     protected void onDestroy() {
         // TODO Auto-generated method stub
         super.onDestroy();
-        this.unregisterReceiver(mReceiver);
+//        this.unregisterReceiver(mReceiver);
     }
 
     private List<GroupBean> initGroupData() {

@@ -6,9 +6,13 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 
+import com.tencent.liteav.demo.cap.common.CLog;
+
 import java.util.List;
 
 public class WifiAdmin {
+    private static final String TAG = "WifiAdmin";
+
     // 定义WifiManager对象
     private WifiManager mWifiManager;
     // 定义WifiInfo对象
@@ -138,9 +142,8 @@ public class WifiAdmin {
     // 添加一个网络并连接
     public void addNetwork(WifiConfiguration wcg) {
         int wcgID = mWifiManager.addNetwork(wcg);
-        boolean b =  mWifiManager.enableNetwork(wcgID, true);
-        System.out.println("a--" + wcgID);
-        System.out.println("b--" + b);
+        boolean success =  mWifiManager.enableNetwork(wcgID, true);
+        CLog.i(TAG, "wcgID = " + wcgID + ", success = " + success);
     }
 
     // 断开指定ID的网络
@@ -161,7 +164,7 @@ public class WifiAdmin {
         config.allowedProtocols.clear();
         config.SSID = "\"" + SSID + "\"";
 
-        WifiConfiguration tempConfig = this.IsExsits(SSID);
+        WifiConfiguration tempConfig = this.isExsits(SSID);
         if(tempConfig != null) {
             mWifiManager.removeNetwork(tempConfig.networkId);
         }
@@ -200,7 +203,7 @@ public class WifiAdmin {
         return config;
     }
 
-    private WifiConfiguration IsExsits(String SSID)
+    public WifiConfiguration isExsits(String SSID)
     {
         List<WifiConfiguration> existingConfigs = mWifiManager.getConfiguredNetworks();
         for (WifiConfiguration existingConfig : existingConfigs)
@@ -213,5 +216,8 @@ public class WifiAdmin {
         return null;
     }
 
+    public void saveConfiguration() {
+        mWifiManager.saveConfiguration();
+    }
 }
 //分为三种情况：1没有密码2用wep加密3用wpa加密

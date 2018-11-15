@@ -1,5 +1,12 @@
 <resources>
 
+    <style name="TestButton">
+        <item name="android:layout_width">0dip</item>
+        <item name="android:layout_height">@dimen/btn_all_app_height</item>
+        <item name="android:layout_weight">1.0</item>
+        <item name="android:layout_gravity">center_vertical</item>
+    </style>
+
     <!--
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.

@@ -1,4 +1,4 @@
-package com.tencent.liteav.demo.cap;
+package com.tencent.liteav.demo.cap.common;
 
 /**
  * Created by melo on 2017/11/27.
@@ -14,14 +14,9 @@ public class CapConfig {
     // 单个CPU线程池大小
     public static final int POOL_SIZE = 5;
 
-    /**
-     * 错误处理
-     */
-    public static class ErrorCode {
+    public static final String PATH_EXT_SDCARD = "/storage/sdcard1";
+    public static final String PATH_VIDEO_RECORD = "CapCamera";
 
-        public static final int CREATE_TCP_ERROR = 1;
-
-        public static final int PING_TCP_TIMEOUT = 2;
-    }
+    public static final int TIME_CAMERA_RECORD =300000;// 10s
 
 }

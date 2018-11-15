@@ -1,4 +1,4 @@
-package com.tencent.liteav.demo.cap;
+package com.tencent.liteav.demo.cap.manager;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -7,6 +7,14 @@ import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.tencent.liteav.demo.cap.listener.OnReceiveEventListener;
+import com.tencent.liteav.demo.cap.listener.OnReceiveMsgListener;
+import com.tencent.liteav.demo.cap.common.CLog;
+import com.tencent.liteav.demo.cap.common.CapConfig;
+import com.tencent.liteav.demo.cap.common.CapConstants;
+import com.tencent.liteav.demo.cap.socket.CapInfoResponse;
+import com.tencent.liteav.demo.cap.socket.CapSocket;
+import com.tencent.liteav.demo.cap.util.HeartbeatTimer;
 
 
 public class CapClientManager implements OnReceiveMsgListener {
@@ -189,7 +197,7 @@ public class CapClientManager implements OnReceiveMsgListener {
 		}
 	}
 
-	private void stopConnection() {
+	public void stopConnection() {
 		CLog.d(TAG, "stopConnection");
 		try {
 			stopHeartbeatTimer();
