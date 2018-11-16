@@ -1,0 +1,83 @@
+adb shell am broadcast -a com.ty.action.test --ei api 0
+adb uninstall com.tencent.liteav.demo
+adb install D:\runde\work\Demo\app\build\outputs\apk\debug\app-debug.apk
+adb shell am start -n com.tencent.liteav.demo/.MainActivity
+git config --global user.email "luhuiyi2001@163.com"
+git config --global user.name "luhuiyi2001"
+telnet 47.106.114.236 9510
+logcat -v time |grep luhuiyi
+
+cat xxx.tar.bz2.* | tar jxvf -
+https://pan.baidu.com/s/1Y4phlVsHl09Y8BFF_GQRYA 提取码 提取码: 2hg4
+
+测试json
+
+管理员端测试账号    user_name:bruce   pwd:123456
+
+app端测试账号	device_id:adaa-dadna-daa		 user_name:test1		pwd:123456  
+				device_id:123450123456789		 user_name:test12		pwd:12345
+
+
+
+管理员--------------------------------------------------------------------------------
+
+1 管理员登陆  ok
+{"act":"ma_login","user_name":"bruce","pwd":"123456","udid":"asdfghjk"}
+
+2 管理员请求推流  ok
+{"act":"ma_open_rtsp","device_id":"adaa-dadna-daa"}
+
+3 管理员关闭推流  ok
+{"act":"ma_stop_rtsp","device_id":"adaa-dadna-daa"}
+
+4 管理员发起音频聊天
+{"act":"ma_open_video_call","room_id":"xxx","device_id":xxx}
+
+5 管理员发起音视频群聊
+{"act":"ma_open_group_video_call","room_id":"xxx","device_ids":["xxx1","xxx2"]}
+
+
+--------------------------------------------------------------------------------------
+
+
+
+app--------------------------------------------------------------------------------
+
+1 app登陆   ok
+{"act":"app_login","user_name":"test1","pwd":"123456","udid":"adahda"}
+
+2 app请求wifi列表  ok
+{act":"app_get_wifi_list"}
+
+3 app选择wifi连接 ok 
+{"act":"app_connect_wifi","spot":"wifi1","pwd":"123456"}
+
+4 app发起双人音视频聊天
+
+5 app发起音视频群聊（仅限于app之间）
+
+
+--------------------------------------------------------------------------------------
+
+
+
+帽子--------------------------------------------------------------------------------
+
+1 帽子登陆 ok
+{"act":"ca_login","device_id":"adaa-dadna-daa"}
+
+2 帽子上报位置 ok
+{"act":"ca_report_location","user_id":1,"x_point":123.4,"y_point":23.123}
+
+3 帽子上报wifi列表 ok
+{"act":"ca_upload_wifi_list","device_id":"adaa-dadna-daa","wifi_list":[{"spot":"wifi1","status":"0","pwd":"1","intensity":123}]}
+
+4 帽子上报wifi连接状态 ok
+{"act":"ca_report_wifi_connect_status","device_id":"adaa-dadna-daa","spot":"wifi1","status":false,"msg":"密码错误！"}
+
+5 帽子sos ok
+{"act":"ca_sos","device_id":"adaa-dadna-daa","x_point":123.34,"y_point":23.12}
+
+
+
+--------------------------------------------------------------------------------------
