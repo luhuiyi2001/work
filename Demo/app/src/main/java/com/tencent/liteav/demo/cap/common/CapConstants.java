@@ -22,5 +22,5 @@ public class CapConstants {
     public static final String EXTRA_UPDATE_STATE_INFO = "update_info";
     public static final String EXTRA_PUSH_URL = "push_url";
 
-
+    public static final String CHARSET_NAME_UTF8 = "UTF-8";
 }

@@ -28,27 +28,22 @@
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:transcriptMode="normal"/>
+		<FrameLayout android:id="@+id/rl_record"
+			android:layout_width="@dimen/publish_video_size"
+			android:layout_height="@dimen/publish_video_size"
+			android:layout_gravity="top|right">
+			<SurfaceView android:id="@+id/sv_record"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent" />
+		</FrameLayout>
+
 		<com.tencent.rtmp.ui.TXCloudVideoView
 			android:id="@+id/video_view"
 			android:layout_width="@dimen/publish_video_size"
 			android:layout_height="@dimen/publish_video_size"
 			android:layout_gravity="top|right"
-			android:layout_marginBottom="0dp"
+			android:layout_marginTop="@dimen/publish_video_size"
 			android:visibility="gone"/>
-        <!-- All applications on the top side of the screen -->
-	    <GridView android:id="@+id/all_apps"
-	        android:persistentDrawingCache="animation|scrolling"
-	        android:alwaysDrawnWithCache="true"
-	        android:scrollbars="none"
-	        android:drawSelectorOnTop="false"
-	        android:listSelector="@drawable/grid_selector"
-	        android:numColumns="auto_fit"
-	        android:columnWidth="78dp"
-	        android:stretchMode="spacingWidth"
-	        android:layout_height="match_parent"
-	        android:layout_width="match_parent"
-	        android:stackFromBottom="true"
-	        android:visibility="invisible" />
     </FrameLayout>
   
     <LinearLayout android:id="@+id/ll_btn"
@@ -69,11 +64,10 @@
         <Button android:id="@+id/btn3"
 	        style="@style/TestButton"
 	        android:onClick="onClickBtn3" />
-        <Button android:id="@+id/btn4"
+        <Button android:id="@+id/btn_show_all_apps"
 	        style="@style/TestButton"
-	        android:onClick="onClickBtn4"
-			android:text="StopConnection"/>
-        <include layout="@layout/all_applications_button"/>
+	        android:onClick="onShowApps"
+			android:text="Show Apps"/>
     </LinearLayout>
 
 </LinearLayout>

@@ -9,7 +9,7 @@ import com.tencent.liteav.demo.cap.common.CapConstants;
 
 public class CapStateInfoManager {
 
-	private static final String TAG = "CapStateInfoManager";
+	private static final String TAG = CapStateInfoManager.class.getSimpleName();
 	private static CapStateInfoManager sMgr;
 	private Context mContext;
 

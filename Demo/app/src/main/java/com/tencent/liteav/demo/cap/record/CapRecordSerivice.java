@@ -110,7 +110,7 @@ public class CapRecordSerivice extends Service implements SurfaceHolder.Callback
 		surfaceHolder = holder;
 		CLog.i("process", Thread.currentThread().getName());
 		// //录像线程，当然也可以在别的地方启动，但是一定要在onCreate方法执行完成以及surfaceHolder被赋值以后启动
-		thread = new CapCameraThread(CapConfig.TIME_CAMERA_RECORD, surfaceview, surfaceHolder);// 设置录制时间为5分钟
+		thread = new CapCameraThread(surfaceHolder);// 设置录制时间为5分钟
 		thread.start();
 
 	}

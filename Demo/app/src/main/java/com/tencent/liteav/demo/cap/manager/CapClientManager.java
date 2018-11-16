@@ -53,7 +53,7 @@ public class CapClientManager implements OnReceiveMsgListener {
 			return;
 		}
 		if (mClient.isDisconnected()) {
-			stopConnection();
+			onStop();
 		}
 		startConnectThread();
 	}
@@ -122,7 +122,6 @@ public class CapClientManager implements OnReceiveMsgListener {
 					CLog.d(TAG, "Connect Success!");
 					mClient.send(CapInfoManager.getInstance().getLoginReqMsg());
 					startReceiveThread();
-					//startHeartbeatTimer();
 				} else {
 					CLog.d(TAG, "Connect Failed!");
 				}
@@ -142,11 +141,6 @@ public class CapClientManager implements OnReceiveMsgListener {
 			public void run() {
 				while(true) {
 					mClient.receive();
-//					try {
-//						Thread.sleep(3000);
-//					} catch (InterruptedException e) {
-//						e.printStackTrace();
-//					}
 				}
 			}
 		});
@@ -167,22 +161,11 @@ public class CapClientManager implements OnReceiveMsgListener {
 				CLog.d(TAG, "mBeatTimer onSchedule:" + receiveDuration);
 				if (receiveDuration > CapConfig.TIME_OUT) {// 若超过十五秒都没收到我的心跳包，则认为对方不在线。
 					CLog.d(TAG, "TIME_OUT");
-					stopConnection();
+					onStop();
 					startConnectThread();
 				} else {
 					mClient.send(CapInfoManager.getInstance().getLocationReqMsg());
 				}
-				
-				/* else if (receiveDuration > CapConfig.HEARTBEAT_MSG_DURATION) {// 若超过两秒他没收到我的心跳包，则重新发一个。
-					CLog.d(TAG, "HEARTBEAT_MSG_DURATION");
-					JSONObject jsonObject = new JSONObject();
-					try {
-						jsonObject.put(Config.MSG, Config.PING);
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-					mClient.send(jsonObject.toString());
-				}*/
 			}
 
 		});
@@ -197,7 +180,7 @@ public class CapClientManager implements OnReceiveMsgListener {
 		}
 	}
 
-	public void stopConnection() {
+	public void onStop() {
 		CLog.d(TAG, "stopConnection");
 		try {
 			stopHeartbeatTimer();
