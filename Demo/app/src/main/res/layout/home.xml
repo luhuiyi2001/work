@@ -28,14 +28,14 @@
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:transcriptMode="normal"/>
-		<FrameLayout android:id="@+id/rl_record"
+		<!--<FrameLayout android:id="@+id/rl_record"
 			android:layout_width="@dimen/publish_video_size"
 			android:layout_height="@dimen/publish_video_size"
 			android:layout_gravity="top|right">
 			<SurfaceView android:id="@+id/sv_record"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent" />
-		</FrameLayout>
+		</FrameLayout>-->
 
 		<com.tencent.rtmp.ui.TXCloudVideoView
 			android:id="@+id/video_view"

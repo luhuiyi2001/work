@@ -24,6 +24,7 @@ import com.tencent.liteav.demo.cap.common.CLog;
 import com.tencent.liteav.demo.cap.common.CapConstants;
 import com.tencent.liteav.demo.cap.fragment.CapChatFragment;
 import com.tencent.liteav.demo.cap.fragment.CapPusherFragment;
+import com.tencent.liteav.demo.cap.fragment.CapRecorderFragment;
 import com.tencent.liteav.demo.cap.home.AllAppActivity;
 import com.tencent.liteav.demo.cap.impl.CapLivePusherImpl;
 import com.tencent.liteav.demo.cap.impl.CapRTCRoomImpl;
@@ -192,6 +193,23 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
         }
     }
 
+    private void startRecorder() {
+        CapRecorderFragment pusherFragment = CapRecorderFragment.newInstance();
+        FragmentManager fm = this.getFragmentManager();
+        FragmentTransaction ts = fm.beginTransaction();
+        ts.replace(R.id.rtmproom_fragment_container, pusherFragment);
+//        ts.addToBackStack(null);
+        ts.commit();
+    }
+
+    private void stopRecorder() {
+        //removeCurFragment();
+        Fragment fragment = this.getFragmentManager().findFragmentById(R.id.rtmproom_fragment_container);
+        if (fragment instanceof CapRecorderFragment && fragment.isVisible()){
+            ((CapRecorderFragment) fragment).onBackPressed();
+        }
+    }
+
 //    public boolean removeCurFragment() {
 //        Fragment fragment = this.getFragmentManager().findFragmentById(R.id.rtmproom_fragment_container);
 //        if (fragment == null) {
@@ -213,10 +231,12 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
         //mReceiveEventImpl.onStopRTSP(null);
         //mLivePusherImpl.doPlay("rtmp://aqm.runde.pro:1935/live/36147_1");
         if (isBtn1Start) {
-            CapClientManager.getInstance().onStop();
+            stopRecorder();
+//            CapClientManager.getInstance().onStop();
             ((Button)v).setText("StartSocket");
         } else {
-            CapClientManager.getInstance().onStart();
+            startRecorder();
+//            CapClientManager.getInstance().onStart();
             ((Button)v).setText("StopSocket");
         }
         isBtn1Start = !isBtn1Start;
@@ -232,7 +252,7 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
 //            this.mRecorderImpl.stopRecord();
             ((Button)v).setText("StartPusher");
         } else {
-            startPusher("");
+            startPusher("rtmp://aqm.runde.pro:1935/live/36147_1000");
 //            this.mRecorderImpl.startRecord();
             ((Button)v).setText("StopPusher");
         }
@@ -244,10 +264,10 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
         CLog.d(TAG, "onClickBtn3");
         mRTCRoomImpl.onStopChat();
         if (isBtn3Start) {
-//            mRTCRoomImpl.onStopChat();
+            mRTCRoomImpl.onStopChat();
             ((Button)v).setText("StartRTCRoom");
         } else {
-//            mRTCRoomImpl.onStartChat();
+            mRTCRoomImpl.onStartChat(null);
             ((Button)v).setText("StopRTCRoom");
         }
         isBtn3Start = !isBtn3Start;

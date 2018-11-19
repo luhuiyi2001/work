@@ -43,6 +43,7 @@ import com.tencent.liteav.demo.cap.impl.CapLivePusherImpl;
 import com.tencent.liteav.demo.cap.impl.CapVideoRecordImpl;
 import com.tencent.liteav.demo.cap.listener.CapReceiveEventImpl;
 import com.tencent.liteav.demo.cap.manager.CapClientManager;
+import com.tencent.liteav.demo.cap.record.CapRecordSerivice;
 import com.tencent.liteav.demo.rtcroom.ui.multi_room.RTCMultiRoomActivity;
 
 import java.io.File;
@@ -181,12 +182,14 @@ public class Home extends Activity {
 	public void onClickBtn2(View v) {
 		CLog.d(TAG, "onClickBtn2");
 		//CapInfoManager.getInstance().getWifiListReqMsg(this);
-        //startService(new Intent(Home.this, CapRecordSerivice.class));
+        //
 		if (isBtn2Start) {
-			this.mRecorderImpl.stopRecord();
+			startService(new Intent(Home.this, CapRecordSerivice.class));
+			//this.mRecorderImpl.stopRecord();
 			((Button)v).setText("StartRecord");
 		} else {
-			this.mRecorderImpl.startRecord();
+			//this.mRecorderImpl.startRecord();
+			stopService(new Intent(Home.this, CapRecordSerivice.class));
 			((Button)v).setText("StopRecord");
 		}
 		isBtn2Start = !isBtn2Start;

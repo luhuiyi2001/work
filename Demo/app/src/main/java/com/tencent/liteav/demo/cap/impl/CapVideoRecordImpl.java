@@ -5,8 +5,12 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
+import android.view.Gravity;
+import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import com.tencent.liteav.demo.R;
 import com.tencent.liteav.demo.cap.common.CLog;
@@ -33,8 +37,55 @@ public class CapVideoRecordImpl {
 
     public void initView() {
         CLog.d(TAG, "initView");
-        mRecordLayout = (FrameLayout)mActivity.findViewById(R.id.rl_record);
-        mRecordSV = (SurfaceView)mActivity.findViewById(R.id.sv_record);
+//        mRecordLayout = (FrameLayout)mActivity.findViewById(R.id.rl_record);
+//        mRecordSV = (SurfaceView)mActivity.findViewById(R.id.sv_record);
+        initSurfaceView();
+    }
+
+    public void initSurfaceView() {
+        CLog.d(TAG, "createSurfaceView");
+        // 设置悬浮窗体属性
+        // 1.得到WindoeManager对象：
+        WindowManager wm = (WindowManager) mActivity.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+        // 2.得到WindowManager.LayoutParams对象，为后续设置相关参数做准备：
+        WindowManager.LayoutParams wmParams = new WindowManager.LayoutParams();
+        // 3.设置相关的窗口布局参数，要实现悬浮窗口效果，要需要设置的参数有
+        // 3.1设置window type
+        wmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
+        // 3.2设置图片格式，效果为背景透明 //wmParams.format = PixelFormat.RGBA_8888;
+        wmParams.format = 1;
+        // 下面的flags属性的效果形同“锁定”。 悬浮窗不可触摸，不接受任何事件,同时不影响后面的事件响应。
+        wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        // 4.// 设置悬浮窗口长宽数据
+        wmParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        wmParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        // 5. 调整悬浮窗口至中间
+        wmParams.gravity = Gravity.CENTER_HORIZONTAL | Gravity.CENTER;
+        // 6. 以屏幕左上角为原点，设置x、y初始值
+        wmParams.x = 0;
+        wmParams.y = 0;
+        // 7.将需要加到悬浮窗口中的View加入到窗口中了：
+        // 如果view没有被加入到某个父组件中，则加入WindowManager中
+        mRecordSV = new SurfaceView(mActivity);
+//        surfaceHolder = mSVRecorder.getHolder();
+        WindowManager.LayoutParams params_sur = new WindowManager.LayoutParams();
+        params_sur.width = 240;
+        params_sur.height = 240;
+        params_sur.alpha = 255;
+        mRecordSV.setLayoutParams(params_sur);
+
+//        mRecordSV.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        // surface.getHolder().setFixedSize(800, 1024);
+        //mSVRecorder.getHolder().addCallback((SurfaceHolder.Callback) this);
+
+        LinearLayout mLLRecorder = new LinearLayout(mActivity);
+        WindowManager.LayoutParams params_rel = new WindowManager.LayoutParams();
+        params_rel.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        params_rel.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        mLLRecorder.setLayoutParams(params_rel);
+        mLLRecorder.addView(mRecordSV);
+        wm.addView(mLLRecorder, wmParams); // 创建View
     }
 
     public void destroy() {

@@ -32,8 +32,8 @@ public class CapRecorderImpl {
 
     public void initView() {
         CLog.d(TAG, "initView");
-        mRecordLayout = (FrameLayout)mActivity.findViewById(R.id.rl_record);
-        mRecordSV = (SurfaceView)mActivity.findViewById(R.id.sv_record);
+//        mRecordLayout = (FrameLayout)mActivity.findViewById(R.id.rl_record);
+//        mRecordSV = (SurfaceView)mActivity.findViewById(R.id.sv_record);
     }
 
     public void destroy() {

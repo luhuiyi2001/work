@@ -65,7 +65,7 @@ public class CapCameraThread extends Thread {
 			c = Camera.open();
 		} catch (Exception e) {
 			// 打开摄像头错误
-			CLog.d(TAG, "打开摄像头错误");
+			CLog.e(TAG, "打开摄像头错误");
 		}
 		return c;
 	}
