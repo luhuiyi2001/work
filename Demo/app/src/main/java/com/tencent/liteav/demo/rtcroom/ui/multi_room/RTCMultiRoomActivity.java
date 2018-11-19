@@ -3,24 +3,20 @@ package com.tencent.liteav.demo.rtcroom.ui.multi_room;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.tencent.liteav.demo.R;
-import com.tencent.liteav.demo.roomutil.commondef.BaseRoom;
+import com.tencent.liteav.demo.cap.common.CapConfig;
+import com.tencent.liteav.demo.cap.manager.CapSharedPrefMgr;
 import com.tencent.liteav.demo.roomutil.commondef.PusherInfo;
 import com.tencent.liteav.demo.roomutil.commondef.LoginInfo;
 import com.tencent.liteav.demo.rtcroom.IRTCRoomListener;
@@ -30,16 +26,10 @@ import com.tencent.liteav.demo.common.misc.NameGenerator;
 import com.tencent.liteav.demo.rtcroom.ui.multi_room.fragment.RTCMultiRoomListFragment;
 import com.tencent.liteav.demo.rtcroom.ui.multi_room.fragment.RTCMultiRoomChatFragment;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 public class RTCMultiRoomActivity extends CommonAppCompatActivity implements RTCMultiRoomActivityInterface {
@@ -49,14 +39,13 @@ public class RTCMultiRoomActivity extends CommonAppCompatActivity implements RTC
     public  Handler         uiHandler  = new Handler();
     
     private RTCRoom         RTCRoom;
-    private String          userId = "456";
-    private String          userName = "XingYue456";
-    private String          userAvatar = "avatar456";
+    private String          userId = "";
+    private String          userName = "RundeCap";
+    private String          userAvatar = "RundeCapAvatar";
     private TextView        titleTextView;
     private TextView        globalLogTextview;
     private ScrollView      globalLogTextviewContainer;
     private Runnable        retryInitRoomRunnable;
-    private LoginInfo loginInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,7 +110,6 @@ public class RTCMultiRoomActivity extends CommonAppCompatActivity implements RTC
         RTCRoom = new RTCRoom(this.getApplicationContext());
         RTCRoom.setRTCRoomListener(new MemberEventListener());
 
-        //initializeRTCRoom();
         internalInitializeRTCRoom(null);
     }
 
@@ -192,97 +180,17 @@ public class RTCMultiRoomActivity extends CommonAppCompatActivity implements RTC
         }
     }
 
-    private void initializeRTCRoom() {
-        setTitle("连接中...");
-
-        SharedPreferences sp = getSharedPreferences("com.tencent.demo", Context.MODE_PRIVATE);
-        String userIdFromSp = sp.getString("userID", "");
-        String loginInfoCgi = "http://live.runde.pro/WebRtcSignApi.php?user_id=" + userId;//BaseRoom.ROOM_SERVICE_DOMAIN+"utils/get_login_info_debug";
-        /*if (!TextUtils.isEmpty(userIdFromSp)) {
-            loginInfoCgi = loginInfoCgi + "?userID=" + userIdFromSp;
-        }*/
-        String userNameFromSp = sp.getString("userName", "");
-        if (!TextUtils.isEmpty(userNameFromSp)) {
-            userName = userNameFromSp;
-        } else {
-            userName = NameGenerator.getRandomName();
-            sp.edit().putString("userName", userName).commit();
-        }
-        final Request request = new Request.Builder()
-                .url(loginInfoCgi)
-                .build();
-
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .addInterceptor(new HttpLoggingInterceptor(new HttpInterceptorLog()).setLevel(HttpLoggingInterceptor.Level.BODY))
-                .connectTimeout(5, TimeUnit.SECONDS)
-                .readTimeout(5, TimeUnit.SECONDS)
-                .writeTimeout(5, TimeUnit.SECONDS)
-                .build();
-
-        okHttpClient.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, final IOException e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setTitle("获取登录信息失败，点击重试");
-                        printGlobalLog(String.format("[Activity]获取登录信息失败{%s}", e.getMessage()));
-                        retryInitRoomRunnable = new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(RTCMultiRoomActivity.this, "重试...", Toast.LENGTH_SHORT).show();
-                                initializeRTCRoom();
-                            }
-                        };
-                    }
-                });
-            }
-
-            @Override
-            public void onResponse(final Call call, final okhttp3.Response response) throws IOException {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            LoginInfoResponse resp = new Gson().fromJson(response.body().string(), LoginInfoResponse.class);
-//                            if (resp.code != 0){
-//                                setTitle("获取登录信息失败");
-//                                printGlobalLog(String.format("[Activity]获取登录信息失败：{%s}", resp.message));
-//                                retryInitRoomRunnable = new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        Toast.makeText(RTCMultiRoomActivity.this, "重试...", Toast.LENGTH_SHORT).show();
-//                                        initializeRTCRoom();
-//                                    }
-//                                };
-//                            }
-//                            else {
-                                SharedPreferences sp = getSharedPreferences("com.tencent.demo", Context.MODE_PRIVATE);
-                                SharedPreferences.Editor editor = sp.edit();
-                                editor.putString("userID", userId/*resp.userID*/);
-                                editor.commit();
-                                internalInitializeRTCRoom(resp);
-//                            }
-                        }
-                        catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
-        });
-    }
 
     private void internalInitializeRTCRoom(LoginInfoResponse resp) {
         LoginInfo loginInfo       = new LoginInfo();
-        loginInfo.sdkAppID       = 1400160417;//resp.sdkAppID;
-        loginInfo.userID         = "456";//resp.userID;
-        loginInfo.userSig        = "eJxlz1FPgzAQwPF3PkXDq8a0jAIz8QEUjBvG6QTlqSFtxy4gNFDmwPjdVVwiiff6*18u92EghMzneHuRc970tWZ6UNJEl8jE5vkfKgWC5ZotWvEP5VFBK1m*07KdkFBKLYznDQhZa9jBqbCpM8NOlGy68LttY0wcbBN3nkAx4X2YXN8Fub*Cwnf1a5ioVbxNbzbD2H-DLQQvT*8i6qu6rTIVwcGH0N*fLYeUc9eRjwUfY49UwXFdbTw1pk7Qr5OuyYqHaF*WOruandTwJk-v2GRJPIvSmR5k20FTT4GFCSXWAv*MaXwaXzMHXRk_";//resp.userSig;
-        loginInfo.accType        = "36862";//resp.accType;
+        loginInfo.sdkAppID       = CapConfig.SDK_APP_ID;
+        loginInfo.userID         = CapSharedPrefMgr.getInstance().getUserID();
+        loginInfo.userSig        = CapSharedPrefMgr.getInstance().getUserSig();
+        loginInfo.accType        = CapConfig.ACC_TYPE;
         loginInfo.userName       = userName;
         loginInfo.userAvatar     = userAvatar;
 
-        RTCRoom.login(/*BaseRoom.ROOM_SERVICE_DOMAIN+"multi_room"*/"https://room.qcloud.com/weapp/multi_room", loginInfo, new com.tencent.liteav.demo.rtcroom.RTCRoom.LoginCallback() {
+        RTCRoom.login("https://room.qcloud.com/weapp/multi_room", loginInfo, new com.tencent.liteav.demo.rtcroom.RTCRoom.LoginCallback() {
             @Override
             public void onError(int errCode, String errInfo) {
                 setTitle(errInfo);
@@ -290,8 +198,8 @@ public class RTCMultiRoomActivity extends CommonAppCompatActivity implements RTC
                 retryInitRoomRunnable = new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(RTCMultiRoomActivity.this, "重试...", Toast.LENGTH_SHORT).show();
-                        initializeRTCRoom();
+                        //Toast.makeText(RTCMultiRoomActivity.this, "重试...", Toast.LENGTH_SHORT).show();
+                        //initializeRTCRoom();
                     }
                 };
             }

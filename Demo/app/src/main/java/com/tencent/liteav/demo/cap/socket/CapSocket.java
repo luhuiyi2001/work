@@ -15,7 +15,7 @@ import java.net.Socket;
 
 public class CapSocket {
 
-	private static final String TAG = "CapClient";
+	private static final String TAG = CapSocket.class.getSimpleName();
 
 	private OnReceiveMsgListener mListener;
 	

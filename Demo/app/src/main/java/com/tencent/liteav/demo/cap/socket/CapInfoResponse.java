@@ -8,4 +8,6 @@ public class CapInfoResponse {
     public String msg;
     public String push_url;
     public UserInfo data;
+    public String userSig;
+    public String room_id;
 }

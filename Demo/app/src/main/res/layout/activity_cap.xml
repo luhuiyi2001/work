@@ -1,0 +1,84 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/activity_bar"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="36dp">
+
+        <TextView
+            android:id="@+id/rtc_mutil_room_title_textview"
+            android:text="多人会话"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:textColor="#EEEEEE"
+            android:textSize="18sp"
+            android:paddingBottom="2dp"
+            android:paddingTop="2dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </FrameLayout>
+
+
+    <FrameLayout
+        android:layout_below="@id/activity_bar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/rtmproom_fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </FrameLayout>
+
+        <ScrollView
+            android:id="@+id/rtc_mutil_room_global_log_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:layout_marginBottom="60dp"
+            android:background="@color/transparent">
+
+            <TextView
+                android:id="@+id/rtc_multi_room_global_log_textview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#75000000"
+                android:singleLine="false"
+                android:textColor="#FFFFFF"
+                android:textSize="10sp" />
+        </ScrollView>
+
+    </FrameLayout>
+    <LinearLayout android:id="@+id/ll_btn"
+        android:layout_width="match_parent"
+        android:layout_height="128dp"
+        android:layout_alignParentBottom="true"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:background="@drawable/application_background">
+        <Button android:id="@+id/btn1"
+            style="@style/TestButton"
+            android:onClick="onClickBtn1"
+            android:text="StartSocket"/>
+        <Button android:id="@+id/btn2"
+            style="@style/TestButton"
+            android:onClick="onClickBtn2"
+            android:text="StartPusher"/>
+        <Button android:id="@+id/btn3"
+            style="@style/TestButton"
+            android:onClick="onClickBtn3"
+            android:text="StartRTCRoom"/>
+        <Button android:id="@+id/btn_show_all_apps"
+            style="@style/TestButton"
+            android:onClick="onShowApps"
+            android:text="Show Apps"/>
+    </LinearLayout>
+</RelativeLayout>
+

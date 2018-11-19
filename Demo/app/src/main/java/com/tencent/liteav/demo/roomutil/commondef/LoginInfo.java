@@ -3,6 +3,8 @@ package com.tencent.liteav.demo.roomutil.commondef;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.tencent.liteav.demo.cap.common.CapConfig;
+
 /**
  * Created by jac on 2017/11/14.
  * Copyright © 2013-2017 Tencent Cloud. All Rights Reserved.
@@ -36,7 +38,8 @@ public class LoginInfo implements Parcelable {
 
 
     public LoginInfo() {
-
+        sdkAppID       = CapConfig.SDK_APP_ID;
+        accType        = CapConfig.ACC_TYPE;
     }
 
     public LoginInfo(int sdkAppID, String accType, String userID, String userName, String userAvatar, String userSig) {

@@ -1,8 +1,9 @@
-package com.tencent.liteav.demo.rtcroom.ui.multi_room.fragment;
+package com.tencent.liteav.demo.cap.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.BitmapFactory;
@@ -17,39 +18,37 @@ import android.widget.TextView;
 
 import com.tencent.liteav.demo.R;
 import com.tencent.liteav.demo.cap.common.CLog;
+import com.tencent.liteav.demo.cap.inter.CapActivityInterface;
+import com.tencent.liteav.demo.cap.manager.CapSharedPrefMgr;
 import com.tencent.liteav.demo.common.misc.AndroidPermissions;
 import com.tencent.liteav.demo.roomutil.commondef.PusherInfo;
-import com.tencent.liteav.demo.rtcroom.RTCRoom;
 import com.tencent.liteav.demo.roomutil.commondef.RoomInfo;
 import com.tencent.liteav.demo.rtcroom.IRTCRoomListener;
-import com.tencent.liteav.demo.rtcroom.ui.multi_room.RTCMultiRoomActivityInterface;
+import com.tencent.liteav.demo.rtcroom.RTCRoom;
 import com.tencent.rtmp.TXLiveConstants;
 import com.tencent.rtmp.ui.TXCloudVideoView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RTCMultiRoomChatFragment extends Fragment implements IRTCRoomListener {
+public class CapChatFragment extends Fragment implements IRTCRoomListener {
 
-    private static final String TAG = RTCMultiRoomChatFragment.class.getSimpleName();
+    private static final String TAG = CapChatFragment.class.getSimpleName();
 
     private Activity                            mActivity;
-    private RTCMultiRoomActivityInterface       mActivityInterface;
+    private CapActivityInterface mActivityInterface;
 
     private RoomInfo                            mRoomInfo;
     private List<RoomVideoView>                 mPlayerViews    = new ArrayList<>();
 
-    private int                                 mShowLogFlag    = 0;
     private int                                 mBeautyStyle    = TXLiveConstants.BEAUTY_STYLE_SMOOTH;
     private int                                 mBeautyLevel    = 5;
     private int                                 mWhiteningLevel = 5;
     private int                                 mRuddyLevel     = 5;
-    private boolean                             mEnableBeauty   = true;
-    private boolean                             mPusherMute     = false;
 
 
-    public static RTCMultiRoomChatFragment newInstance(RoomInfo config, String userID, boolean createRoom) {
-        RTCMultiRoomChatFragment fragment = new RTCMultiRoomChatFragment();
+    public static CapChatFragment newInstance(RoomInfo config, String userID, boolean createRoom) {
+        CapChatFragment fragment = new CapChatFragment();
         Bundle bundle = new Bundle();
         bundle.putParcelable("roomInfo", config);
         bundle.putString("userID", userID);
@@ -70,14 +69,14 @@ public class RTCMultiRoomChatFragment extends Fragment implements IRTCRoomListen
     public void onAttach(Context context) {
         super.onAttach(context);
         mActivity = ((Activity) context);
-        mActivityInterface = ((RTCMultiRoomActivityInterface) context);
+        mActivityInterface = ((CapActivityInterface) context);
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mActivity = ((Activity) activity);
-        mActivityInterface = ((RTCMultiRoomActivityInterface) activity);
+        mActivityInterface = ((CapActivityInterface) activity);
     }
 
     @Nullable
@@ -101,48 +100,6 @@ public class RTCMultiRoomChatFragment extends Fragment implements IRTCRoomListen
             mPlayerViews.add(new RoomVideoView(views[i], nameViews[i]));
         }
 
-        //切换摄像头
-        (view.findViewById(R.id.rtmproom_camera_switcher_btn)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mActivityInterface != null)
-                    mActivityInterface.getRTCRoom().switchCamera();
-            }
-        });
-
-        //美颜
-        view.findViewById(R.id.rtmproom_beauty_btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEnableBeauty = !mEnableBeauty;
-                v.setBackgroundResource(mEnableBeauty ? R.drawable.beauty : R.drawable.beauty_dis);
-                if (mEnableBeauty) {
-                    mActivityInterface.getRTCRoom().setBeautyFilter(mBeautyStyle, mBeautyLevel, mWhiteningLevel, mRuddyLevel);
-                }
-                else {
-                    mActivityInterface.getRTCRoom().setBeautyFilter(mBeautyStyle, 0, 0, 0);
-                }
-            }
-        });
-
-        //静音
-        view.findViewById(R.id.rtmproom_mute_btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPusherMute = !mPusherMute;
-                mActivityInterface.getRTCRoom().setMute(mPusherMute);
-                v.setBackgroundResource(mPusherMute ? R.drawable.mic_disable : R.drawable.mic_normal);
-            }
-        });
-
-        //日志
-        (view.findViewById(R.id.rtmproom_log_switcher_btn)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchLog();
-            }
-        });
-
         return view;
     }
 
@@ -155,7 +112,7 @@ public class RTCMultiRoomChatFragment extends Fragment implements IRTCRoomListen
         Bundle bundle = getArguments();
         mRoomInfo = bundle.getParcelable("roomInfo");
         String  selfUserID   = bundle.getString("userID");
-        String  selfUserName = mActivityInterface.getSelfUserName();
+        String  selfUserName = CapSharedPrefMgr.getInstance().getUserName();
         boolean createRoom   = bundle.getBoolean("createRoom");
 
         if (selfUserID == null || ( !createRoom && mRoomInfo == null)) {
@@ -166,7 +123,8 @@ public class RTCMultiRoomChatFragment extends Fragment implements IRTCRoomListen
 
         RoomVideoView videoView = applyVideoView(selfUserID, "我("+selfUserName+")");
         if (videoView == null) {
-            mActivityInterface.printGlobalLog("申请 UserID {%s} 返回view 为空", selfUserID);
+            CLog.e(TAG, String.format("申请 UserID {%s} 返回view 为空", selfUserID));
+//            mActivityInterface.printGlobalLog("申请 UserID {%s} 返回view 为空", selfUserID);
             return;
         }
 
@@ -179,6 +137,7 @@ public class RTCMultiRoomChatFragment extends Fragment implements IRTCRoomListen
             mActivityInterface.getRTCRoom().createRoom("", mRoomInfo.roomInfo, new RTCRoom.CreateRoomCallback() {
                 @Override
                 public void onSuccess(String roomId) {
+                    CLog.i(TAG, "roomId : " + roomId);
                     mRoomInfo.roomID = roomId;
                 }
 
@@ -242,12 +201,12 @@ public class RTCMultiRoomChatFragment extends Fragment implements IRTCRoomListen
             mActivityInterface.getRTCRoom().exitRoom(new RTCRoom.ExitRoomCallback() {
                 @Override
                 public void onSuccess() {
-                    Log.i(TAG, "exitRoom Success");
+                    CLog.i(TAG, "exitRoom Success");
                 }
 
                 @Override
                 public void onError(int errCode, String e) {
-                    Log.e(TAG, "exitRoom failed, errorCode = " + errCode + " errMessage = " + e);
+                    CLog.e(TAG, "exitRoom failed, errorCode = " + errCode + " errMessage = " + e);
                 }
             });
         }
@@ -256,18 +215,10 @@ public class RTCMultiRoomChatFragment extends Fragment implements IRTCRoomListen
     }
 
     private void errorGoBack(String title, int errCode, String errInfo){
+        CLog.e(TAG, "ErrorInfo : [ " + title + ", " + errCode + ", " + errInfo + " ]");
         mActivityInterface.getRTCRoom().exitRoom(null);
-        new AndroidPermissions.HintDialog.Builder(mActivity)
-                .setTittle(title)
-                .setContent(errInfo + "[" + errCode + "]" )
-                .setButtonText("确定")
-                .setDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        recycleVideoView();
-                        backStack();
-                    }
-                }).show();
+        recycleVideoView();
+        backStack();
     }
 
     private void backStack(){
@@ -276,54 +227,16 @@ public class RTCMultiRoomChatFragment extends Fragment implements IRTCRoomListen
                 @Override
                 public void run() {
                     if (mActivity != null) {
-                        FragmentManager fragmentManager = mActivity.getFragmentManager();
-                        fragmentManager.popBackStack();
-                        fragmentManager.beginTransaction().commit();
+                        FragmentManager fm = mActivity.getFragmentManager();
+                        FragmentTransaction ts = fm.beginTransaction();
+                        ts.remove(CapChatFragment.this);
+                        ts.commit();
+//                        FragmentManager fragmentManager = mActivity.getFragmentManager();
+//                        fragmentManager.popBackStack();
+//                        fragmentManager.beginTransaction().commit();
                     }
                 }
             });
-        }
-    }
-
-    private void switchLog(){
-        mShowLogFlag++;
-        mShowLogFlag = (mShowLogFlag % 3);
-        switch (mShowLogFlag) {
-            case 0: {
-                for (RoomVideoView item : mPlayerViews) {
-                    if (item.isUsed) {
-                        item.videoView.showLog(false);
-                    }
-                }
-                if (mActivityInterface != null) {
-                    mActivityInterface.showGlobalLog(false);
-                }
-                break;
-            }
-
-            case 1:{
-                for (RoomVideoView item : mPlayerViews) {
-                    if (item.isUsed) {
-                        item.videoView.showLog(false);
-                    }
-                }
-                if (mActivityInterface != null) {
-                    mActivityInterface.showGlobalLog(true);
-                }
-                break;
-            }
-
-            case 2:{
-                for (RoomVideoView item : mPlayerViews) {
-                    if (item.isUsed) {
-                        item.videoView.showLog(true);
-                    }
-                }
-                if (mActivityInterface != null) {
-                    mActivityInterface.showGlobalLog(false);
-                }
-                break;
-            }
         }
     }
 
@@ -364,16 +277,8 @@ public class RTCMultiRoomChatFragment extends Fragment implements IRTCRoomListen
     public void onRoomClosed(String roomId) {
         boolean createRoom = getArguments().getBoolean("createRoom");
         if (createRoom == false) {
-            new AndroidPermissions.HintDialog.Builder(mActivity)
-                    .setTittle("系统消息")
-                    .setContent(String.format("会话【%s】解散了", mRoomInfo != null ? mRoomInfo.roomInfo : "null"))
-                    .setButtonText("返回")
-                    .setDismissListener(new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-                            onBackPressed();
-                        }
-                    }).show();
+            CLog.e(TAG, "onRoomClosed : [ " + roomId + ", " + String.format("会话【%s】解散了", mRoomInfo != null ? mRoomInfo.roomInfo : "null") + " ]");
+            onBackPressed();
         }
     }
 

@@ -56,7 +56,7 @@
         <Button android:id="@+id/btn1"
 	        style="@style/TestButton"
 	        android:onClick="onClickBtn1"
-			android:text="StartStopRTMP"/>
+			android:text="StartSocket"/>
         <Button android:id="@+id/btn2"
 	        style="@style/TestButton"
 	        android:onClick="onClickBtn2"

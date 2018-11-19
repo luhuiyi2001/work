@@ -74,6 +74,13 @@ public class CapRecorderImpl {
                 }
             });
 
+
+            mediaRecorder.setOnInfoListener(new MediaRecorder.OnInfoListener() {
+                @Override
+                public void onInfo(MediaRecorder mr, int what, int extra) {
+
+                }
+            });
             // 准备、开始
             mediaRecorder.prepare();
             mediaRecorder.start();

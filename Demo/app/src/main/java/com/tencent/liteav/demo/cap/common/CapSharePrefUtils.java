@@ -1,9 +1,9 @@
-package com.tencent.liteav.demo.play.superplayer;
+package com.tencent.liteav.demo.cap.common;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
-public class SharePreferenceUtils {
+public class CapSharePrefUtils {
 
 
     public static final SharedPreferences newInstance(Context context, String name) {

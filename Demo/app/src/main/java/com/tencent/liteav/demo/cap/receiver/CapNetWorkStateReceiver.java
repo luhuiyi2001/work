@@ -1,4 +1,4 @@
-package com.tencent.liteav.demo.cap.impl;
+package com.tencent.liteav.demo.cap.receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,8 +7,9 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
 
+import com.tencent.liteav.demo.cap.common.CapConstants;
+import com.tencent.liteav.demo.cap.service.CapClientService;
 import com.tencent.liteav.demo.cap.common.CLog;
-import com.tencent.liteav.demo.cap.manager.CapClientManager;
 
 public class CapNetWorkStateReceiver extends BroadcastReceiver {
     private static final String TAG = CapNetWorkStateReceiver.class.getSimpleName();
@@ -57,9 +58,15 @@ public class CapNetWorkStateReceiver extends BroadcastReceiver {
         }
         CLog.i(TAG, "networkChange = " + networkChange);
         if (networkChange) {
-            CapClientManager.getInstance().onStart();
+            startClientService(context,CapConstants.CMD_START);
         } else {
-            CapClientManager.getInstance().onStop();
+            startClientService(context, CapConstants.CMD_STOP);
         }
+    }
+
+    public void startClientService(Context context, String cmd) {
+        Intent clientServiceIntent = new Intent(context, CapClientService.class);
+        clientServiceIntent.putExtra(CapConstants.EXTRA_CMD_CLIENT, cmd);
+        context.startService(clientServiceIntent);
     }
 }

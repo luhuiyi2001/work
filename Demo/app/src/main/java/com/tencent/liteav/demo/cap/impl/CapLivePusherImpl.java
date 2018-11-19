@@ -46,7 +46,7 @@ public class CapLivePusherImpl implements ITXLivePushListener {
     private Activity mActivity;
     public CapLivePusherImpl(Activity context) {
         mActivity = context;
-    }
+}
 
     public void initView() {
         mLivePusher     = new TXLivePusher(mActivity);
@@ -151,7 +151,7 @@ public class CapLivePusherImpl implements ITXLivePushListener {
     private PhoneStateListener mPhoneListener = null;
 
     public void doPlay(String rtmpUrl) {
-        rtmpUrl = "rtmp://aqm.runde.pro:1935/live/36147_1";
+//        rtmpUrl = "rtmp://aqm.runde.pro:1935/live/36147_1";
         CLog.d(TAG, "doPlay = " + rtmpUrl);
         if (mVideoPublish) {
             stopPublishRtmp();
@@ -167,7 +167,6 @@ public class CapLivePusherImpl implements ITXLivePushListener {
 
     private  boolean startPublishRtmp(String rtmpUrl) {
         CLog.d(TAG, "startPublishRtmp = " + rtmpUrl);
-//		String rtmpUrl = getIntent().getStringExtra("PUSH_URL");
 
         if (TextUtils.isEmpty(rtmpUrl) || (!rtmpUrl.trim().toLowerCase().startsWith("rtmp://"))) {
             //Toast.makeText(mActivity, "推流地址不合法，目前支持rtmp推流!", Toast.LENGTH_SHORT).show();

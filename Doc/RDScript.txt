@@ -1,7 +1,10 @@
 adb shell am broadcast -a com.ty.action.test --ei api 0
 adb uninstall com.tencent.liteav.demo
 adb install D:\runde\work\Demo\app\build\outputs\apk\debug\app-debug.apk
-adb shell am start -n com.tencent.liteav.demo/.MainActivity
+
+adb install C:\runde\work\Demo\app\build\outputs\apk\debug\app-debug.apk
+adb shell am start -n com.tencent.liteav.demo/.cap.home.Home
+adb shell am force-stop  com.tencent.liteav.demo
 git config --global user.email "luhuiyi2001@163.com"
 git config --global user.name "luhuiyi2001"
 telnet 47.106.114.236 9510

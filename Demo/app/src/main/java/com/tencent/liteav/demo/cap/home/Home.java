@@ -16,10 +16,6 @@
 
 package com.tencent.liteav.demo.cap.home;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -27,7 +23,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -36,24 +31,32 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.tencent.liteav.demo.R;
+import com.tencent.liteav.demo.cap.callback.PushRtmpRespCallback;
 import com.tencent.liteav.demo.cap.common.CLog;
-import com.tencent.liteav.demo.cap.impl.CapLivePusherImpl;
-import com.tencent.liteav.demo.cap.impl.CapNetWorkStateReceiver;
-import com.tencent.liteav.demo.cap.impl.CapVideoRecordImpl;
-import com.tencent.liteav.demo.cap.manager.CapClientManager;
 import com.tencent.liteav.demo.cap.common.CapConstants;
+import com.tencent.liteav.demo.cap.common.CapUtils;
+import com.tencent.liteav.demo.cap.impl.CapLivePusherImpl;
+import com.tencent.liteav.demo.cap.impl.CapVideoRecordImpl;
 import com.tencent.liteav.demo.cap.listener.CapReceiveEventImpl;
-import com.tencent.liteav.demo.cap.record.CapRecordSerivice;
+import com.tencent.liteav.demo.cap.manager.CapClientManager;
+import com.tencent.liteav.demo.rtcroom.ui.multi_room.RTCMultiRoomActivity;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Home extends Activity {
 	private static final String TAG = Home.class.getSimpleName();
 
 	private CapLivePusherImpl mLivePusherImpl;
 	private CapVideoRecordImpl mRecorderImpl;
-	private CapNetWorkStateReceiver mNetStateReceiver = new CapNetWorkStateReceiver();
+	//private CapNetWorkStateReceiver mNetStateReceiver = new CapNetWorkStateReceiver();
+	private PushRtmpRespCallback mPushRtmpRespCallback;
+
 
 	private ListView mListView;
 	private ArrayAdapter<String> mAdapter;
@@ -98,6 +101,8 @@ public class Home extends Activity {
 		mLivePusherImpl.initView();
 		mRecorderImpl = new CapVideoRecordImpl(this);
 		mRecorderImpl.initView();
+		mPushRtmpRespCallback = new PushRtmpRespCallback();
+		CapClientManager.getInstance().addOnResponseCallback(mPushRtmpRespCallback);
 	}
 
 	@Override
@@ -111,6 +116,7 @@ public class Home extends Activity {
 		unregisterIntentReceivers();
 		mLivePusherImpl.destroy();
 		mRecorderImpl.destroy();
+		CapClientManager.getInstance().removeOnResponseCallback(mPushRtmpRespCallback);
 	}
 
 	@Override
@@ -147,31 +153,47 @@ public class Home extends Activity {
         intentFilter.addAction(CapConstants.ACTION_STOP_PUBLISH);
 		LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver,intentFilter);
 
-		IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-		registerReceiver(mNetStateReceiver, filter);
+//		IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+		//registerReceiver(mNetStateReceiver, filter);
 	}
 
 	private void unregisterIntentReceivers() {
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
-		unregisterReceiver(mNetStateReceiver);
+		//unregisterReceiver(mNetStateReceiver);
 	}
 
+	private boolean isBtn1Start = false;
 	public void onClickBtn1(View v) {
 		CLog.d(TAG, "onClickBtn1");
 		//mReceiveEventImpl.onStopRTSP(null);
 		//mLivePusherImpl.doPlay("rtmp://aqm.runde.pro:1935/live/36147_1");
-		this.mRecorderImpl.startRecord();
+		if (isBtn1Start) {
+			CapClientManager.getInstance().onStop();
+			((Button)v).setText("StartSocket");
+		} else {
+			CapClientManager.getInstance().onStart();
+			((Button)v).setText("StopSocket");
+		}
+		isBtn1Start = !isBtn1Start;
 	}
 
+	private boolean isBtn2Start = false;
 	public void onClickBtn2(View v) {
 		CLog.d(TAG, "onClickBtn2");
 		//CapInfoManager.getInstance().getWifiListReqMsg(this);
         //startService(new Intent(Home.this, CapRecordSerivice.class));
-		this.mRecorderImpl.stopRecord();
+		if (isBtn2Start) {
+			this.mRecorderImpl.stopRecord();
+			((Button)v).setText("StartRecord");
+		} else {
+			this.mRecorderImpl.startRecord();
+			((Button)v).setText("StopRecord");
+		}
+		isBtn2Start = !isBtn2Start;
 	}
 
 	public void onClickBtn3(View v) {
-		CLog.d(TAG, "onClickBtn3");
+		CLog.d(TAG, "onClickBtn3 =" + CapUtils.getImei());
 		//mReceiveEventImpl.onConnWifi(null);
 
 		if (new File("/mnt/m_external_sd").exists()) {
@@ -184,7 +206,7 @@ public class Home extends Activity {
 	public void onShowApps(View v) {
 		CLog.d(TAG, "onClickBtn4");
 		//CapClientManager.getInstance().stopConnection();
-        Intent intent = new Intent(Home.this, AllAppActivity.class);
+        Intent intent = new Intent(Home.this, RTCMultiRoomActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
 	}

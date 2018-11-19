@@ -1,5 +1,7 @@
 package com.tencent.liteav.demo.cap.manager;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -7,11 +9,12 @@ import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.tencent.liteav.demo.cap.callback.LoginRespCallback;
 import com.tencent.liteav.demo.cap.listener.OnReceiveEventListener;
 import com.tencent.liteav.demo.cap.listener.OnReceiveMsgListener;
 import com.tencent.liteav.demo.cap.common.CLog;
 import com.tencent.liteav.demo.cap.common.CapConfig;
-import com.tencent.liteav.demo.cap.common.CapConstants;
+import com.tencent.liteav.demo.cap.callback.OnResponseCallback;
 import com.tencent.liteav.demo.cap.socket.CapInfoResponse;
 import com.tencent.liteav.demo.cap.socket.CapSocket;
 import com.tencent.liteav.demo.cap.util.HeartbeatTimer;
@@ -28,6 +31,8 @@ public class CapClientManager implements OnReceiveMsgListener {
 	private long mLastReceiveTime = 0;
 	private CapSocket mClient;
 	private OnReceiveEventListener mListener;
+	private List<OnResponseCallback> mRespCallbackList = new ArrayList<OnResponseCallback>();
+	private LoginRespCallback mLoginRespCallback;
 
 	public static CapClientManager getInstance() {
 		if (sMgr == null) {
@@ -44,7 +49,24 @@ public class CapClientManager implements OnReceiveMsgListener {
 		CLog.d(TAG, "CapClientManager");
 		mClient = new CapSocket();
 		mClient.setOnReceiveMsgListener(this);
+		mLoginRespCallback = new LoginRespCallback();
+		addOnResponseCallback(mLoginRespCallback);
 	}
+
+	public void addOnResponseCallback(OnResponseCallback onResponseCallback) {
+		if (onResponseCallback == null) {
+			return;
+		}
+		mRespCallbackList.add(onResponseCallback);
+	}
+
+	public void removeOnResponseCallback(OnResponseCallback onResponseCallback) {
+		if (onResponseCallback == null) {
+			return;
+		}
+		mRespCallbackList.remove(onResponseCallback);
+	}
+
 	
 	public void onStart() {
 		CLog.d(TAG, "onStart = " + (mClient == null ? "null" : mClient.isConnected()));
@@ -68,35 +90,41 @@ public class CapClientManager implements OnReceiveMsgListener {
 		mLastReceiveTime = System.currentTimeMillis();
         try {
 			CapInfoResponse resp = new Gson().fromJson(msg, CapInfoResponse.class);
-			if (CapConstants.RES_CMD_CA_LOGIN.equals(resp.cmd)) {
-				if (mListener != null) {
-					mListener.onLogin(resp);
-				}
-			} else if (CapConstants.RES_CMD_CA_REPORT_LOCATION.equals(resp.cmd)) {
-				if (mListener != null) {
-					mListener.onLocation(resp);
-				}
-			} else if (CapConstants.RES_CMD_CA_SOS.equals(resp.cmd)) {
-				if (mListener != null) {
-					mListener.onSOS(resp);
-				}
-			} else if (CapConstants.RES_CMD_SERVER_PUSH_OPEN_RTSP.equals(resp.cmd)) {
-				if (mListener != null) {
-					mListener.onOpenRTSP(resp);
-				}
-			} else if (CapConstants.RES_CMD_SERVER_PUSH_STOP_RTSP.equals(resp.cmd)) {
-				if (mListener != null) {
-					mListener.onStopRTSP(resp);
-				}
-			} else if (CapConstants.RES_CMD_SERVER_PULL_WIFI_LIST.equals(resp.cmd)) {
-				if (mListener != null) {
-					mListener.onPullWifiList(resp);
-				}
-			} else if (CapConstants.RES_CMD_SERVER_PUSH_CONNECT_WIFI.equals(resp.cmd)) {
-				if (mListener != null) {
-					mListener.onConnWifi(resp);
-				}
+			if (resp == null) {
+				return;
 			}
+			for (int i = 0; i < mRespCallbackList.size(); i++) {
+				mRespCallbackList.get(i).onResponse(resp);
+			}
+//			if (CapConstants.RES_CMD_CA_LOGIN.equals(resp.cmd)) {
+//				if (mListener != null) {
+//					mListener.onLogin(resp);
+//				}
+//			} else if (CapConstants.RES_CMD_CA_REPORT_LOCATION.equals(resp.cmd)) {
+//				if (mListener != null) {
+//					mListener.onLocation(resp);
+//				}
+//			} else if (CapConstants.RES_CMD_CA_SOS.equals(resp.cmd)) {
+//				if (mListener != null) {
+//					mListener.onSOS(resp);
+//				}
+//			} else if (CapConstants.RES_CMD_SERVER_PUSH_OPEN_RTSP.equals(resp.cmd)) {
+//				if (mListener != null) {
+//					mListener.onOpenRTSP(resp);
+//				}
+//			} else if (CapConstants.RES_CMD_SERVER_PUSH_STOP_RTSP.equals(resp.cmd)) {
+//				if (mListener != null) {
+//					mListener.onStopRTSP(resp);
+//				}
+//			} else if (CapConstants.RES_CMD_SERVER_PULL_WIFI_LIST.equals(resp.cmd)) {
+//				if (mListener != null) {
+//					mListener.onPullWifiList(resp);
+//				}
+//			} else if (CapConstants.RES_CMD_SERVER_PUSH_CONNECT_WIFI.equals(resp.cmd)) {
+//				if (mListener != null) {
+//					mListener.onConnWifi(resp);
+//				}
+//			}
 		} catch (JsonSyntaxException e) {
 			e.printStackTrace();
 			CLog.e(TAG, e.getMessage());
@@ -139,7 +167,8 @@ public class CapClientManager implements OnReceiveMsgListener {
 		mThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
-				while(true) {
+				while(!mClient.isClosed()) {
+					CLog.d(TAG, "while(!mClient.isClosed())");
 					mClient.receive();
 				}
 			}
@@ -185,7 +214,7 @@ public class CapClientManager implements OnReceiveMsgListener {
 		try {
 			stopHeartbeatTimer();
 			if (mThreadPool != null) {
-				mThreadPool.shutdown();
+				mThreadPool.shutdownNow();
 				mThreadPool = null;
 			}
 			mClient.close();

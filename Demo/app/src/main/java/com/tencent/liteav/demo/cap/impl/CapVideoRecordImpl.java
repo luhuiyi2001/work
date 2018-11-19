@@ -3,6 +3,7 @@ package com.tencent.liteav.demo.cap.impl;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.view.SurfaceView;
 import android.widget.FrameLayout;
@@ -55,22 +56,34 @@ public class CapVideoRecordImpl {
             // 设置视频图像的录入源
             mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
             // 设置录入媒体的输出格式
-            mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+            //            mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
             // 设置音频的编码格式
-            mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+//            mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
             // 设置视频的编码格式
-            mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.MPEG_4_SP);
+//            mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.MPEG_4_SP);
             // 设置视频的采样率，每秒4帧
-            mediaRecorder.setVideoFrameRate(4);
+//            mediaRecorder.setVideoFrameRate(4);
+            mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
             // 设置录制视频文件的输出路径
             mediaRecorder.setOutputFile(getOutputMediaFile().toString());
             // 设置捕获视频图像的预览界面
             mediaRecorder.setPreviewDisplay(mRecordSV.getHolder().getSurface());
+            mediaRecorder.setMaxDuration(CapConfig.TIME_CAMERA_RECORD);
             mediaRecorder.setOnErrorListener(new MediaRecorder.OnErrorListener() {
                 @Override
                 public void onError(MediaRecorder mr, int what, int extra) {
                     // 发生错误，停止录制
                     stopMediaRecorder();
+                }
+            });
+
+            mediaRecorder.setOnInfoListener(new MediaRecorder.OnInfoListener() {
+                @Override
+                public void onInfo(MediaRecorder mr, int what, int extra) {
+                    if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED) {
+                        stopRecord();
+                        startRecord();
+                    }
                 }
             });
 
@@ -118,7 +131,7 @@ public class CapVideoRecordImpl {
             return;
         }
         startMediaRecorder();
-        startRecordTimer();
+        //startRecordTimer();
     }
 
     public void stopRecord() {
