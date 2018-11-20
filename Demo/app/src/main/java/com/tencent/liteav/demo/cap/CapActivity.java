@@ -6,8 +6,11 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -22,6 +25,7 @@ import com.tencent.liteav.demo.cap.callback.OnResponseCallback;
 import com.tencent.liteav.demo.cap.callback.PushRtmpRespCallback;
 import com.tencent.liteav.demo.cap.common.CLog;
 import com.tencent.liteav.demo.cap.common.CapConstants;
+import com.tencent.liteav.demo.cap.common.CapUtils;
 import com.tencent.liteav.demo.cap.fragment.CapChatFragment;
 import com.tencent.liteav.demo.cap.fragment.CapPusherFragment;
 import com.tencent.liteav.demo.cap.fragment.CapRecorderFragment;
@@ -30,6 +34,7 @@ import com.tencent.liteav.demo.cap.impl.CapLivePusherImpl;
 import com.tencent.liteav.demo.cap.impl.CapRTCRoomImpl;
 import com.tencent.liteav.demo.cap.inter.CapActivityInterface;
 import com.tencent.liteav.demo.cap.manager.CapClientManager;
+import com.tencent.liteav.demo.cap.receiver.CapNetWorkStateReceiver;
 import com.tencent.liteav.demo.cap.socket.CapInfoResponse;
 import com.tencent.liteav.demo.common.misc.CommonAppCompatActivity;
 import com.tencent.liteav.demo.common.misc.NameGenerator;
@@ -41,14 +46,14 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
     private static final String TAG = CapActivity.class.getSimpleName();
 
     public  Handler         uiHandler  = new Handler();
-    
+    private Handler         mMainHandler;
     private TextView        titleTextView;
     private TextView        globalLogTextview;
     private ScrollView      globalLogTextviewContainer;
     private OnResponseCallback mPushRtmpRespCallback;
 
     private CapRTCRoomImpl mRTCRoomImpl;
-//    private CapLivePusherImpl mLivePusherImpl;
+    private CapNetWorkStateReceiver mNetStateReceiver = new CapNetWorkStateReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +71,8 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
                  return true;
             }
         });
+
+        mMainHandler = new Handler(Looper.getMainLooper());
 
         globalLogTextviewContainer = ((ScrollView) findViewById(R.id.rtc_mutil_room_global_log_container));
 
@@ -94,6 +101,7 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
             }
         };
         CapClientManager.getInstance().addOnResponseCallback(mPushRtmpRespCallback);
+        registerIntentReceivers();
     }
 
     @Override
@@ -105,6 +113,15 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
     protected void onResume() {
         super.onResume();
 //        mLivePusherImpl.resume();
+        mMainHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startRecorder();
+            }
+        }, 1000);
+        if (CapUtils.isNetworkAvailable(this)) {
+            CapClientManager.getInstance().onStart();
+        }
     }
 
     @Override
@@ -118,7 +135,7 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
         super.onDestroy();
         mRTCRoomImpl.destroy();
         CapClientManager.getInstance().removeOnResponseCallback(mPushRtmpRespCallback);
-//        mLivePusherImpl.destroy();
+        unregisterIntentReceivers();
     }
 
     @Override
@@ -136,6 +153,15 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
 //    public boolean onCreateOptionsMenu(Menu menu) {
 //        return super.onCreateOptionsMenu(menu);
 //    }
+
+    private void registerIntentReceivers() {
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(mNetStateReceiver, filter);
+    }
+
+    private void unregisterIntentReceivers() {
+        unregisterReceiver(mNetStateReceiver);
+    }
 
     @Override
     public void onPermissionDisable() {
@@ -169,6 +195,11 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
                 titleTextView.setText(ss);
             }
         });
+    }
+
+    @Override
+    public void backToStartRecord() {
+        this.startRecorder();
     }
 
     private void startPusher(String url) {

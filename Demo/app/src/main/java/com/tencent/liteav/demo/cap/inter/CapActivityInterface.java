@@ -11,5 +11,6 @@ public interface CapActivityInterface {
     RTCRoom getRTCRoom();
 //    void    showGlobalLog(boolean enable);
 //    void    printGlobalLog(String format, Object... args);
+    void backToStartRecord();
     void    setTitle(String s);
 }

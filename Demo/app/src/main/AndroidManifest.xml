@@ -44,25 +44,23 @@
             android:stateNotNeeded="true"
             android:screenOrientation="portrait"
             android:label="Home">
-            <intent-filter>
+            <!--<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <!--<category android:name="android.intent.category.HOME"/>-->
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            </intent-filter>-->
         </activity>
 
         <activity
             android:name=".cap.CapActivity"
             android:label="RundeCap"
-            android:screenOrientation="portrait"
             android:theme="@style/RtmproomActivityTheme"
             android:windowSoftInputMode="adjustNothing" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <!--<category android:name="android.intent.category.HOME"/>-->
+                <category android:name="android.intent.category.HOME"/>
                 <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
             </intent-filter>
         </activity>
 
@@ -76,11 +74,11 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"/>
         <receiver android:name=".cap.receiver.CapNetWorkStateReceiver">
-            <intent-filter>
+            <!--<intent-filter>
                 //检测网络变化的acton
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
+            </intent-filter>-->
         </receiver>
         <!-- 【必须】消息收发service -->
         <service
@@ -107,11 +105,11 @@
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait">
-            <intent-filter>
+            <!--<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            </intent-filter>-->
         </activity>
         <activity
             android:name=".common.activity.QRCodeScanActivity"

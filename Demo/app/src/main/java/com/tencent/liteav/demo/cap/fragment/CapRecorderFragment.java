@@ -53,6 +53,7 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
     private MediaRecorder mediaRecorder;
 
     public static CapRecorderFragment newInstance() {
+        CLog.d(TAG,"newInstance = ");
         CapRecorderFragment fragment = new CapRecorderFragment();
         Bundle bundle = new Bundle();
         fragment.setArguments(bundle);
@@ -154,6 +155,7 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
     }
 
     private void backStack(){
+        CLog.d(TAG, "destroy");
         if (mActivity != null) {
             mActivity.runOnUiThread(new Runnable() {
                 @Override

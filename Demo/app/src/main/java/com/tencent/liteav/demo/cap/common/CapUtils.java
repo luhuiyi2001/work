@@ -3,6 +3,8 @@ package com.tencent.liteav.demo.cap.common;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.StatFs;
 import android.telephony.TelephonyManager;
 
@@ -42,5 +44,15 @@ public class CapUtils {
         }
         return "255533366988887";
         //return "123450123456789";
+    }
+
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivity = (ConnectivityManager)context.getSystemService("connectivity");
+        if(connectivity == null) {
+            return false;
+        } else {
+            NetworkInfo networkInfo = connectivity.getActiveNetworkInfo();
+            return networkInfo != null && networkInfo.isConnectedOrConnecting();
+        }
     }
 }

@@ -48,6 +48,7 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
 
 
     public static CapChatFragment newInstance(RoomInfo config, String userID, boolean createRoom) {
+        CLog.d(TAG, "newInstance");
         CapChatFragment fragment = new CapChatFragment();
         Bundle bundle = new Bundle();
         bundle.putParcelable("roomInfo", config);
@@ -68,6 +69,7 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        CLog.d(TAG, "onAttach");
         mActivity = ((Activity) context);
         mActivityInterface = ((CapActivityInterface) context);
     }
@@ -75,6 +77,7 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        CLog.d(TAG, "onAttach");
         mActivity = ((Activity) activity);
         mActivityInterface = ((CapActivityInterface) activity);
     }
@@ -83,7 +86,7 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_rtc_multi_room_chat, container, false);
-
+        CLog.d(TAG, "onCreateView");
         TXCloudVideoView views[] = new TXCloudVideoView[4];
         views[0] = ((TXCloudVideoView) view.findViewById(R.id.rtmproom_video_0));
         views[1] = ((TXCloudVideoView) view.findViewById(R.id.rtmproom_video_1));
@@ -106,7 +109,7 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        CLog.d(TAG, "onActivityCreated");
         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         Bundle bundle = getArguments();
@@ -167,18 +170,21 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
     @Override
     public void onResume() {
         super.onResume();
+        CLog.d(TAG, "onResume");
         mActivityInterface.getRTCRoom().switchToForeground();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        CLog.d(TAG, "onPause");
         mActivityInterface.getRTCRoom().switchToBackground();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        CLog.d(TAG, "onDestroyView");
         mPlayerViews.clear();
         mActivityInterface.getRTCRoom().stopLocalPreview();
     }
@@ -186,17 +192,20 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        CLog.d(TAG, "onDestroy");
         recycleVideoView();
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        CLog.d(TAG, "onDetach");
         mActivity = null;
         mActivityInterface = null;
     }
 
     public void onBackPressed() {
+        CLog.d(TAG, "onBackPressed");
         if (mActivityInterface != null) {
             mActivityInterface.getRTCRoom().exitRoom(new RTCRoom.ExitRoomCallback() {
                 @Override
@@ -222,6 +231,7 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
     }
 
     private void backStack(){
+        CLog.d(TAG, "backStack");
         if (mActivity != null) {
             mActivity.runOnUiThread(new Runnable() {
                 @Override
@@ -234,6 +244,7 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
 //                        FragmentManager fragmentManager = mActivity.getFragmentManager();
 //                        fragmentManager.popBackStack();
 //                        fragmentManager.beginTransaction().commit();
+                        mActivityInterface.backToStartRecord();
                     }
                 }
             });
@@ -243,6 +254,7 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
     @Override
     public void onGetPusherList(List<PusherInfo> pusherInfoList) {
         //do nothing
+        CLog.d(TAG, "onGetPusherList");
     }
 
     @Override
@@ -269,12 +281,14 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
 
     @Override
     public void onPusherQuit(PusherInfo pusher) {
+        CLog.d(TAG, "onPusherQuit");
         mActivityInterface.getRTCRoom().deleteRemoteView(pusher);//关闭远端视频渲染
         recycleVideoView(pusher.userID);
     }
 
     @Override
     public void onRoomClosed(String roomId) {
+        CLog.d(TAG, "onRoomClosed = " + roomId);
         boolean createRoom = getArguments().getBoolean("createRoom");
         if (createRoom == false) {
             CLog.e(TAG, "onRoomClosed : [ " + roomId + ", " + String.format("会话【%s】解散了", mRoomInfo != null ? mRoomInfo.roomInfo : "null") + " ]");
@@ -284,17 +298,17 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
 
     @Override
     public void onRecvRoomTextMsg(String roomid, String userid, String userName, String userAvatar, String msg) {
-        //do nothing
+        CLog.d(TAG, "onRecvRoomTextMsg");
     }
 
     @Override
     public void onRecvRoomCustomMsg(final String roomID, final String userID, final String userName, final String userAvatar, final String cmd, final String message) {
-        //do nothing
+        CLog.d(TAG, "onRecvRoomCustomMsg");
     }
 
     @Override
     public void onDebugLog(String line) {
-        //do nothing
+        CLog.d(TAG, "line");
     }
 
     @Override

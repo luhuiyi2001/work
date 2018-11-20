@@ -59,6 +59,7 @@ public class CapPusherFragment extends Fragment implements ITXLivePushListener {
 
 
     public static CapPusherFragment newInstance(String url) {
+        CLog.d(TAG,"newInstance = " + url);
         CapPusherFragment fragment = new CapPusherFragment();
         Bundle bundle = new Bundle();
         bundle.putString(CapConstants.KEY_URL, url);
@@ -191,6 +192,7 @@ public class CapPusherFragment extends Fragment implements ITXLivePushListener {
     }
 
     private void backStack(){
+        CLog.d(TAG,"backStack");
         if (mActivity != null) {
             mActivity.runOnUiThread(new Runnable() {
                 @Override
@@ -203,6 +205,7 @@ public class CapPusherFragment extends Fragment implements ITXLivePushListener {
 //                        FragmentManager fragmentManager = mActivity.getFragmentManager();
 //                        fragmentManager.popBackStack();
 //                        fragmentManager.beginTransaction().commit();
+                        mActivityInterface.backToStartRecord();
                     }
                 }
             });
@@ -210,6 +213,7 @@ public class CapPusherFragment extends Fragment implements ITXLivePushListener {
     }
 
     public  void startPusher() {
+        CLog.d(TAG,"startPusher");
         if (!mVideoPublish) {
 //            stopPublishRtmp();
 //        } else {
@@ -224,6 +228,7 @@ public class CapPusherFragment extends Fragment implements ITXLivePushListener {
     }
 
     private  boolean startPublishRtmp() {
+        CLog.d(TAG,"startPublishRtmp");
         mCaptureView.setVisibility(View.VISIBLE);
 
         int customModeType = 0;
@@ -243,6 +248,7 @@ public class CapPusherFragment extends Fragment implements ITXLivePushListener {
     }
 
     private void stopPublishRtmp() {
+        CLog.d(TAG,"stopPublishRtmp");
         mVideoPublish = false;
         mLivePusher.stopBGM();
         mLivePusher.stopCameraPreview(true);
@@ -307,6 +313,7 @@ public class CapPusherFragment extends Fragment implements ITXLivePushListener {
 
     @Override
     public void onNetStatus(Bundle status) {
+        CLog.d(TAG,"onNetStatus");
     }
 
     static class TXPhoneStateListener extends PhoneStateListener {
@@ -318,6 +325,7 @@ public class CapPusherFragment extends Fragment implements ITXLivePushListener {
         public void onCallStateChanged(int state, String incomingNumber) {
             super.onCallStateChanged(state, incomingNumber);
             TXLivePusher pusher = mPusher.get();
+            CLog.d(TAG,"onCallStateChanged = " + state);
             switch(state){
                 //电话等待接听
                 case TelephonyManager.CALL_STATE_RINGING:
