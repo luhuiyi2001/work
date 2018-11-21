@@ -23,8 +23,11 @@ public class CapConfig {
     public static final String FILE_NAME_VIDEO_RECORD = "CapCamera";
     public static final String PATH_VIDEO_RECORD = PATH_EXT_SDCARD + File.separator + FILE_NAME_VIDEO_RECORD;
 
-    public static final int TIME_CAMERA_RECORD =10000;// 10s
+    public static final int TIME_CAMERA_RECORD =300000;// 10s
     public static final int MIN_STORAGE_SIZE = 104857600;//100M : 52428800(50M)
+
+    public static final String TEST_USER_ID = "1004";
+    public static final String TEST_IMEI = "123451234512345";
 
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd_HHmmss");
 

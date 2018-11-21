@@ -42,7 +42,9 @@ public class CapUtils {
             if (imei == null) imei = "";
         } catch (Exception e) {
         }
-        return "255533366988887";
+        return CapConfig.TEST_IMEI;
+        //return "12345-12345-12345";
+        //return "255533366988887";
         //return "123450123456789";
     }
 

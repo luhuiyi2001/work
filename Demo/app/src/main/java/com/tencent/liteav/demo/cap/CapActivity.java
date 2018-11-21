@@ -4,9 +4,13 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,6 +28,7 @@ import com.tencent.liteav.demo.R;
 import com.tencent.liteav.demo.cap.callback.OnResponseCallback;
 import com.tencent.liteav.demo.cap.callback.PushRtmpRespCallback;
 import com.tencent.liteav.demo.cap.common.CLog;
+import com.tencent.liteav.demo.cap.common.CapConfig;
 import com.tencent.liteav.demo.cap.common.CapConstants;
 import com.tencent.liteav.demo.cap.common.CapUtils;
 import com.tencent.liteav.demo.cap.fragment.CapChatFragment;
@@ -33,6 +38,7 @@ import com.tencent.liteav.demo.cap.home.AllAppActivity;
 import com.tencent.liteav.demo.cap.impl.CapLivePusherImpl;
 import com.tencent.liteav.demo.cap.impl.CapRTCRoomImpl;
 import com.tencent.liteav.demo.cap.inter.CapActivityInterface;
+import com.tencent.liteav.demo.cap.inter.CapGetLocationInterface;
 import com.tencent.liteav.demo.cap.manager.CapClientManager;
 import com.tencent.liteav.demo.cap.receiver.CapNetWorkStateReceiver;
 import com.tencent.liteav.demo.cap.socket.CapInfoResponse;
@@ -41,7 +47,7 @@ import com.tencent.liteav.demo.common.misc.NameGenerator;
 import com.tencent.liteav.demo.rtcroom.RTCRoom;
 import com.tencent.liteav.demo.rtcroom.ui.multi_room.fragment.RTCMultiRoomChatFragment;
 
-public class CapActivity extends CommonAppCompatActivity implements CapActivityInterface {
+public class CapActivity extends CommonAppCompatActivity implements CapActivityInterface,CapGetLocationInterface {
 
     private static final String TAG = CapActivity.class.getSimpleName();
 
@@ -54,6 +60,30 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
 
     private CapRTCRoomImpl mRTCRoomImpl;
     private CapNetWorkStateReceiver mNetStateReceiver = new CapNetWorkStateReceiver();
+
+    private LocationManager mLocationManager;
+    private Location mLocation;
+
+    // 定义一个LocationListener来响应定位更新
+    LocationListener mLocationListener = new LocationListener() {
+        public void onLocationChanged(Location location) {
+            CLog.d(TAG, "onStatusChanged = [ " + location.getLatitude() + ", " + location.getLongitude() + " ]");
+            // 当地理位置信息有变化的时候回调
+            makeUseOfNewLocation(location);
+        }
+
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            CLog.d(TAG, "onStatusChanged = [ " + provider + " ]");
+        }
+
+        public void onProviderEnabled(String provider) {
+            CLog.d(TAG, "onProviderEnabled = [ " + provider + " ]");
+        }
+
+        public void onProviderDisabled(String provider) {
+            CLog.d(TAG, "onProviderDisabled = [ " + provider + " ]");
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +131,13 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
             }
         };
         CapClientManager.getInstance().addOnResponseCallback(mPushRtmpRespCallback);
+        CapClientManager.getInstance().setLocationGetInterface(this);
         registerIntentReceivers();
+
+        // 获取系统的LocationManager服务
+        mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        // 向Location Manager注册LocationListener监听定位更新
+        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mLocationListener);
     }
 
     @Override
@@ -136,6 +172,7 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
         mRTCRoomImpl.destroy();
         CapClientManager.getInstance().removeOnResponseCallback(mPushRtmpRespCallback);
         unregisterIntentReceivers();
+        mLocationManager.removeUpdates(mLocationListener);
     }
 
     @Override
@@ -241,6 +278,14 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
         }
     }
 
+
+    private void makeUseOfNewLocation(Location location) {
+        mLocation = location;
+    }
+
+
+
+
 //    public boolean removeCurFragment() {
 //        Fragment fragment = this.getFragmentManager().findFragmentById(R.id.rtmproom_fragment_container);
 //        if (fragment == null) {
@@ -255,7 +300,6 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
 //        return true;
 //    }
 
-
     private boolean isBtn1Start = false;
     public void onClickBtn1(View v) {
         CLog.d(TAG, "onClickBtn1");
@@ -264,11 +308,11 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
         if (isBtn1Start) {
             stopRecorder();
 //            CapClientManager.getInstance().onStop();
-            ((Button)v).setText("StartSocket");
+            ((Button)v).setText("StartRecorder");
         } else {
             startRecorder();
 //            CapClientManager.getInstance().onStart();
-            ((Button)v).setText("StopSocket");
+            ((Button)v).setText("StopRecorder");
         }
         isBtn1Start = !isBtn1Start;
     }
@@ -283,7 +327,7 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
 //            this.mRecorderImpl.stopRecord();
             ((Button)v).setText("StartPusher");
         } else {
-            startPusher("rtmp://aqm.runde.pro:1935/live/36147_1000");
+            startPusher("rtmp://aqm.runde.pro:1935/live/36147_" + CapConfig.TEST_USER_ID);
 //            this.mRecorderImpl.startRecord();
             ((Button)v).setText("StopPusher");
         }
@@ -310,5 +354,13 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
         Intent intent = new Intent(this, AllAppActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+    }
+
+    @Override
+    public Location getLocation() {
+        if (mLocation == null) {
+            return mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        }
+        return mLocation;
     }
 }

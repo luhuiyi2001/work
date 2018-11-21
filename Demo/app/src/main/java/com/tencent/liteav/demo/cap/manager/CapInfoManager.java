@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.location.Location;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 
@@ -49,12 +50,12 @@ public class CapInfoManager {
 		//return "{\"act\":\"ca_login\",\"device_id\":\"adaa-dadna-daa\",\"status\":false}";
 	}
 	
-	public String getLocationReqMsg() {
+	public String getLocationReqMsg(Location location) {
 		CapInfoRequest req = new CapInfoRequest();
 		req.act = CapConstants.REQ_ACT_CA_REPORT_LOCATION;
 		req.user_id = CapSharedPrefMgr.getInstance().getUserID();
-		req.x_point = "123.4";
-		req.y_point = "23.123";
+		req.x_point = (location == null ? "0" : String.valueOf(location.getLatitude()));
+		req.y_point = (location == null ? "0" : String.valueOf(location.getLongitude()));
 		return new Gson().toJson(req);
 		//return "{\"act\":\"ca_report_location\",\"user_id\":\"1\",\"x_point\":\"123.4\",\"y_point\":\"23.123\",\"status\":false}";
 	}

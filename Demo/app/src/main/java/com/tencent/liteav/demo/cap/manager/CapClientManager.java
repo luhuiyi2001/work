@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.tencent.liteav.demo.cap.callback.LoginRespCallback;
+import com.tencent.liteav.demo.cap.inter.CapGetLocationInterface;
 import com.tencent.liteav.demo.cap.listener.OnReceiveEventListener;
 import com.tencent.liteav.demo.cap.listener.OnReceiveMsgListener;
 import com.tencent.liteav.demo.cap.common.CLog;
@@ -33,6 +34,9 @@ public class CapClientManager implements OnReceiveMsgListener {
 	private OnReceiveEventListener mListener;
 	private List<OnResponseCallback> mRespCallbackList = new ArrayList<OnResponseCallback>();
 	private LoginRespCallback mLoginRespCallback;
+	private int mNullDataCount;
+	private CapGetLocationInterface mGetLocation;
+
 
 	public static CapClientManager getInstance() {
 		if (sMgr == null) {
@@ -43,6 +47,10 @@ public class CapClientManager implements OnReceiveMsgListener {
 
 	public void setOnReceiveEventListener(OnReceiveEventListener listener) {
 		mListener = listener;
+	}
+
+	public void setLocationGetInterface(CapGetLocationInterface listener) {
+		mGetLocation = listener;
 	}
 
 	private CapClientManager() {
@@ -84,9 +92,15 @@ public class CapClientManager implements OnReceiveMsgListener {
 	public void onReceived(String msg) {
 		CLog.d(TAG, "onReceived = " + msg);
 		if (TextUtils.isEmpty(msg)) {
+			mNullDataCount++;
+			if (mNullDataCount > 10) {
+				reconnection();
+				mNullDataCount = 0;
+			}
 			return;
 		}
 
+		mNullDataCount = 0;
 		mLastReceiveTime = System.currentTimeMillis();
         try {
 			CapInfoResponse resp = new Gson().fromJson(msg, CapInfoResponse.class);
@@ -139,6 +153,12 @@ public class CapClientManager implements OnReceiveMsgListener {
 		mClient.send(req);
 	}
 
+	private void reconnection() {
+		onStop();
+		onStart();
+	}
+
+
 	private void startConnectThread() {
 		CLog.d(TAG, "startConnectThread");
 		// 根据CPU数目初始化线程池
@@ -190,10 +210,9 @@ public class CapClientManager implements OnReceiveMsgListener {
 				CLog.d(TAG, "mBeatTimer onSchedule:" + receiveDuration);
 				if (receiveDuration > CapConfig.TIME_OUT) {// 若超过十五秒都没收到我的心跳包，则认为对方不在线。
 					CLog.d(TAG, "TIME_OUT");
-					onStop();
-					startConnectThread();
+					reconnection();
 				} else {
-					mClient.send(CapInfoManager.getInstance().getLocationReqMsg());
+					mClient.send(CapInfoManager.getInstance().getLocationReqMsg(mGetLocation == null ? null : mGetLocation.getLocation()));
 				}
 			}
 
