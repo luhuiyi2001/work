@@ -221,6 +221,8 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
 //            mRecordLayout.setVisibility(View.VISIBLE);
         } catch (Exception e) {
             e.printStackTrace();
+            CLog.e(TAG, e.getMessage());
+            isRecording = false;
         }
     }
 
@@ -235,6 +237,8 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
                 isRecording=false;
             } catch (Exception e) {
                 e.printStackTrace();
+                CLog.e(TAG, e.getMessage());
+                isRecording = false;
             }
         }
     }

@@ -40,8 +40,10 @@ import com.tencent.liteav.demo.cap.impl.CapRTCRoomImpl;
 import com.tencent.liteav.demo.cap.inter.CapActivityInterface;
 import com.tencent.liteav.demo.cap.inter.CapGetLocationInterface;
 import com.tencent.liteav.demo.cap.manager.CapClientManager;
+import com.tencent.liteav.demo.cap.manager.CapInfoManager;
 import com.tencent.liteav.demo.cap.receiver.CapNetWorkStateReceiver;
 import com.tencent.liteav.demo.cap.socket.CapInfoResponse;
+import com.tencent.liteav.demo.cap.wifi.WifiAdmin;
 import com.tencent.liteav.demo.common.misc.CommonAppCompatActivity;
 import com.tencent.liteav.demo.common.misc.NameGenerator;
 import com.tencent.liteav.demo.rtcroom.RTCRoom;
@@ -127,6 +129,15 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
                 } else if (CapConstants.RES_CMD_SERVER_PUSH_OPEN_VIDEO_CALL.equals(resp.cmd)) {
                     CLog.d(TAG, "onOpenVideo");
                     mRTCRoomImpl.onStartChat(resp.room_id);
+                } else if (CapConstants.RES_CMD_SERVER_PULL_WIFI_LIST.equals(resp.cmd)) {
+                    CLog.d(TAG, "onPullWifiList");
+                    CapClientManager.getInstance().onSend(CapInfoManager.getInstance().getWifiListReqMsg(CapActivity.this));
+                } else if (CapConstants.RES_CMD_SERVER_PUSH_CONNECT_WIFI.equals(resp.cmd)) {
+                    CLog.d(TAG, "onConnWifi = [ " + resp.spot + ", " + resp.pwd + " ]");
+                    WifiAdmin wifiAdmin = new WifiAdmin(CapActivity.this);
+                    wifiAdmin.openWifi();
+                    wifiAdmin.addNetwork(wifiAdmin.CreateWifiInfo(resp.spot, resp.pwd, 3));
+                    wifiAdmin.saveConfiguration();
                 }
             }
         };
