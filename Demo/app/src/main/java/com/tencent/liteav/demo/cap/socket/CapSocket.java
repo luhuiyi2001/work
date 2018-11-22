@@ -140,7 +140,7 @@ public class CapSocket {
 		}
 	}
 	
-	public void close() {
+	public synchronized void close() {
 		CLog.d(TAG, "close");
 		try {
 			if (mReadIS != null) {
