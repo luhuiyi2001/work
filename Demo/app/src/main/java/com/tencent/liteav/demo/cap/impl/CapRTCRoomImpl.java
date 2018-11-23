@@ -18,6 +18,7 @@ import com.tencent.liteav.demo.roomutil.commondef.RoomInfo;
 import com.tencent.liteav.demo.rtcroom.IRTCRoomListener;
 import com.tencent.liteav.demo.rtcroom.RTCRoom;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.tencent.liteav.demo.rtcroom.RTCRoom.*;
@@ -30,6 +31,7 @@ public class CapRTCRoomImpl {
     private String mUserName;
     private Runnable retryInitRoomRunnable;
     private String mRoomID;
+    private ArrayList<String> mUserIDs;
 
     private CapActivity mActivity;
     public CapRTCRoomImpl(CapActivity context) {
@@ -48,8 +50,9 @@ public class CapRTCRoomImpl {
         mRTCRoom.logout();
     }
 
-    public void onStartChat(String roomId) {
+    public void onStartChat(String roomId, ArrayList<String> userIDs) {
         mRoomID = roomId;
+        mUserIDs = userIDs;
         internalInitializeRTCRoom();
     }
 
@@ -116,14 +119,14 @@ public class CapRTCRoomImpl {
         RoomInfo roomInfo = new RoomInfo();
         roomInfo.roomInfo = CapUtils.getImei();
         roomInfo.roomID = mRoomID;
-        enterRoom(roomInfo, getUserID(), TextUtils.isEmpty(roomInfo.roomID) ? true : false);
+        enterRoom(roomInfo, getUserID(), TextUtils.isEmpty(roomInfo.roomID) ? true : false, mUserIDs);
     }
 
-    private void enterRoom(final RoomInfo roomInfo, final String userID, final boolean requestCreateRoom) {
+    private void enterRoom(final RoomInfo roomInfo, final String userID, final boolean requestCreateRoom, final ArrayList<String> userIds) {
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                CapChatFragment roomFragment = CapChatFragment.newInstance(roomInfo, userID, requestCreateRoom);
+                CapChatFragment roomFragment = CapChatFragment.newInstance(roomInfo, userID, requestCreateRoom, userIds);
                 FragmentManager fm = mActivity.getFragmentManager();
                 FragmentTransaction ts = fm.beginTransaction();
                 ts.replace(R.id.rtmproom_fragment_container, roomFragment);

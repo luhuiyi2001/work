@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +20,8 @@ import android.widget.TextView;
 import com.tencent.liteav.demo.R;
 import com.tencent.liteav.demo.cap.common.CLog;
 import com.tencent.liteav.demo.cap.inter.CapActivityInterface;
+import com.tencent.liteav.demo.cap.manager.CapClientManager;
+import com.tencent.liteav.demo.cap.manager.CapInfoManager;
 import com.tencent.liteav.demo.cap.manager.CapSharedPrefMgr;
 import com.tencent.liteav.demo.common.misc.AndroidPermissions;
 import com.tencent.liteav.demo.roomutil.commondef.PusherInfo;
@@ -37,23 +40,40 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
 
     private Activity                            mActivity;
     private CapActivityInterface mActivityInterface;
+    private Handler mHandler = new Handler();
 
     private RoomInfo                            mRoomInfo;
+    private ArrayList<String>                   mUserIDs;
     private List<RoomVideoView>                 mPlayerViews    = new ArrayList<>();
 
     private int                                 mBeautyStyle    = TXLiveConstants.BEAUTY_STYLE_SMOOTH;
     private int                                 mBeautyLevel    = 5;
     private int                                 mWhiteningLevel = 5;
     private int                                 mRuddyLevel     = 5;
+    private List<String> mPusherList = new ArrayList<String>();
 
+    final Runnable mPusherJoinTimeout = new Runnable() {
+        @Override public void run() {
+            CapClientManager.getInstance().onSend(CapInfoManager.getInstance().getReportRoomStatusMsg(mRoomInfo.roomID, "-1", null));
+            onBackPressed();
+        }
+    };
 
-    public static CapChatFragment newInstance(RoomInfo config, String userID, boolean createRoom) {
+    final Runnable mAllPusherExitTimeout = new Runnable() {
+        @Override public void run() {
+            CapClientManager.getInstance().onSend(CapInfoManager.getInstance().getReportRoomStatusMsg(mRoomInfo.roomID, "-2", null));
+            onBackPressed();
+        }
+    };
+
+    public static CapChatFragment newInstance(RoomInfo config, String userID, boolean createRoom, ArrayList<String> userIds) {
         CLog.d(TAG, "newInstance");
         CapChatFragment fragment = new CapChatFragment();
         Bundle bundle = new Bundle();
         bundle.putParcelable("roomInfo", config);
         bundle.putString("userID", userID);
         bundle.putBoolean("createRoom", createRoom);
+        bundle.putStringArrayList("userIDs", userIds);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -113,10 +133,11 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         Bundle bundle = getArguments();
-        mRoomInfo = bundle.getParcelable("roomInfo");
+        mRoomInfo            = bundle.getParcelable("roomInfo");
         String  selfUserID   = bundle.getString("userID");
         String  selfUserName = CapSharedPrefMgr.getInstance().getUserName();
         boolean createRoom   = bundle.getBoolean("createRoom");
+        mUserIDs             = bundle.getStringArrayList("userIDs");
 
         if (selfUserID == null || ( !createRoom && mRoomInfo == null)) {
             return;
@@ -142,6 +163,8 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
                 public void onSuccess(String roomId) {
                     CLog.i(TAG, "roomId : " + roomId);
                     mRoomInfo.roomID = roomId;
+                    CapClientManager.getInstance().onSend(CapInfoManager.getInstance().getCreateRoomMsg(roomId, mUserIDs));
+                    mHandler.postDelayed(mPusherJoinTimeout, 60000);
                 }
 
                 @Override
@@ -262,13 +285,15 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
         if (pusher == null || pusher.userID == null) {
             return;
         }
-
+        mPusherList.add(pusher.userID);
+        mHandler.removeCallbacks(mPusherJoinTimeout);
+        mHandler.removeCallbacks(mAllPusherExitTimeout);
+        CapClientManager.getInstance().onSend(CapInfoManager.getInstance().getReportRoomStatusMsg(mRoomInfo.roomID, "0", pusher.userID));
         RoomVideoView videoView = applyVideoView(pusher.userID, pusher.userName == null ? pusher.userID : pusher.userName);
         if (videoView != null)  {
             mActivityInterface.getRTCRoom().addRemoteView(videoView.videoView, pusher, new RTCRoom.RemoteViewPlayCallback() {
                 @Override
                 public void onPlayBegin() {
-
                 }
 
                 @Override
@@ -284,6 +309,11 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
         CLog.d(TAG, "onPusherQuit");
         mActivityInterface.getRTCRoom().deleteRemoteView(pusher);//关闭远端视频渲染
         recycleVideoView(pusher.userID);
+        mPusherList.remove(pusher.userID);
+        CapClientManager.getInstance().onSend(CapInfoManager.getInstance().getReportRoomStatusMsg(mRoomInfo.roomID, "1", pusher.userID));
+        if (mPusherList.size() == 0) {
+            mHandler.postDelayed(mAllPusherExitTimeout, 30000);
+        }
     }
 
     @Override

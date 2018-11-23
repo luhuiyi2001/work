@@ -81,7 +81,7 @@ public class CapSocket {
 			CLog.d(TAG, "send - mSocket == null");
 			return;
 		}
-		CLog.d(TAG, "send - isConnected = " + mSocket.isConnected() + ", isClosed = " + mSocket.isClosed());
+		//CLog.d(TAG, "send - isConnected = " + mSocket.isConnected() + ", isClosed = " + mSocket.isClosed());
 		try {
 			if (mSocket.isConnected() && !mSocket.isClosed()) {
 				// 向服务器端写数据，写入一个缓冲区
@@ -108,7 +108,7 @@ public class CapSocket {
 			CLog.d(TAG, "receive - mSocket == null");
 			return;
 		}
-		CLog.d(TAG, "receive - isConnected = " + mSocket.isConnected() + ", isClosed = " + mSocket.isClosed());
+		//CLog.d(TAG, "receive - isConnected = " + mSocket.isConnected() + ", isClosed = " + mSocket.isClosed());
 		/* * * * * * * * * * Socket 客户端读取服务器端响应数据 * * * * * * * * * */
 		try {
 			// serverSocket.isConnected 代表是否连接成功过

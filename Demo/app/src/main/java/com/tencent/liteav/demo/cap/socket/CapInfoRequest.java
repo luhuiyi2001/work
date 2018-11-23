@@ -13,4 +13,7 @@ public class CapInfoRequest {
     public String spot;
     public Boolean status;
     public String msg;
+    public String room_id;
+    public String type;
+    public List<String> user_ids;
 }

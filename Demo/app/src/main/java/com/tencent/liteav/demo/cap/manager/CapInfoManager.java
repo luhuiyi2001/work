@@ -123,4 +123,21 @@ public class CapInfoManager {
 		}
 		return wifiList;
 	}
+
+	public String getCreateRoomMsg(String roomId, ArrayList<String> userIDs) {
+		CapInfoRequest req = new CapInfoRequest();
+		req.act = CapConstants.REQ_ACT_CA_CREATE_ROOM_FOR_HELP;
+		req.room_id = roomId;
+		req.user_ids = userIDs;
+		return new Gson().toJson(req);
+	}
+
+	public String getReportRoomStatusMsg(String roomId, String type, String userID) {
+		CapInfoRequest req = new CapInfoRequest();
+		req.act = CapConstants.REQ_ACT_CA_REPORT_ROOM_STATUS;
+		req.room_id = roomId;
+		req.type = type;
+		req.user_id = userID;
+		return new Gson().toJson(req);
+	}
 }

@@ -43,9 +43,6 @@ public class CapUtils {
         } catch (Exception e) {
         }
         return CapConfig.TEST_IMEI;
-        //return "12345-12345-12345";
-        //return "255533366988887";
-        //return "123450123456789";
     }
 
     public static boolean isNetworkAvailable(Context context) {

@@ -145,12 +145,20 @@ public class CapClientManager implements OnReceiveMsgListener {
 		}
 	}
 	
-	public void onSend(String req) {
+	public void onSend(final String req) {
 		CLog.d(TAG, "onSend = " + req);
 		if (TextUtils.isEmpty(req)) {
 			return;
 		}
-		mClient.send(req);
+		if (mThreadPool == null) {
+			return;
+		}
+		mThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				mClient.send(req);
+			}
+		});
 	}
 
 	private void reconnection() {
@@ -188,7 +196,7 @@ public class CapClientManager implements OnReceiveMsgListener {
 			@Override
 			public void run() {
 				while(!mClient.isClosed()) {
-					CLog.d(TAG, "while(!mClient.isClosed())");
+//					CLog.d(TAG, "while(!mClient.isClosed())");
 					mClient.receive();
 				}
 			}

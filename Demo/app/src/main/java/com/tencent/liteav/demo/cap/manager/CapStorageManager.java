@@ -8,6 +8,9 @@ import com.tencent.liteav.demo.cap.common.CapUtils;
 import com.tencent.liteav.demo.common.utils.FileUtils;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 
 public class CapStorageManager {
@@ -38,9 +41,15 @@ public class CapStorageManager {
 			return false;
 		}
 
-		for (int i = 0; i < listFiles.length; i++) {
-			CLog.d(TAG, listFiles[i]);
-			FileUtils.deleteFile(videoFolder.getAbsolutePath() + File.separator + listFiles[i]);
+		List<String> fileList = Arrays.asList(listFiles);
+		Collections.sort(fileList);
+		for (int i = 0; i < fileList.size(); i++) {
+			CLog.d(TAG, "file [ " + i + " ] = " + fileList.get(i));
+		}
+		for (int i = 0; i < fileList.size(); i++) {
+			String deletePath = videoFolder.getAbsolutePath() + File.separator + fileList.get(i);
+			CLog.d(TAG, "deleteFile : " + deletePath);
+			FileUtils.deleteFile(deletePath);
 			if (isExternalStorageSpaceEnough()) {
 				return true;
 			}
@@ -50,7 +59,9 @@ public class CapStorageManager {
 
 	public static boolean isExternalStorageSpaceEnough() {
 		StatFs statFs = new StatFs(CapConfig.PATH_EXT_SDCARD);
-		return CapUtils.getAvailableSize(statFs) > CapConfig.MIN_STORAGE_SIZE;
+		long availableSize = CapUtils.getAvailableSize(statFs);
+		CLog.d(TAG, "availableSize : " + availableSize);
+		return availableSize > CapConfig.MIN_STORAGE_SIZE;
 	}
 
 }

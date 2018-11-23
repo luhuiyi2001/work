@@ -4,18 +4,13 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.app.Service;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.Nullable;
-import android.telephony.PhoneStateListener;
-import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -26,19 +21,11 @@ import android.view.WindowManager;
 import com.tencent.liteav.demo.R;
 import com.tencent.liteav.demo.cap.common.CLog;
 import com.tencent.liteav.demo.cap.common.CapConfig;
-import com.tencent.liteav.demo.cap.common.CapConstants;
 import com.tencent.liteav.demo.cap.common.CapUtils;
 import com.tencent.liteav.demo.cap.inter.CapActivityInterface;
 import com.tencent.liteav.demo.cap.manager.CapStorageManager;
-import com.tencent.liteav.demo.cap.util.CapRecorderTimer;
-import com.tencent.rtmp.ITXLivePushListener;
-import com.tencent.rtmp.TXLiveConstants;
-import com.tencent.rtmp.TXLivePushConfig;
-import com.tencent.rtmp.TXLivePusher;
-import com.tencent.rtmp.ui.TXCloudVideoView;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 import java.util.Date;
 
 public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callback {
@@ -51,7 +38,18 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
     private SurfaceView mRecordSV;
     private boolean isRecording;
     private MediaRecorder mediaRecorder;
+    private Handler mHandler = new Handler();
+    final Runnable mStartRecorderRunable = new Runnable() {
+        @Override public void run() {
+            startMediaRecorder();
+        }
+    };
 
+    final Runnable mStopRecorderRunable = new Runnable() {
+        @Override public void run() {
+            stopMediaRecorder();
+        }
+    };
     public static CapRecorderFragment newInstance() {
         CLog.d(TAG,"newInstance = ");
         CapRecorderFragment fragment = new CapRecorderFragment();
@@ -171,7 +169,7 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
         }
     }
 
-    private void startMediaRecorder() {
+    private synchronized void startMediaRecorder() {
         CLog.d(TAG, "startMediaRecorder");
         try {
             mediaRecorder = new MediaRecorder();
@@ -188,7 +186,7 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
 //            mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.MPEG_4_SP);
             // 设置视频的采样率，每秒4帧
 //            mediaRecorder.setVideoFrameRate(4);
-            mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
+            mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_LOW));
             // 设置录制视频文件的输出路径
             mediaRecorder.setOutputFile(getOutputMediaFile().toString());
             // 设置捕获视频图像的预览界面
@@ -197,7 +195,7 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
             mediaRecorder.setOnErrorListener(new MediaRecorder.OnErrorListener() {
                 @Override
                 public void onError(MediaRecorder mr, int what, int extra) {
-                    CLog.e(TAG, "onError = [ " + what + ", " + extra + ", ]");
+                    CLog.e(TAG, "onError = [ " + what + ", " + extra + " ]");
                     // 发生错误，停止录制
                     stopRecord();
                 }
@@ -218,7 +216,6 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
             mediaRecorder.prepare();
             mediaRecorder.start();
             isRecording = true;
-//            mRecordLayout.setVisibility(View.VISIBLE);
         } catch (Exception e) {
             e.printStackTrace();
             CLog.e(TAG, e.getMessage());
@@ -226,7 +223,7 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
         }
     }
 
-    private void stopMediaRecorder() {
+    private synchronized void stopMediaRecorder() {
         CLog.d(TAG, "stopMediaRecorder");
         if (isRecording) {
             // 如果正在录制，停止并释放资源
@@ -268,13 +265,17 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
             CLog.e(TAG, "checkExternalStorageSpaceEnough = false");
             stopRecord();
         }
-        startMediaRecorder();
+        //startMediaRecorder();
         //startRecordTimer();
+        mHandler.removeCallbacks(mStartRecorderRunable);
+        this.mHandler.post(mStartRecorderRunable);
     }
 
     public void stopRecord() {
         CLog.d(TAG, "stopRecord");
         stopMediaRecorder();
+        mHandler.removeCallbacks(mStopRecorderRunable);
+        this.mHandler.post(mStopRecorderRunable);
     }
 
     /**

@@ -66,6 +66,12 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
     private LocationManager mLocationManager;
     private Location mLocation;
 
+    final Runnable mRecorderTimeout = new Runnable() {
+        @Override public void run() {
+            startRecorder();
+        }
+    };
+
     // 定义一个LocationListener来响应定位更新
     LocationListener mLocationListener = new LocationListener() {
         public void onLocationChanged(Location location) {
@@ -128,7 +134,7 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
                     stopPusher();
                 } else if (CapConstants.RES_CMD_SERVER_PUSH_OPEN_VIDEO_CALL.equals(resp.cmd)) {
                     CLog.d(TAG, "onOpenVideo");
-                    mRTCRoomImpl.onStartChat(resp.room_id);
+                    mRTCRoomImpl.onStartChat(resp.room_id, null);
                 } else if (CapConstants.RES_CMD_SERVER_PULL_WIFI_LIST.equals(resp.cmd)) {
                     CLog.d(TAG, "onPullWifiList");
                     CapClientManager.getInstance().onSend(CapInfoManager.getInstance().getWifiListReqMsg(CapActivity.this));
@@ -138,6 +144,9 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
                     wifiAdmin.openWifi();
                     wifiAdmin.addNetwork(wifiAdmin.CreateWifiInfo(resp.spot, resp.pwd, 3));
                     wifiAdmin.saveConfiguration();
+                } else if (CapConstants.RES_CMD_SERVER_PUSH_APP_ASK_FOR_HELP.equals(resp.cmd)) {
+                    CLog.d(TAG, "onCreateRoom : " + resp.user_ids);
+                    mRTCRoomImpl.onStartChat(null, resp.user_ids);
                 }
             }
         };
@@ -273,6 +282,13 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
     }
 
     private void startRecorder() {
+        if (!CapUtils.checkExtSdcard()) {
+            CLog.e(TAG, CapConfig.PATH_EXT_SDCARD + " isn't exist");
+            mMainHandler.removeCallbacks(mRecorderTimeout);
+            mMainHandler.postDelayed(mRecorderTimeout, 10000);
+            return;
+        }
+        mMainHandler.removeCallbacks(mRecorderTimeout);
         CapRecorderFragment pusherFragment = CapRecorderFragment.newInstance();
         FragmentManager fm = this.getFragmentManager();
         FragmentTransaction ts = fm.beginTransaction();
@@ -353,7 +369,7 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
             mRTCRoomImpl.onStopChat();
             ((Button)v).setText("StartRTCRoom");
         } else {
-            mRTCRoomImpl.onStartChat(null);
+            mRTCRoomImpl.onStartChat(null, null);
             ((Button)v).setText("StopRTCRoom");
         }
         isBtn3Start = !isBtn3Start;
