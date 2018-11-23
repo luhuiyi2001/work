@@ -2,26 +2,15 @@ package com.tencent.liteav.demo.cap.impl;
 
 import android.app.Activity;
 import android.app.Service;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.tencent.liteav.demo.R;
 import com.tencent.liteav.demo.cap.common.CLog;
-import com.tencent.liteav.demo.cap.common.CapConstants;
-import com.tencent.liteav.demo.cap.home.Home;
-import com.tencent.liteav.demo.cap.listener.OnReceiveEventListener;
-import com.tencent.liteav.demo.cap.manager.CapClientManager;
-import com.tencent.liteav.demo.cap.manager.CapInfoManager;
-import com.tencent.liteav.demo.cap.socket.CapInfoResponse;
-import com.tencent.liteav.demo.cap.wifi.WifiAdmin;
 import com.tencent.rtmp.ITXLivePushListener;
 import com.tencent.rtmp.TXLiveConstants;
 import com.tencent.rtmp.TXLivePushConfig;

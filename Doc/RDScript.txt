@@ -5,12 +5,15 @@ adb push C:\runde\app-debug\app-debug.apk system/priv-app/app-debug/app-debug.ap
 adb push W:\luhuiyi\RD_AQM01\alsp_n0.mp1_v1.76\vendor\runde\app-debug\app-debug.apk system/priv-app/app-debug/app-debug.apk
 adb push W:\luhuiyi\RD_AQM01\alsp_n0.mp1_v1.76\out\target\product\rd_aqm01\system\framework\services.jar system/framework/services.jar
 adb install C:\runde\work\Demo\app\build\outputs\apk\debug\app-debug.apk
-adb shell am start -n com.tencent.liteav.demo/.cap.home.Home
+adb shell am start -n com.tencent.liteav.demo/.cap.CapActivity
 adb shell am force-stop  com.tencent.liteav.demo
 git config --global user.email "luhuiyi2001@163.com"
 git config --global user.name "luhuiyi2001"
 telnet 47.106.114.236 9510
 logcat -v time |grep luhuiyi
+
+adb shell am broadcast -a com.runde.test.action_send_login
+adb shell am broadcast -a com.runde.test.action_send_location
 
 copy /Y C:\runde\work\Demo\app\build\outputs\apk\debug\app-debug.apk W:\luhuiyi\RD_AQM01\alsp_n0.mp1_v1.76\vendor\runde\app-debug\app-debug.apk
 adb push W:\luhuiyi\RD_AQM01\alsp_n0.mp1_v1.76\out\target\product\rd_aqm01\system\priv-app\app-debug\app-debug.apk system/priv-app/app-debug/app-debug.apk
@@ -21,6 +24,15 @@ https://pan.baidu.com/s/1Y4phlVsHl09Y8BFF_GQRYA 提取码 提取码: 2hg4
 K9635B_35VCP_6M_800X1280-KANG1104-JD9365-CPT
 
 {"cmd":"server_push_open_video_call","room_id":"room_1542537064406_baf2"}
+
+
+查看分支：git branch
+创建分支：git branch <name>
+切换分支：git checkout <name>
+创建+切换分支：git checkout -b <name>
+合并某分支到当前分支：git merge <name>
+删除分支：git branch -d <name>
+
 
 测试json
 

@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Binder;
 import android.os.IBinder;
@@ -18,8 +17,6 @@ import com.tencent.liteav.demo.cap.common.CLog;
 import com.tencent.liteav.demo.cap.common.CapConfig;
 import com.tencent.liteav.demo.cap.common.CapConstants;
 import com.tencent.liteav.demo.cap.common.CapUtils;
-import com.tencent.liteav.demo.cap.manager.CapClientManager;
-import com.tencent.liteav.demo.cap.record.CapCameraThread;
 import com.tencent.liteav.demo.cap.util.CapRecorderTimer;
 
 import java.io.File;

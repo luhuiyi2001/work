@@ -1,11 +1,6 @@
 package com.tencent.liteav.demo.cap.callback;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.text.TextUtils;
-
 import com.google.gson.Gson;
-import com.tencent.liteav.demo.DemoApplication;
 import com.tencent.liteav.demo.cap.common.CLog;
 import com.tencent.liteav.demo.cap.common.CapConfig;
 import com.tencent.liteav.demo.cap.common.CapConstants;
@@ -13,7 +8,6 @@ import com.tencent.liteav.demo.cap.manager.CapClientManager;
 import com.tencent.liteav.demo.cap.manager.CapSharedPrefMgr;
 import com.tencent.liteav.demo.cap.socket.CapInfoResponse;
 import com.tencent.liteav.demo.cap.socket.UserInfo;
-import com.tencent.liteav.demo.play.superplayer.SharePreferenceUtils;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;

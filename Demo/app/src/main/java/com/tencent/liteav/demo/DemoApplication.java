@@ -3,12 +3,11 @@ package com.tencent.liteav.demo;
 import android.support.multidex.MultiDexApplication;
 
 import com.tencent.bugly.crashreport.CrashReport;
-import com.tencent.liteav.demo.cap.manager.CapStateInfoManager;
 import com.tencent.rtmp.TXLiveBase;
 import com.tencent.rtmp.TXLiveConstants;
 
 public class DemoApplication extends MultiDexApplication {
-    private static final String TAG = "CapClientManager";
+    private static final String TAG = DemoApplication.class.getSimpleName();
 //    private RefWatcher mRefWatcher;
     private static DemoApplication instance;
     String ugcLicenceUrl = "http://download-1252463788.cossh.myqcloud.com/xiaoshipin/licence_android/TXUgcSDK.licence";
@@ -36,7 +35,7 @@ public class DemoApplication extends MultiDexApplication {
         //测试代码
 //        TCHttpEngine.getInstance().initContext(getApplicationContext());
 //        mRefWatcher = LeakCanary.install(this);
-        CapStateInfoManager.getInstance().setContext(this);
+//        CapStateInfoManager.getInstance().setContext(this);
     }
 
 //    public static RefWatcher getRefWatcher(Context context) {

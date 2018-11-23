@@ -28,6 +28,22 @@ public class CapSharedPrefMgr {
         mSharedPrefs = CapSharePrefUtils.newInstance(DemoApplication.getApplication(), CapConstants.SHARED_PREFS_NAME);
     }
 
+    public String getLatitude() {
+        return CapSharePrefUtils.getString(mSharedPrefs, CapConstants.KEY_LATITUDE, "0");
+    }
+
+    public final void putLatitude(String value) {
+        CapSharePrefUtils.putString(mSharedPrefs, CapConstants.KEY_LATITUDE, value);
+    }
+
+    public String getLongitude() {
+        return CapSharePrefUtils.getString(mSharedPrefs, CapConstants.KEY_LONGITUDE, "0");
+    }
+
+    public final void putLongitude(String value) {
+        CapSharePrefUtils.putString(mSharedPrefs, CapConstants.KEY_LONGITUDE, value);
+    }
+
     public String getUserID() {
         return CapSharePrefUtils.getString(mSharedPrefs, CapConstants.KEY_USER_ID);
     }

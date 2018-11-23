@@ -40,21 +40,21 @@
         android:largeHeap="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".cap.home.Home"
+        <!--<activity android:name=".cap.home.Home"
             android:theme="@android:style/Theme.Wallpaper.NoTitleBar"
             android:launchMode="singleInstance"
             android:stateNotNeeded="true"
             android:screenOrientation="portrait"
             android:label="Home">
-            <!--<intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
-        </activity>
+            </intent-filter>
+        </activity>-->
 
         <activity
-            android:name=".cap.CapActivity"
+            android:name=".CapActivity"
             android:label="RundeCap"
             android:theme="@style/RtmproomActivityTheme"
             android:windowSoftInputMode="adjustNothing" >
@@ -62,26 +62,26 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.HOME"/>
                 <category android:name="android.intent.category.DEFAULT" />
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <service android:name=".cap.record.CapRecordSerivice"/>
+        <!--<service android:name=".cap.record.CapRecordSerivice"/>
         <service android:name=".cap.service.CapRecorderService"/>
-        <service android:name=".cap.service.CapClientService"/>
+        <service android:name=".cap.service.CapClientService"/>-->
         <activity
             android:name=".cap.home.AllAppActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"/>
-        <receiver android:name=".cap.receiver.CapNetWorkStateReceiver">
-            <!--<intent-filter>
+        <!--<receiver android:name=".cap.receiver.CapNetWorkStateReceiver">
+            <intent-filter>
                 //检测网络变化的acton
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>-->
-        </receiver>
+            </intent-filter>
+        </receiver>-->
         <!-- 【必须】消息收发service -->
         <service
             android:name="com.tencent.qalsdk.service.QalService"
@@ -101,18 +101,18 @@
             </intent-filter>
         </receiver>
 
-        <activity
+        <!--<activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait">
-            <!--<intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
-        </activity>
+            </intent-filter>
+        </activity>-->
         <activity
             android:name=".common.activity.QRCodeScanActivity"
             android:screenOrientation="portrait" />

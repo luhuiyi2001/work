@@ -5,12 +5,10 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,10 +18,9 @@ import android.widget.TextView;
 import com.tencent.liteav.demo.R;
 import com.tencent.liteav.demo.cap.common.CLog;
 import com.tencent.liteav.demo.cap.inter.CapActivityInterface;
-import com.tencent.liteav.demo.cap.manager.CapClientManager;
 import com.tencent.liteav.demo.cap.manager.CapInfoManager;
 import com.tencent.liteav.demo.cap.manager.CapSharedPrefMgr;
-import com.tencent.liteav.demo.common.misc.AndroidPermissions;
+import com.tencent.liteav.demo.cap.manager.CapSocketManager;
 import com.tencent.liteav.demo.roomutil.commondef.PusherInfo;
 import com.tencent.liteav.demo.roomutil.commondef.RoomInfo;
 import com.tencent.liteav.demo.rtcroom.IRTCRoomListener;
@@ -54,14 +51,14 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
 
     final Runnable mPusherJoinTimeout = new Runnable() {
         @Override public void run() {
-            CapClientManager.getInstance().onSend(CapInfoManager.getInstance().getReportRoomStatusMsg(mRoomInfo.roomID, "-1", null));
+            CapSocketManager.getInstance().onSend(CapInfoManager.getInstance().getReportRoomStatusMsg(mRoomInfo.roomID, "-1", null));
             onBackPressed();
         }
     };
 
     final Runnable mAllPusherExitTimeout = new Runnable() {
         @Override public void run() {
-            CapClientManager.getInstance().onSend(CapInfoManager.getInstance().getReportRoomStatusMsg(mRoomInfo.roomID, "-2", null));
+            CapSocketManager.getInstance().onSend(CapInfoManager.getInstance().getReportRoomStatusMsg(mRoomInfo.roomID, "-2", null));
             onBackPressed();
         }
     };
@@ -163,7 +160,7 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
                 public void onSuccess(String roomId) {
                     CLog.i(TAG, "roomId : " + roomId);
                     mRoomInfo.roomID = roomId;
-                    CapClientManager.getInstance().onSend(CapInfoManager.getInstance().getCreateRoomMsg(roomId, mUserIDs));
+                    CapSocketManager.getInstance().onSend(CapInfoManager.getInstance().getCreateRoomMsg(roomId, mUserIDs));
                     mHandler.postDelayed(mPusherJoinTimeout, 60000);
                 }
 
@@ -288,7 +285,7 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
         mPusherList.add(pusher.userID);
         mHandler.removeCallbacks(mPusherJoinTimeout);
         mHandler.removeCallbacks(mAllPusherExitTimeout);
-        CapClientManager.getInstance().onSend(CapInfoManager.getInstance().getReportRoomStatusMsg(mRoomInfo.roomID, "0", pusher.userID));
+        CapSocketManager.getInstance().onSend(CapInfoManager.getInstance().getReportRoomStatusMsg(mRoomInfo.roomID, "0", pusher.userID));
         RoomVideoView videoView = applyVideoView(pusher.userID, pusher.userName == null ? pusher.userID : pusher.userName);
         if (videoView != null)  {
             mActivityInterface.getRTCRoom().addRemoteView(videoView.videoView, pusher, new RTCRoom.RemoteViewPlayCallback() {
@@ -310,7 +307,7 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
         mActivityInterface.getRTCRoom().deleteRemoteView(pusher);//关闭远端视频渲染
         recycleVideoView(pusher.userID);
         mPusherList.remove(pusher.userID);
-        CapClientManager.getInstance().onSend(CapInfoManager.getInstance().getReportRoomStatusMsg(mRoomInfo.roomID, "1", pusher.userID));
+        CapSocketManager.getInstance().onSend(CapInfoManager.getInstance().getReportRoomStatusMsg(mRoomInfo.roomID, "1", pusher.userID));
         if (mPusherList.size() == 0) {
             mHandler.postDelayed(mAllPusherExitTimeout, 30000);
         }

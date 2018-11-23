@@ -63,21 +63,17 @@
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
         android:background="@drawable/application_background">
-        <Button android:id="@+id/btn1"
+        <Button android:id="@+id/btn_recorder"
             style="@style/TestButton"
-            android:onClick="onClickBtn1"
-            android:text="StartRecorder"/>
-        <Button android:id="@+id/btn2"
+            android:text="Start Recorder"/>
+        <Button android:id="@+id/btn_pusher"
             style="@style/TestButton"
-            android:onClick="onClickBtn2"
-            android:text="StartPusher"/>
-        <Button android:id="@+id/btn3"
+            android:text="Start Pusher"/>
+        <Button android:id="@+id/btn_chat"
             style="@style/TestButton"
-            android:onClick="onClickBtn3"
-            android:text="StartRTCRoom"/>
-        <Button android:id="@+id/btn_show_all_apps"
+            android:text="Start Chat"/>
+        <Button android:id="@+id/btn_show_apps"
             style="@style/TestButton"
-            android:onClick="onShowApps"
             android:text="Show Apps"/>
     </LinearLayout>
 </RelativeLayout>

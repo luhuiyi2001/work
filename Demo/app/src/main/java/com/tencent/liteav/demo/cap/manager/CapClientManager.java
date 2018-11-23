@@ -220,7 +220,7 @@ public class CapClientManager implements OnReceiveMsgListener {
 					CLog.d(TAG, "TIME_OUT");
 					reconnection();
 				} else {
-					mClient.send(CapInfoManager.getInstance().getLocationReqMsg(mGetLocation == null ? null : mGetLocation.getLocation()));
+					mClient.send(CapInfoManager.getInstance().getLocationReqMsg());
 				}
 			}
 

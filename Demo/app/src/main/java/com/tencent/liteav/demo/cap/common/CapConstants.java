@@ -40,4 +40,6 @@ public class CapConstants {
     public static final String KEY_USER_NAME = "userName";
     public static final String KEY_USER_IMG = "userImg";
     public static final String KEY_URL = "url";
+    public static final String KEY_LATITUDE = "latitude";
+    public static final String KEY_LONGITUDE = "longitude";
 }

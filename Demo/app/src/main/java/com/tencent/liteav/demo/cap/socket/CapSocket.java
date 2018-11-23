@@ -29,7 +29,7 @@ public class CapSocket {
 	public synchronized boolean connect() {
 		CLog.d(TAG, "connect");
 		if (mSocket != null) {
-			return false;
+			close();
 		}
 		try {
 			/* * * * * * * * * * 客户端 Socket 通过构造方法连接服务器 * * * * * * * * * */

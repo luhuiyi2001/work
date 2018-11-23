@@ -42,11 +42,11 @@ public class CapUtils {
             if (imei == null) imei = "";
         } catch (Exception e) {
         }
-        return CapConfig.TEST_IMEI;
+        return imei;
     }
 
     public static boolean isNetworkAvailable(Context context) {
-        ConnectivityManager connectivity = (ConnectivityManager)context.getSystemService("connectivity");
+        ConnectivityManager connectivity = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if(connectivity == null) {
             return false;
         } else {

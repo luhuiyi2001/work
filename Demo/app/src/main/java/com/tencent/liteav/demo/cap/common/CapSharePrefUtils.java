@@ -28,4 +28,8 @@ public class CapSharePrefUtils {
     public static final String getString(SharedPreferences s, String key) {
         return s.getString(key,"");
     }
+
+    public static final String getString(SharedPreferences s, String key, String defValue) {
+        return s.getString(key, defValue);
+    }
 }
