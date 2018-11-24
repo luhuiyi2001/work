@@ -54,7 +54,7 @@
         </activity>-->
 
         <activity
-            android:name=".CapActivity"
+            android:name=".cap.CapActivity"
             android:label="RundeCap"
             android:theme="@style/RtmproomActivityTheme"
             android:windowSoftInputMode="adjustNothing" >

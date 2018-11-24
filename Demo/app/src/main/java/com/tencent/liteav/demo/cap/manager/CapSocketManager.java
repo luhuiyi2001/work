@@ -6,7 +6,6 @@ import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.tencent.liteav.demo.cap.callback.OnSocketCallback;
 import com.tencent.liteav.demo.cap.common.CLog;
 import com.tencent.liteav.demo.cap.common.CapConfig;
 import com.tencent.liteav.demo.cap.listener.OnReceiveMsgListener;
@@ -26,16 +25,17 @@ public class CapSocketManager implements OnReceiveMsgListener {
 
 	private ExecutorService mThreadPool;
 	private CapSocket mClient;
-	private List<OnSocketCallback> mRespCallbackList = new ArrayList<OnSocketCallback>();
+	private List<OnResponseCallback> mRespCallbackList = new ArrayList<OnResponseCallback>();
+	private List<OnConnectStateCallback> mConnectStateCallbackList = new ArrayList<OnConnectStateCallback>();
 	private int mNullDataCount;
 
-	private Handler mHandler = new Handler(Looper.myLooper());
-	final Runnable mWaitTimeout = new Runnable() {
-		@Override public void run() {
-			CLog.d(TAG, "ReceiveTimeout");
-			reconnect();
-		}
-	};
+//	private Handler mHandler = new Handler(Looper.myLooper());
+//	final Runnable mWaitTimeout = new Runnable() {
+//		@Override public void run() {
+//			CLog.d(TAG, "ReceiveTimeout");
+//			reconnect();
+//		}
+//	};
 
 	public static CapSocketManager getInstance() {
 		if (sMgr == null) {
@@ -49,18 +49,32 @@ public class CapSocketManager implements OnReceiveMsgListener {
 		mClient.setOnReceiveMsgListener(this);
 	}
 
-	public void addOnSocketCallback(OnSocketCallback callback) {
+	public void addOnResponseCallback(OnResponseCallback callback) {
 		if (callback == null) {
 			return;
 		}
 		mRespCallbackList.add(callback);
 	}
 
-	public void removeOnSocketCallback(OnSocketCallback callback) {
+	public void removeOnResponseCallback(OnResponseCallback callback) {
 		if (callback == null) {
 			return;
 		}
 		mRespCallbackList.remove(callback);
+	}
+
+	public void addOnConnectStateCallback(OnConnectStateCallback callback) {
+		if (callback == null) {
+			return;
+		}
+		mConnectStateCallbackList.add(callback);
+	}
+
+	public void removeOnConnectStateCallback(OnConnectStateCallback callback) {
+		if (callback == null) {
+			return;
+		}
+		mConnectStateCallbackList.remove(callback);
 	}
 
 	public void reconnect() {
@@ -99,8 +113,8 @@ public class CapSocketManager implements OnReceiveMsgListener {
 			}
 			return;
 		}
-		mHandler.removeCallbacks(mWaitTimeout);
-		mHandler.postDelayed(mWaitTimeout, CapConfig.TIME_OUT);
+//		mHandler.removeCallbacks(mWaitTimeout);
+//		mHandler.postDelayed(mWaitTimeout, CapConfig.TIME_OUT);
 		mNullDataCount = 0;
         try {
 			CapInfoResponse resp = new Gson().fromJson(msg, CapInfoResponse.class);
@@ -168,17 +182,27 @@ public class CapSocketManager implements OnReceiveMsgListener {
 
 	private void notifyConnected() {
 		CLog.d(TAG, "notifyConnected");
-		mHandler.removeCallbacks(mWaitTimeout);
-		mHandler.postDelayed(mWaitTimeout, CapConfig.TIME_OUT);
-		for (int i = 0; i < mRespCallbackList.size(); i++) {
-			mRespCallbackList.get(i).notifyConnected();
+//		mHandler.removeCallbacks(mWaitTimeout);
+//		mHandler.postDelayed(mWaitTimeout, CapConfig.TIME_OUT);
+		for (int i = 0; i < mConnectStateCallbackList.size(); i++) {
+			mConnectStateCallbackList.get(i).notifyConnected();
 		}
 	}
 
 	private void notifyDisconnected() {
 		CLog.d(TAG, "notifyDisconnected");
-		for (int i = 0; i < mRespCallbackList.size(); i++) {
-			mRespCallbackList.get(i).notifyDisconnected();
+		for (int i = 0; i < mConnectStateCallbackList.size(); i++) {
+			mConnectStateCallbackList.get(i).notifyDisconnected();
 		}
+	}
+
+
+	public interface OnResponseCallback {
+		void onResponse(CapInfoResponse resp);
+	}
+
+	public interface OnConnectStateCallback {
+		void notifyConnected();
+		void notifyDisconnected();
 	}
 }

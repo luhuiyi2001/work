@@ -67,7 +67,7 @@ public class CapReceiveEventImpl implements OnReceiveEventListener {
     @Override
     public void onPullWifiList(CapInfoResponse resp) {
         CLog.d(TAG, "onPullWifiList");
-        CapClientManager.getInstance().onSend(CapInfoManager.getInstance().getWifiListReqMsg(mContext));
+//        CapClientManager.getInstance().onSend(CapInfoManager.getInstance().getWifiListReqMsg(mContext));
     }
 
     @Override

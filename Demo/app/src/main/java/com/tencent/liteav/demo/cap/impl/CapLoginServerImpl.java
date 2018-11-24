@@ -2,9 +2,7 @@ package com.tencent.liteav.demo.cap.impl;
 
 import android.app.Activity;
 import android.os.Handler;
-import android.os.Looper;
 
-import com.tencent.liteav.demo.cap.callback.OnSocketCallback;
 import com.tencent.liteav.demo.cap.common.CLog;
 import com.tencent.liteav.demo.cap.common.CapConfig;
 import com.tencent.liteav.demo.cap.common.CapConstants;
@@ -13,7 +11,7 @@ import com.tencent.liteav.demo.cap.manager.CapSocketManager;
 import com.tencent.liteav.demo.cap.socket.CapInfoResponse;
 import com.tencent.liteav.demo.cap.util.HeartbeatTimer;
 
-public class CapLoginServerImpl implements OnSocketCallback {
+public class CapLoginServerImpl implements CapSocketManager.OnResponseCallback, CapSocketManager.OnConnectStateCallback {
     private static final String TAG = CapLoginServerImpl.class.getSimpleName();
     private long mLastReceiveTime = 0;
     private HeartbeatTimer mBeatTimer;

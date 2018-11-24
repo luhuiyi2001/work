@@ -21,6 +21,7 @@ public class CapImeiMonitor {
     public void start(){
         CLog.d(TAG, "start");
         if (!TextUtils.isEmpty(CapUtils.getImei())) {
+            CapSocketManager.getInstance().connect();
             return;
         }
         startTimer();
