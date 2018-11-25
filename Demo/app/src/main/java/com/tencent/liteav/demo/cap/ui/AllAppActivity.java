@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.tencent.liteav.demo.cap.home;
+package com.tencent.liteav.demo.cap.ui;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;

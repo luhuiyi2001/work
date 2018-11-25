@@ -22,7 +22,7 @@ import com.tencent.liteav.demo.R;
 import com.tencent.liteav.demo.cap.common.CLog;
 import com.tencent.liteav.demo.cap.common.CapConfig;
 import com.tencent.liteav.demo.cap.common.CapUtils;
-import com.tencent.liteav.demo.cap.inter.CapActivityInterface;
+import com.tencent.liteav.demo.cap.callback.CapActivityInterface;
 import com.tencent.liteav.demo.cap.manager.CapStorageManager;
 
 import java.io.File;

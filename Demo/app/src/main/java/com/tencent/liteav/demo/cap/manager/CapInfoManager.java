@@ -4,17 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
-import android.location.Location;
-import android.net.wifi.ScanResult;
-import android.net.wifi.WifiManager;
 
 import com.google.gson.Gson;
-import com.tencent.liteav.demo.cap.common.CLog;
 import com.tencent.liteav.demo.cap.common.CapConstants;
 import com.tencent.liteav.demo.cap.common.CapUtils;
 import com.tencent.liteav.demo.cap.socket.CapInfoRequest;
-import com.tencent.liteav.demo.cap.socket.WifiInfo;
-import com.tencent.liteav.demo.cap.wifi.WifiAdmin;
+import com.tencent.liteav.demo.cap.socket.CapWifi;
 
 
 public class CapInfoManager {
@@ -64,7 +59,7 @@ public class CapInfoManager {
 		return new Gson().toJson(req);
 	}
 	
-	public String getWifiListReqMsg(List<WifiInfo> wifiList) {
+	public String getWifiListReqMsg(List<CapWifi> wifiList) {
 		CapInfoRequest req = new CapInfoRequest();
 		req.act = CapConstants.REQ_ACT_CA_UPLOAD_WIFI_LIST;
 		req.device_id = CapUtils.getImei();

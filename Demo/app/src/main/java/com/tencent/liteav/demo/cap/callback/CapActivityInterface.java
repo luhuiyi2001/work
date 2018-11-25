@@ -1,4 +1,4 @@
-package com.tencent.liteav.demo.cap.inter;
+package com.tencent.liteav.demo.cap.callback;
 
 import com.tencent.liteav.demo.rtcroom.RTCRoom;
 

@@ -6,33 +6,20 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.Service;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.tencent.liteav.demo.R;
 import com.tencent.liteav.demo.cap.common.CLog;
 import com.tencent.liteav.demo.cap.common.CapConstants;
-import com.tencent.liteav.demo.cap.inter.CapActivityInterface;
-import com.tencent.liteav.demo.cap.manager.CapSharedPrefMgr;
-import com.tencent.liteav.demo.common.misc.AndroidPermissions;
-import com.tencent.liteav.demo.push.LivePublisherActivity;
-import com.tencent.liteav.demo.roomutil.commondef.PusherInfo;
-import com.tencent.liteav.demo.roomutil.commondef.RoomInfo;
-import com.tencent.liteav.demo.rtcroom.IRTCRoomListener;
-import com.tencent.liteav.demo.rtcroom.RTCRoom;
+import com.tencent.liteav.demo.cap.callback.CapActivityInterface;
 import com.tencent.rtmp.ITXLivePushListener;
 import com.tencent.rtmp.TXLiveConstants;
 import com.tencent.rtmp.TXLivePushConfig;
@@ -40,8 +27,6 @@ import com.tencent.rtmp.TXLivePusher;
 import com.tencent.rtmp.ui.TXCloudVideoView;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
 
 public class CapPusherFragment extends Fragment implements ITXLivePushListener {
 

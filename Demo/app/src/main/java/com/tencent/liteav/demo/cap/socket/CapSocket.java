@@ -2,7 +2,7 @@ package com.tencent.liteav.demo.cap.socket;
 
 import com.tencent.liteav.demo.cap.common.CLog;
 import com.tencent.liteav.demo.cap.common.CapConfig;
-import com.tencent.liteav.demo.cap.listener.OnReceiveMsgListener;
+import com.tencent.liteav.demo.cap.callback.OnSocketCallback;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -16,19 +16,20 @@ public class CapSocket {
 
 	private static final String TAG = CapSocket.class.getSimpleName();
 
-	private OnReceiveMsgListener mListener;
+	private OnSocketCallback mCallback;
 	
 	private Socket mSocket;
 	private BufferedWriter mSendBW;
 	private InputStream mReadIS;
+	private boolean mIsConnected;
 	
-	public void setOnReceiveMsgListener(OnReceiveMsgListener listener) {
-		mListener = listener;
+	public void setOnReceiveMsgListener(OnSocketCallback callback) {
+		mCallback = callback;
 	}
 
 	public synchronized boolean connect() {
-		CLog.d(TAG, "connect");
-		if (mSocket != null) {
+		CLog.d(TAG, "connect : " + mIsConnected);
+		if (mIsConnected) {
 			close();
 		}
 		try {
@@ -64,7 +65,7 @@ public class CapSocket {
 			mReadIS = mSocket.getInputStream();
 			
 			if (mSocket.isConnected()) {
-				return true;
+				mIsConnected = true;
 			} else {
 				close();
 			}
@@ -73,17 +74,19 @@ public class CapSocket {
 			CLog.e(TAG, "connect = " + e.getMessage());
 			close();
 		}
-		return false;
+
+		if (mIsConnected) {
+			mCallback.onConnected();
+		} else {
+			mCallback.onUnconnect();
+		}
+		return mIsConnected;
 	}
 	
 	public void send(String msg) {
-		if (mSocket == null) {
-			CLog.d(TAG, "send - mSocket == null");
-			return;
-		}
-		//CLog.d(TAG, "send - isConnected = " + mSocket.isConnected() + ", isClosed = " + mSocket.isClosed());
+		CLog.d(TAG, "send : " + mIsConnected);
 		try {
-			if (mSocket.isConnected() && !mSocket.isClosed()) {
+			if (mIsConnected) {
 				// 向服务器端写数据，写入一个缓冲区
 				// 注：此处字符串最后必须包含“\r\n\r\n”，告诉服务器HTTP头已经结束，可以处理数据，否则会造成下面的读取数据出现阻塞
 				// 在write() 方法中可以定义规则，与后台匹配来识别相应的功能，例如登录Login()
@@ -92,10 +95,11 @@ public class CapSocket {
 				// 发送缓冲区中数据 - 前面说调用 flush() 无效，可能是调用的方法不对吧！
 				mSendBW.flush();
 				CLog.i(TAG, "send = " + msg);
-			} else {
-				// 关闭网络
-				close();
 			}
+//			else {
+//				// 关闭网络
+//				close();
+//			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			CLog.e(TAG, "send = " + e.getMessage());
@@ -104,16 +108,12 @@ public class CapSocket {
 	}
 
 	public void receive() {
-		if (mSocket == null) {
-			CLog.d(TAG, "receive - mSocket == null");
-			return;
-		}
-		//CLog.d(TAG, "receive - isConnected = " + mSocket.isConnected() + ", isClosed = " + mSocket.isClosed());
+		CLog.d(TAG, "receive : " + mIsConnected);
 		/* * * * * * * * * * Socket 客户端读取服务器端响应数据 * * * * * * * * * */
 		try {
 			// serverSocket.isConnected 代表是否连接成功过
 			// 判断 Socket 是否处于连接状态
-			if (mSocket.isConnected() && !mSocket.isClosed()) {
+			if (mIsConnected) {
 				// 缓冲区
 //				byte[] buffer = new byte[mReadIS.available()];
 				// 读取缓冲区
@@ -126,13 +126,14 @@ public class CapSocket {
 	            String msg = br.readLine();
 				// 日志中输出
 				CLog.i(TAG, "receive = " + msg);
-				if (mListener != null) {
-					mListener.onReceived(msg);
+				if (mCallback != null) {
+					mCallback.onReceived(msg);
 				}
-			} else {
-				// 关闭网络
-				close();
 			}
+//			else {
+//				// 关闭网络
+//				close();
+//			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			CLog.e(TAG, "receive = " + e.getMessage());
@@ -157,27 +158,32 @@ public class CapSocket {
 			e.printStackTrace();
 			CLog.e(TAG, "close = " + e.getMessage());
 		}
+
+		if (mIsConnected) {
+			mIsConnected = false;
+			mCallback.onClosed();
+		}
 	}
 	
 	public boolean isConnected() {
-		if (mSocket != null && mSocket.isConnected()) {
-			return true;
-		}
-		return false;
+//		if (mSocket != null && mSocket.isConnected()) {
+//			return true;
+//		}
+		return mIsConnected;
 	}
 	
-	public boolean isClosed() {
-		if (mSocket == null || mSocket.isClosed()) {
-			return true;
-		}
-		return false;
-	}
+//	public boolean isClosed() {
+//		if (mSocket == null || mSocket.isClosed()) {
+//			return true;
+//		}
+//		return false;
+//	}
 	
-	public boolean isDisconnected() {
-		if (mSocket != null && (!mSocket.isConnected() || mSocket.isClosed())) {
-			return true;
-		}
-		return false;
-	}
+//	public boolean isDisconnected() {
+//		if (mSocket != null && (!mSocket.isConnected() || mSocket.isClosed())) {
+//			return true;
+//		}
+//		return false;
+//	}
 
 }

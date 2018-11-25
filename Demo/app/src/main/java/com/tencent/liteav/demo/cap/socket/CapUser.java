@@ -1,6 +1,6 @@
 package com.tencent.liteav.demo.cap.socket;
 
-public class UserInfo {
+public class CapUser {
     public String user_id;
     public String device_id;
     public String mobile;

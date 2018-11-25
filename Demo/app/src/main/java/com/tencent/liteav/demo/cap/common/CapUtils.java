@@ -42,7 +42,7 @@ public class CapUtils {
             if (imei == null) imei = "";
         } catch (Exception e) {
         }
-        return imei;
+        return CapConfig.TEST_IMEI;
     }
 
     public static boolean isNetworkAvailable(Context context) {

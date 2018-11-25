@@ -7,11 +7,10 @@ import android.media.MediaRecorder;
 import android.view.SurfaceView;
 import android.widget.FrameLayout;
 
-import com.tencent.liteav.demo.R;
 import com.tencent.liteav.demo.cap.common.CLog;
 import com.tencent.liteav.demo.cap.common.CapConfig;
 import com.tencent.liteav.demo.cap.common.CapUtils;
-import com.tencent.liteav.demo.cap.util.CapRecorderTimer;
+import com.tencent.liteav.demo.cap.common.CapTimer;
 
 import java.io.File;
 import java.util.Date;
@@ -23,7 +22,7 @@ public class CapRecorderImpl {
     private SurfaceView mRecordSV;
     private boolean isRecording;
     private MediaRecorder mediaRecorder;
-    private CapRecorderTimer mTimer;
+    private CapTimer mTimer;
 
     private Activity mActivity;
     public CapRecorderImpl(Activity context) {
@@ -142,9 +141,9 @@ public class CapRecorderImpl {
             return;
         }
         if (mTimer == null) {
-            mTimer = new CapRecorderTimer();
+            mTimer = new CapTimer();
         }
-        mTimer.setOnScheduleListener(new CapRecorderTimer.OnScheduleListener() {
+        mTimer.setOnScheduleListener(new CapTimer.OnScheduleListener() {
             @Override
             public void onSchedule() {
                 CLog.d(TAG, "onSchedule");

@@ -1,4 +1,4 @@
-package com.tencent.liteav.demo.cap.util;
+package com.tencent.liteav.demo.cap.common;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -7,13 +7,13 @@ import java.util.TimerTask;
  * Created by melo on 2017/9/21.
  */
 
-public class HeartbeatTimer {
+public class CapTimer {
 
     private Timer timer;
     private TimerTask task;
     private OnScheduleListener mListener;
 
-    public HeartbeatTimer() {
+    public CapTimer() {
         timer = new Timer();
     }
 

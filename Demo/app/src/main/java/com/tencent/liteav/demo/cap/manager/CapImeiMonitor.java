@@ -6,7 +6,7 @@ import com.tencent.liteav.demo.cap.callback.OnImeiCallback;
 import com.tencent.liteav.demo.cap.common.CLog;
 import com.tencent.liteav.demo.cap.common.CapConfig;
 import com.tencent.liteav.demo.cap.common.CapUtils;
-import com.tencent.liteav.demo.cap.util.CapTimer;
+import com.tencent.liteav.demo.cap.common.CapTimer;
 
 public class CapImeiMonitor {
     private static final String TAG = CapImeiMonitor.class.getSimpleName();

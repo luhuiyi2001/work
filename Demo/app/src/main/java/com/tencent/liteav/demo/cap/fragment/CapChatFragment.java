@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.tencent.liteav.demo.R;
 import com.tencent.liteav.demo.cap.common.CLog;
-import com.tencent.liteav.demo.cap.inter.CapActivityInterface;
+import com.tencent.liteav.demo.cap.callback.CapActivityInterface;
 import com.tencent.liteav.demo.cap.manager.CapInfoManager;
 import com.tencent.liteav.demo.cap.manager.CapSharedPrefMgr;
 import com.tencent.liteav.demo.cap.manager.CapSocketManager;

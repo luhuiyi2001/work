@@ -1,14 +1,12 @@
 package com.tencent.liteav.demo.cap.manager;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.tencent.liteav.demo.cap.common.CLog;
 import com.tencent.liteav.demo.cap.common.CapConfig;
-import com.tencent.liteav.demo.cap.listener.OnReceiveMsgListener;
+import com.tencent.liteav.demo.cap.callback.OnSocketCallback;
 import com.tencent.liteav.demo.cap.socket.CapInfoResponse;
 import com.tencent.liteav.demo.cap.socket.CapSocket;
 
@@ -18,7 +16,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-public class CapSocketManager implements OnReceiveMsgListener {
+public class CapSocketManager implements OnSocketCallback {
 
 	private static final String TAG = CapSocketManager.class.getSimpleName();
 	private static CapSocketManager sMgr;
@@ -47,6 +45,8 @@ public class CapSocketManager implements OnReceiveMsgListener {
 	private CapSocketManager() {
 		mClient = new CapSocket();
 		mClient.setOnReceiveMsgListener(this);
+		// 根据CPU数目初始化线程池
+		mThreadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * CapConfig.POOL_SIZE);
 	}
 
 	public void addOnResponseCallback(OnResponseCallback callback) {
@@ -77,10 +77,10 @@ public class CapSocketManager implements OnReceiveMsgListener {
 		mConnectStateCallbackList.remove(callback);
 	}
 
-	public void reconnect() {
-		disconnect();
-		connect();
-	}
+//	public void reconnect() {
+//		disconnect();
+//		connect();
+//	}
 
 	public void connect() {
 		CLog.d(TAG, "connect = " + (mClient == null ? "null" : mClient.isConnected()));
@@ -90,12 +90,11 @@ public class CapSocketManager implements OnReceiveMsgListener {
 	public void disconnect() {
 		CLog.d(TAG, "disconnect");
 		try {
-			if (mThreadPool != null) {
-				mThreadPool.shutdownNow();
-				mThreadPool = null;
-			}
+//			if (mThreadPool != null) {
+//				mThreadPool.shutdownNow();
+//				mThreadPool = null;
+//			}
 			mClient.close();
-			notifyDisconnected();
 		} catch (Exception e) {
 			e.printStackTrace();
 			CLog.e(TAG, e.getMessage());
@@ -109,7 +108,7 @@ public class CapSocketManager implements OnReceiveMsgListener {
 			mNullDataCount++;
 			if (mNullDataCount > 10) {
 				mNullDataCount = 0;
-				reconnect();
+				disconnect();
 			}
 			return;
 		}
@@ -129,13 +128,27 @@ public class CapSocketManager implements OnReceiveMsgListener {
 			CLog.e(TAG, e.getMessage());
 		}
 	}
-	
+
+	@Override
+	public void onConnected() {
+		CLog.d(TAG, "onConnected");
+		startReceiveThread();
+		notifyConnected();
+	}
+
+	@Override
+	public void onUnconnect() {
+
+	}
+
+	@Override
+	public void onClosed() {
+		notifyDisconnected();
+	}
+
 	public void onSend(final String req) {
 		CLog.d(TAG, "onSend = " + req);
 		if (TextUtils.isEmpty(req)) {
-			return;
-		}
-		if (mThreadPool == null) {
 			return;
 		}
 		mThreadPool.execute(new Runnable() {
@@ -148,18 +161,18 @@ public class CapSocketManager implements OnReceiveMsgListener {
 
 	private void startConnectThread() {
 		CLog.d(TAG, "startConnectThread");
-		// 根据CPU数目初始化线程池
-		mThreadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * CapConfig.POOL_SIZE);
+
 		mThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
-			if (mClient.connect()) {
-				CLog.d(TAG, "Connect Success!");
-				startReceiveThread();
-				notifyConnected();
-			} else {
-				CLog.d(TAG, "Connect Failed!");
-			}
+				mClient.connect();
+//			if (mClient.connect()) {
+//				CLog.d(TAG, "Connect Success!");
+//				startReceiveThread();
+//				notifyConnected();
+//			} else {
+//				CLog.d(TAG, "Connect Failed!");
+//			}
 			}
 		});
 	}
@@ -173,9 +186,9 @@ public class CapSocketManager implements OnReceiveMsgListener {
 		mThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
-			while(!mClient.isClosed()) {
-				mClient.receive();
-			}
+				while(mClient.isConnected()) {
+					mClient.receive();
+				}
 			}
 		});
 	}
@@ -196,13 +209,13 @@ public class CapSocketManager implements OnReceiveMsgListener {
 		}
 	}
 
-
 	public interface OnResponseCallback {
 		void onResponse(CapInfoResponse resp);
 	}
 
 	public interface OnConnectStateCallback {
 		void notifyConnected();
+		void notifyUnconnect();
 		void notifyDisconnected();
 	}
 }

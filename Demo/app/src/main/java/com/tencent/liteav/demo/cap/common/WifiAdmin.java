@@ -1,4 +1,4 @@
-package com.tencent.liteav.demo.cap.wifi;
+package com.tencent.liteav.demo.cap.common;
 
 import android.content.Context;
 import android.net.wifi.ScanResult;
@@ -139,10 +139,11 @@ public class WifiAdmin {
     }
 
     // 添加一个网络并连接
-    public void addNetwork(WifiConfiguration wcg) {
+    public boolean addNetwork(WifiConfiguration wcg) {
         int wcgID = mWifiManager.addNetwork(wcg);
         boolean success =  mWifiManager.enableNetwork(wcgID, true);
         CLog.i(TAG, "wcgID = " + wcgID + ", success = " + success);
+        return success;
     }
 
     // 断开指定ID的网络

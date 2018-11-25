@@ -8,7 +8,7 @@ public class CapConstants {
     public static final String RES_CMD_SERVER_PUSH_OPEN_RTSP = "server_push_open_rtsp";
     public static final String RES_CMD_SERVER_PUSH_STOP_RTSP = "server_push_stop_rtsp";
     public static final String RES_CMD_SERVER_PULL_WIFI_LIST = "server_pull_wifi_list";
-    public static final String RES_CMD_SERVER_PUSH_CONNECT_WIFI = "server_push_set_wifis";
+    public static final String RES_CMD_SERVER_PUSH_CONNECT_WIFI = "server_push_set_wifi";
     public static final String RES_CMD_SERVER_PUSH_OPEN_VIDEO_CALL = "server_push_open_video_call";
     public static final String RES_CMD_SERVER_PUSH_APP_ASK_FOR_HELP = "server_push_app_ask_for_help";
 

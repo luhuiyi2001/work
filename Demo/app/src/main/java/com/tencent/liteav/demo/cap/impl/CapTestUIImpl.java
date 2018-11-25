@@ -1,23 +1,16 @@
 package com.tencent.liteav.demo.cap.impl;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkInfo;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 
 import com.tencent.liteav.demo.R;
 import com.tencent.liteav.demo.cap.CapActivity;
 import com.tencent.liteav.demo.cap.common.CLog;
-import com.tencent.liteav.demo.cap.common.CapConfig;
-import com.tencent.liteav.demo.cap.common.CapUtils;
-import com.tencent.liteav.demo.cap.home.AllAppActivity;
+import com.tencent.liteav.demo.cap.ui.AllAppActivity;
 import com.tencent.liteav.demo.cap.manager.CapInfoManager;
 import com.tencent.liteav.demo.cap.manager.CapSharedPrefMgr;
 import com.tencent.liteav.demo.cap.manager.CapSocketManager;

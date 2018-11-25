@@ -70,7 +70,7 @@
         <service android:name=".cap.service.CapRecorderService"/>
         <service android:name=".cap.service.CapClientService"/>-->
         <activity
-            android:name=".cap.home.AllAppActivity"
+            android:name=".cap.ui.AllAppActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:launchMode="singleTop"

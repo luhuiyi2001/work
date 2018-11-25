@@ -5,23 +5,17 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiManager;
-import android.text.TextUtils;
 
-import com.tencent.liteav.demo.cap.CapActivity;
 import com.tencent.liteav.demo.cap.common.CLog;
 import com.tencent.liteav.demo.cap.common.CapConstants;
-import com.tencent.liteav.demo.cap.common.CapUtils;
 import com.tencent.liteav.demo.cap.manager.CapInfoManager;
 import com.tencent.liteav.demo.cap.manager.CapSocketManager;
 import com.tencent.liteav.demo.cap.socket.CapInfoResponse;
-import com.tencent.liteav.demo.cap.socket.WifiInfo;
-import com.tencent.liteav.demo.cap.wifi.WifiAdmin;
+import com.tencent.liteav.demo.cap.common.WifiAdmin;
+import com.tencent.liteav.demo.cap.socket.CapWifi;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +29,7 @@ public class CapWifiImpl implements CapSocketManager.OnResponseCallback{
         mActivity = context;
         mWifiMgr = new WifiAdmin(context);
     }
-
+/**
     public void create() {
         registerIntentReceivers();
     }
@@ -77,21 +71,30 @@ public class CapWifiImpl implements CapSocketManager.OnResponseCallback{
     private void unregisterIntentReceivers() {
         mActivity.unregisterReceiver(mWifiReceiver);
     }
-
+*/
     @Override
     public void onResponse(CapInfoResponse resp) {
         if (CapConstants.RES_CMD_SERVER_PULL_WIFI_LIST.equals(resp.cmd)) {
             CLog.d(TAG, "onPullWifiList");
             CapSocketManager.getInstance().onSend(CapInfoManager.getInstance().getWifiListReqMsg(getWifiList()));
         } else if (CapConstants.RES_CMD_SERVER_PUSH_CONNECT_WIFI.equals(resp.cmd)) {
-            CLog.d(TAG, "onConnWifi = [ " + resp.spot + ", " + resp.pwd + " ]");
+            if (resp.data == null) {
+                CLog.d(TAG, "onConnWifi : null");
+                return;
+            }
+            String ssid = resp.data.spot;
+            String pwd = resp.data.pwd;
+            CLog.d(TAG, "onConnWifi = [ " + ssid + ", " + pwd + " ]");
             mWifiMgr.openWifi();
-            mWifiMgr.addNetwork(mWifiMgr.CreateWifiInfo(resp.spot, resp.pwd, 3));
-            mWifiMgr.saveConfiguration();
+            boolean isSuccess = mWifiMgr.addNetwork(mWifiMgr.CreateWifiInfo(ssid, pwd, 3));
+            if (isSuccess) {
+                mWifiMgr.saveConfiguration();
+            }
+            CapSocketManager.getInstance().onSend(CapInfoManager.getInstance().getWifiConnStateReqMsg(ssid, isSuccess));
         }
     }
 
-    private List<WifiInfo> getWifiList() {
+    private List<CapWifi> getWifiList() {
         mWifiMgr.openWifi();
         mWifiMgr.startScan();
         CLog.i(TAG, "getWifiList = " + mWifiMgr.lookUpScan().toString());
@@ -99,10 +102,10 @@ public class CapWifiImpl implements CapSocketManager.OnResponseCallback{
         if (scanWifiList.size() == 0) {
             return null;
         }
-        List<WifiInfo> wifiList = new ArrayList<WifiInfo>();
+        List<CapWifi> wifiList = new ArrayList<CapWifi>();
         for (int i = 0; i < scanWifiList.size(); i++) {
             ScanResult curResult = scanWifiList.get(i);
-            WifiInfo wifiInfo = new WifiInfo();
+            CapWifi wifiInfo = new CapWifi();
             wifiInfo.spot = curResult.SSID;
             wifiInfo.pwd = curResult.capabilities.contains("WPA") ? 1 : 0;
             wifiInfo.intensity = WifiManager.calculateSignalLevel(curResult.level, 5);
@@ -111,7 +114,7 @@ public class CapWifiImpl implements CapSocketManager.OnResponseCallback{
         }
         return wifiList;
     }
-
+/**
     private void setSupplicantState(SupplicantState supplicantState) {
         if (SupplicantState.FOUR_WAY_HANDSHAKE.equals(supplicantState)) {
             CLog.d(TAG, "FOUR WAY HANDSHAKE");
@@ -139,4 +142,5 @@ public class CapWifiImpl implements CapSocketManager.OnResponseCallback{
             CLog.e(TAG, "supplicant state is bad");
         }
     }
+    */
 }
