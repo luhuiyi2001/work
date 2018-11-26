@@ -25,6 +25,7 @@ public class CapConfig {
 
 
     public static final String FILE_NAME_VIDEO_RECORD = "CapCamera";
+    public static final String FILE_NAME_PICTURE = "CapPicture";
 
 
     public static final int TIME_CAMERA_RECORD =300000;// 10s
@@ -32,6 +33,7 @@ public class CapConfig {
 
     public static final String PATH_EXT_SDCARD = "/mnt/sdcard";//"/mnt/sdcard2";//"/mnt/m_external_sd";
     public static final String PATH_VIDEO_RECORD = PATH_EXT_SDCARD + File.separator + FILE_NAME_VIDEO_RECORD;
+    public static final String PATH_PHOTO = PATH_EXT_SDCARD + File.separator + FILE_NAME_PICTURE;
     public static final String TEST_USER_ID = "1004";//1000
     public static final String TEST_IMEI = "123451234512345";//255533366988887
     //return "123451234512345";

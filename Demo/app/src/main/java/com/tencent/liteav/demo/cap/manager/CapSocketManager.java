@@ -7,7 +7,7 @@ import com.google.gson.JsonSyntaxException;
 import com.tencent.liteav.demo.cap.common.CLog;
 import com.tencent.liteav.demo.cap.common.CapConfig;
 import com.tencent.liteav.demo.cap.callback.OnSocketCallback;
-import com.tencent.liteav.demo.cap.socket.CapInfoResponse;
+import com.tencent.liteav.demo.cap.socket.CapResponse;
 import com.tencent.liteav.demo.cap.socket.CapSocket;
 
 import java.util.ArrayList;
@@ -116,7 +116,7 @@ public class CapSocketManager implements OnSocketCallback {
 //		mHandler.postDelayed(mWaitTimeout, CapConfig.TIME_OUT);
 		mNullDataCount = 0;
         try {
-			CapInfoResponse resp = new Gson().fromJson(msg, CapInfoResponse.class);
+			CapResponse resp = new Gson().fromJson(msg, CapResponse.class);
 			if (resp == null) {
 				return;
 			}
@@ -210,7 +210,7 @@ public class CapSocketManager implements OnSocketCallback {
 	}
 
 	public interface OnResponseCallback {
-		void onResponse(CapInfoResponse resp);
+		void onResponse(CapResponse resp);
 	}
 
 	public interface OnConnectStateCallback {

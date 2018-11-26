@@ -11,7 +11,7 @@ import com.tencent.liteav.demo.cap.common.CapUtils;
 import com.tencent.liteav.demo.cap.manager.CapInfoManager;
 import com.tencent.liteav.demo.cap.manager.CapSharedPrefMgr;
 import com.tencent.liteav.demo.cap.manager.CapSocketManager;
-import com.tencent.liteav.demo.cap.socket.CapInfoResponse;
+import com.tencent.liteav.demo.cap.socket.CapResponse;
 import com.tencent.liteav.demo.cap.socket.CapUser;
 import com.tencent.liteav.demo.cap.common.CapTimer;
 
@@ -94,7 +94,7 @@ public class CapLoginServerImpl implements CapSocketManager.OnResponseCallback, 
     }
 
     @Override
-    public void onResponse(CapInfoResponse resp) {
+    public void onResponse(CapResponse resp) {
         if (resp == null) {
             return;
         }
@@ -114,7 +114,7 @@ public class CapLoginServerImpl implements CapSocketManager.OnResponseCallback, 
         }
     }
 
-    private void login(CapInfoResponse resp) {
+    private void login(CapResponse resp) {
         saveLoginInfo(resp.data);
         requestUserSig(resp.data);
         startLocationTimer();
@@ -208,7 +208,7 @@ public class CapLoginServerImpl implements CapSocketManager.OnResponseCallback, 
             public void onResponse(final Call call, final okhttp3.Response response) throws IOException {
                 String json = response.body().string();
                 CLog.d(TAG, "onResponse = " + json);
-                CapInfoResponse resp = new Gson().fromJson(json, CapInfoResponse.class);
+                CapResponse resp = new Gson().fromJson(json, CapResponse.class);
                 CapSharedPrefMgr.getInstance().putUserSig(resp.userSig);
             }
         });

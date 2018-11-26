@@ -6,6 +6,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Bundle;
@@ -26,11 +27,14 @@ import com.tencent.liteav.demo.cap.callback.CapActivityInterface;
 import com.tencent.liteav.demo.cap.manager.CapStorageManager;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Date;
 
 public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callback {
 
     private static final String TAG = CapRecorderFragment.class.getSimpleName();
+    public static final int MEDIA_TYPE_IMAGE = 1;
+    public static final int MEDIA_TYPE_VIDEO = 2;
 
     private Activity mActivity;
     private CapActivityInterface mActivityInterface;
@@ -38,14 +42,15 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
     private SurfaceView mRecordSV;
     private boolean isRecording;
     private MediaRecorder mediaRecorder;
-    private Handler mHandler = new Handler();
-    final Runnable mStartRecorderRunable = new Runnable() {
+//    private Handler mHandler = new Handler();
+    private Camera mCamera;
+    final Thread mStartRecorderThread = new Thread() {
         @Override public void run() {
             startMediaRecorder();
         }
     };
 
-    final Runnable mStopRecorderRunable = new Runnable() {
+    final Thread mStopRecorderThread = new Thread() {
         @Override public void run() {
             stopMediaRecorder();
         }
@@ -169,13 +174,32 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
         }
     }
 
+    /** * 获取摄像头实例对象 * * @return */
+    public Camera getCameraInstance() {
+        Camera c = null;
+        try {
+            c = Camera.open();
+        } catch (Exception e) {
+            // 打开摄像头错误
+            CLog.e(TAG, "打开摄像头错误");
+        }
+        return c;
+    }
+
     private synchronized void startMediaRecorder() {
         CLog.d(TAG, "startMediaRecorder");
+        if (mCamera == null) {
+            CLog.e(TAG, "mCamera == null");
+            return;
+        }
         try {
+            // 准备录制
+            mCamera.unlock();
             mediaRecorder = new MediaRecorder();
+            mediaRecorder.setCamera(mCamera); // 设置录制视频源为Camera(相机)
             mediaRecorder.reset();
             // 设置音频录入源
-            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
             // 设置视频图像的录入源
             mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
             // 设置录入媒体的输出格式
@@ -186,9 +210,9 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
 //            mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.MPEG_4_SP);
             // 设置视频的采样率，每秒4帧
 //            mediaRecorder.setVideoFrameRate(4);
-            mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_720P));
+            mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_LOW));
             // 设置录制视频文件的输出路径
-            mediaRecorder.setOutputFile(getOutputMediaFile().toString());
+            mediaRecorder.setOutputFile(getOutputMediaFile(MEDIA_TYPE_VIDEO).toString());
             // 设置捕获视频图像的预览界面
             mediaRecorder.setPreviewDisplay(mRecordSV.getHolder().getSurface());
             mediaRecorder.setMaxDuration(CapConfig.TIME_CAMERA_RECORD);
@@ -206,8 +230,8 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
                 public void onInfo(MediaRecorder mr, int what, int extra) {
                     if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED) {
                         CLog.d(TAG, "onInfo = [ " + what + ", " + extra + ", ]");
-                        stopRecord();
-                        startRecord();
+                        stopMediaRecorder();
+                        startMediaRecorder();
                     }
                 }
             });
@@ -231,25 +255,31 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
                 mediaRecorder.stop();
                 mediaRecorder.release();
                 mediaRecorder = null;
-                isRecording=false;
+                // 为后续使用锁定摄像头
+                if (mCamera != null) {
+                    mCamera.lock();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 CLog.e(TAG, e.getMessage());
-                isRecording = false;
             }
+            isRecording = false;
         }
     }
-    private File getOutputMediaFile() {
-        File mediaStorageDir = new File(CapConfig.PATH_VIDEO_RECORD);
+    private File getOutputMediaFile(int type) {
+        File mediaStorageDir = new File(type == MEDIA_TYPE_VIDEO ? CapConfig.PATH_VIDEO_RECORD : CapConfig.PATH_PHOTO);
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdir()) {
-                CLog.e(TAG, "failed to create directory");
+                CLog.e(TAG, mediaStorageDir.getAbsolutePath() + " ： failed to create directory");
                 return null;
             }
         }
         // 创建媒体文件名
-        String timestamp = CapConfig.DATE_FORMAT.format(new Date());
-        return new File(mediaStorageDir.getPath() + File.separator + "RD_" + timestamp + ".mp4");
+        StringBuilder sb = new StringBuilder();
+        sb.append(type == MEDIA_TYPE_VIDEO ? "VID" : "IMG");
+        sb.append(CapConfig.DATE_FORMAT.format(new Date()));
+        sb.append(type == MEDIA_TYPE_VIDEO ? ".mp4" : ".jpg");
+        return new File(mediaStorageDir.getPath() + File.separator + sb.toString());
     }
     public void startRecord() {
         CLog.d(TAG, "startRecord");
@@ -264,18 +294,26 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
         if (!CapStorageManager.getInstance().checkExternalStorageSpaceEnough()) {
             CLog.e(TAG, "checkExternalStorageSpaceEnough = false");
             stopRecord();
+            return;
         }
         //startMediaRecorder();
         //startRecordTimer();
-        mHandler.removeCallbacks(mStartRecorderRunable);
-        this.mHandler.post(mStartRecorderRunable);
+//        mHandler.removeCallbacks(mStartRecorderRunable);
+//        this.mHandler.post(mStartRecorderRunable);
+        mCamera = getCameraInstance(); // 解锁camera
+
+        mStartRecorderThread.start();
     }
 
     public void stopRecord() {
         CLog.d(TAG, "stopRecord");
         stopMediaRecorder();
-        mHandler.removeCallbacks(mStopRecorderRunable);
-        this.mHandler.post(mStopRecorderRunable);
+        if (mCamera != null) {
+            mCamera.release();
+            mCamera = null;
+        }
+//        mHandler.removeCallbacks(mStopRecorderRunable);
+//        this.mHandler.post(mStopRecorderRunable);
     }
 
     /**
@@ -307,5 +345,28 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
         // surfaceDestroyed的时候同时对象设置为null
         destroy();
         mRecordSV = null;
+    }
+
+    public void takePicture() {
+        mCamera.takePicture(null, null, null, new JpegPictureCallback());
+    }
+
+    public final class JpegPictureCallback implements Camera.PictureCallback {
+        @Override
+        public void onPictureTaken(byte[] jpegData, android.hardware.Camera camera) {
+            CLog.d(TAG, "[onPictureTaken]");
+            if (jpegData == null) {
+                CLog.i(TAG, "[onPictureTaken],data is null,return");
+                return;
+            }
+            File pictureFile = new File(getOutputMediaFile(MEDIA_TYPE_IMAGE).toString());
+            try{
+                FileOutputStream fos = new FileOutputStream(pictureFile);
+                fos.write(jpegData);
+                fos.close();
+            }catch (Exception e){
+                CLog.d("takePhoto", "File not found: " + e.getMessage());
+            }
+        }
     }
 }

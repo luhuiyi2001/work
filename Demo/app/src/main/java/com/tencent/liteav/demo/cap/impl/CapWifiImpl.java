@@ -1,20 +1,15 @@
 package com.tencent.liteav.demo.cap.impl;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
-import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiManager;
 
 import com.tencent.liteav.demo.cap.common.CLog;
 import com.tencent.liteav.demo.cap.common.CapConstants;
 import com.tencent.liteav.demo.cap.manager.CapInfoManager;
 import com.tencent.liteav.demo.cap.manager.CapSocketManager;
-import com.tencent.liteav.demo.cap.socket.CapInfoResponse;
-import com.tencent.liteav.demo.cap.common.WifiAdmin;
+import com.tencent.liteav.demo.cap.socket.CapResponse;
+import com.tencent.liteav.demo.cap.manager.CapWifiManager;
 import com.tencent.liteav.demo.cap.socket.CapWifi;
 
 import java.util.ArrayList;
@@ -24,10 +19,10 @@ public class CapWifiImpl implements CapSocketManager.OnResponseCallback{
     private static final String TAG = CapWifiImpl.class.getSimpleName();
 
     private Activity mActivity;
-    private WifiAdmin mWifiMgr;
+    private CapWifiManager mWifiMgr;
     public CapWifiImpl(Activity context) {
         mActivity = context;
-        mWifiMgr = new WifiAdmin(context);
+        mWifiMgr = new CapWifiManager(context);
     }
 /**
     public void create() {
@@ -73,7 +68,7 @@ public class CapWifiImpl implements CapSocketManager.OnResponseCallback{
     }
 */
     @Override
-    public void onResponse(CapInfoResponse resp) {
+    public void onResponse(CapResponse resp) {
         if (CapConstants.RES_CMD_SERVER_PULL_WIFI_LIST.equals(resp.cmd)) {
             CLog.d(TAG, "onPullWifiList");
             CapSocketManager.getInstance().onSend(CapInfoManager.getInstance().getWifiListReqMsg(getWifiList()));

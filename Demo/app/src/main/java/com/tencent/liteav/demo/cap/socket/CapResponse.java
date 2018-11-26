@@ -2,7 +2,7 @@ package com.tencent.liteav.demo.cap.socket;
 
 import java.util.ArrayList;
 
-public class CapInfoResponse {
+public class CapResponse {
     public String cmd;
 //    public String spot;
 //    public String pwd;

@@ -25,6 +25,8 @@ K9635B_35VCP_6M_800X1280-KANG1104-JD9365-CPT
 {"cmd":"server_push_open_video_call","room_id":"room_1542537064406_baf2"}
 {"cmd":"server_push_set_wifi","data":{"act":"app_set_wifi","wifi_enabled":1,"spot":"XY","pwd":"123456"}}
 
+adb shell input keyevent 140
+
 查看分支：git branch
 创建分支：git branch <name>
 切换分支：git checkout <name>

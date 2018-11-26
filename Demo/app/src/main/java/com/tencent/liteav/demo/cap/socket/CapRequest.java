@@ -3,7 +3,7 @@ package com.tencent.liteav.demo.cap.socket;
 
 import java.util.List;
 
-public class CapInfoRequest {
+public class CapRequest {
     public String act;
     public String device_id;
     public String user_id;

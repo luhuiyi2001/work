@@ -14,8 +14,11 @@ import android.widget.TextView;
 
 import com.tencent.liteav.demo.R;
 import com.tencent.liteav.demo.cap.common.CLog;
+import com.tencent.liteav.demo.cap.common.CapConfig;
 import com.tencent.liteav.demo.cap.common.CapConstants;
+import com.tencent.liteav.demo.cap.common.CapUtils;
 import com.tencent.liteav.demo.cap.fragment.CapPusherFragment;
+import com.tencent.liteav.demo.cap.fragment.CapRecorderFragment;
 import com.tencent.liteav.demo.cap.impl.CapWifiImpl;
 import com.tencent.liteav.demo.cap.impl.CapLoginServerImpl;
 import com.tencent.liteav.demo.cap.impl.CapNetWorkImpl;
@@ -24,7 +27,7 @@ import com.tencent.liteav.demo.cap.impl.CapTestUIImpl;
 import com.tencent.liteav.demo.cap.callback.CapActivityInterface;
 import com.tencent.liteav.demo.cap.manager.CapInfoManager;
 import com.tencent.liteav.demo.cap.manager.CapSocketManager;
-import com.tencent.liteav.demo.cap.socket.CapInfoResponse;
+import com.tencent.liteav.demo.cap.socket.CapResponse;
 import com.tencent.liteav.demo.common.misc.CommonAppCompatActivity;
 import com.tencent.liteav.demo.common.misc.NameGenerator;
 import com.tencent.liteav.demo.rtcroom.RTCRoom;
@@ -60,7 +63,7 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
     private CapSocketManager.OnResponseCallback mPushRtmpRespCallback = new CapSocketManager.OnResponseCallback(){
 
         @Override
-        public void onResponse(CapInfoResponse resp) {
+        public void onResponse(CapResponse resp) {
             CLog.d(TAG, "onResponse");
             if (resp == null) {
                 CLog.d(TAG, "resp == null || mContext == null");
@@ -229,26 +232,26 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
     }
 
     public void startRecorder() {
-//        if (!CapUtils.checkExtSdcard()) {
-//            CLog.e(TAG, CapConfig.PATH_EXT_SDCARD + " isn't exist");
-//            mMainHandler.removeCallbacks(mRecorderTimeout);
-//            mMainHandler.postDelayed(mRecorderTimeout, 10000);
-//            return;
-//        }
-//        mMainHandler.removeCallbacks(mRecorderTimeout);
-//        CapRecorderFragment pusherFragment = CapRecorderFragment.newInstance();
-//        FragmentManager fm = this.getFragmentManager();
-//        FragmentTransaction ts = fm.beginTransaction();
-//        ts.replace(R.id.rtmproom_fragment_container, pusherFragment);
-////        ts.addToBackStack(null);
-//        ts.commit();
+        if (!CapUtils.checkExtSdcard()) {
+            CLog.e(TAG, CapConfig.PATH_EXT_SDCARD + " isn't exist");
+            mMainHandler.removeCallbacks(mRecorderTimeout);
+            mMainHandler.postDelayed(mRecorderTimeout, 10000);
+            return;
+        }
+        mMainHandler.removeCallbacks(mRecorderTimeout);
+        CapRecorderFragment pusherFragment = CapRecorderFragment.newInstance();
+        FragmentManager fm = this.getFragmentManager();
+        FragmentTransaction ts = fm.beginTransaction();
+        ts.replace(R.id.rtmproom_fragment_container, pusherFragment);
+//        ts.addToBackStack(null);
+        ts.commit();
     }
 
     public void stopRecorder() {
-//        Fragment fragment = this.getFragmentManager().findFragmentById(R.id.rtmproom_fragment_container);
-//        if (fragment instanceof CapRecorderFragment && fragment.isVisible()){
-//            ((CapRecorderFragment) fragment).onBackPressed();
-//        }
+        Fragment fragment = this.getFragmentManager().findFragmentById(R.id.rtmproom_fragment_container);
+        if (fragment instanceof CapRecorderFragment && fragment.isVisible()){
+            ((CapRecorderFragment) fragment).onBackPressed();
+        }
     }
 
     public void startChat() {
@@ -268,7 +271,10 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
     }
 
     public void doVideoShot() {
-
+        Fragment fragment = this.getFragmentManager().findFragmentById(R.id.rtmproom_fragment_container);
+        if (fragment instanceof CapRecorderFragment && fragment.isVisible()){
+            ((CapRecorderFragment) fragment).takePicture();
+        }
     }
 
     public void doChat() {

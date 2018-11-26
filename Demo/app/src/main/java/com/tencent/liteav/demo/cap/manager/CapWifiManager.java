@@ -1,4 +1,4 @@
-package com.tencent.liteav.demo.cap.common;
+package com.tencent.liteav.demo.cap.manager;
 
 import android.content.Context;
 import android.net.wifi.ScanResult;
@@ -10,8 +10,8 @@ import com.tencent.liteav.demo.cap.common.CLog;
 
 import java.util.List;
 
-public class WifiAdmin {
-    private static final String TAG = "WifiAdmin";
+public class CapWifiManager {
+    private static final String TAG = "CapWifiManager";
 
     // 定义WifiManager对象
     private WifiManager mWifiManager;
@@ -26,7 +26,7 @@ public class WifiAdmin {
 
 
     // 构造器
-    public WifiAdmin(Context context) {
+    public CapWifiManager(Context context) {
         // 取得WifiManager对象
         mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         // 取得WifiInfo对象

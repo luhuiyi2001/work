@@ -8,7 +8,7 @@ import android.content.Context;
 import com.google.gson.Gson;
 import com.tencent.liteav.demo.cap.common.CapConstants;
 import com.tencent.liteav.demo.cap.common.CapUtils;
-import com.tencent.liteav.demo.cap.socket.CapInfoRequest;
+import com.tencent.liteav.demo.cap.socket.CapRequest;
 import com.tencent.liteav.demo.cap.socket.CapWifi;
 
 
@@ -35,14 +35,14 @@ public class CapInfoManager {
 	
 	
 	public String getLoginReqMsg() {
-		CapInfoRequest req = new CapInfoRequest();
+		CapRequest req = new CapRequest();
 		req.act = CapConstants.REQ_ACT_CA_LOGIN;
 		req.device_id = CapUtils.getImei();
 		return new Gson().toJson(req);
 	}
 	
 	public String getLocationReqMsg() {
-		CapInfoRequest req = new CapInfoRequest();
+		CapRequest req = new CapRequest();
 		req.act = CapConstants.REQ_ACT_CA_REPORT_LOCATION;
 		req.user_id = CapSharedPrefMgr.getInstance().getUserID();
 		req.x_point = CapSharedPrefMgr.getInstance().getLatitude();
@@ -51,7 +51,7 @@ public class CapInfoManager {
 	}
 	
 	public String getSosReqMsg() {
-		CapInfoRequest req = new CapInfoRequest();
+		CapRequest req = new CapRequest();
 		req.act = CapConstants.REQ_ACT_CA_SOS;
 		req.device_id = CapUtils.getImei();
 		req.x_point = CapSharedPrefMgr.getInstance().getLatitude();
@@ -60,7 +60,7 @@ public class CapInfoManager {
 	}
 	
 	public String getWifiListReqMsg(List<CapWifi> wifiList) {
-		CapInfoRequest req = new CapInfoRequest();
+		CapRequest req = new CapRequest();
 		req.act = CapConstants.REQ_ACT_CA_UPLOAD_WIFI_LIST;
 		req.device_id = CapUtils.getImei();
 		req.wifi_list = wifiList;
@@ -68,7 +68,7 @@ public class CapInfoManager {
 	}
 	
 	public String getWifiConnStateReqMsg(String ssid, boolean isSuccess) {
-		CapInfoRequest req = new CapInfoRequest();
+		CapRequest req = new CapRequest();
 		req.act = CapConstants.REQ_ACT_CA_REPORT_WIFI_CONNECT_STATUS;
 		req.device_id = CapUtils.getImei();
 		req.spot = ssid;
@@ -78,7 +78,7 @@ public class CapInfoManager {
 	}
 
 	public String getCreateRoomMsg(String roomId, ArrayList<String> userIDs) {
-		CapInfoRequest req = new CapInfoRequest();
+		CapRequest req = new CapRequest();
 		req.act = CapConstants.REQ_ACT_CA_CREATE_ROOM_FOR_HELP;
 		req.room_id = roomId;
 		req.user_ids = userIDs;
@@ -86,7 +86,7 @@ public class CapInfoManager {
 	}
 
 	public String getReportRoomStatusMsg(String roomId, String type, String userID) {
-		CapInfoRequest req = new CapInfoRequest();
+		CapRequest req = new CapRequest();
 		req.act = CapConstants.REQ_ACT_CA_REPORT_ROOM_STATUS;
 		req.room_id = roomId;
 		req.type = type;

@@ -1,7 +1,7 @@
 package com.tencent.liteav.demo.cap.callback;
 
-import com.tencent.liteav.demo.cap.socket.CapInfoResponse;
+import com.tencent.liteav.demo.cap.socket.CapResponse;
 
 public interface OnResponseCallback {
-	void onResponse(CapInfoResponse resp);
+	void onResponse(CapResponse resp);
 }
