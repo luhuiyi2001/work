@@ -32,6 +32,7 @@ public class CapRTCRoomImpl {
     private Runnable retryInitRoomRunnable;
     private String mRoomID;
     private ArrayList<String> mUserIDs;
+    private boolean mIsBtnCall;
 
     private CapActivity mActivity;
     public CapRTCRoomImpl(CapActivity context) {
@@ -50,9 +51,10 @@ public class CapRTCRoomImpl {
         mRTCRoom.logout();
     }
 
-    public void onStartChat(String roomId, ArrayList<String> userIDs) {
+    public void onStartChat(String roomId, ArrayList<String> userIDs, boolean isBtnCall) {
         mRoomID = roomId;
         mUserIDs = userIDs;
+        mIsBtnCall = isBtnCall;
         internalInitializeRTCRoom();
     }
 
@@ -119,14 +121,14 @@ public class CapRTCRoomImpl {
         RoomInfo roomInfo = new RoomInfo();
         roomInfo.roomInfo = CapUtils.getImei();
         roomInfo.roomID = mRoomID;
-        enterRoom(roomInfo, getUserID(), TextUtils.isEmpty(roomInfo.roomID) ? true : false, mUserIDs);
+        enterRoom(roomInfo, getUserID(), TextUtils.isEmpty(roomInfo.roomID) ? true : false, mUserIDs, mIsBtnCall);
     }
 
-    private void enterRoom(final RoomInfo roomInfo, final String userID, final boolean requestCreateRoom, final ArrayList<String> userIds) {
+    private void enterRoom(final RoomInfo roomInfo, final String userID, final boolean requestCreateRoom, final ArrayList<String> userIds, final boolean isBtnCall) {
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                CapChatFragment roomFragment = CapChatFragment.newInstance(roomInfo, userID, requestCreateRoom, userIds);
+                CapChatFragment roomFragment = CapChatFragment.newInstance(roomInfo, userID, requestCreateRoom, userIds, isBtnCall);
                 FragmentManager fm = mActivity.getFragmentManager();
                 FragmentTransaction ts = fm.beginTransaction();
                 ts.replace(R.id.rtmproom_fragment_container, roomFragment);

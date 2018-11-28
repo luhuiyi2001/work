@@ -25,6 +25,7 @@ import com.tencent.liteav.demo.cap.impl.CapNetWorkImpl;
 import com.tencent.liteav.demo.cap.impl.CapRTCRoomImpl;
 import com.tencent.liteav.demo.cap.impl.CapTestUIImpl;
 import com.tencent.liteav.demo.cap.callback.CapActivityInterface;
+import com.tencent.liteav.demo.cap.manager.CapAudioManager;
 import com.tencent.liteav.demo.cap.manager.CapInfoManager;
 import com.tencent.liteav.demo.cap.manager.CapSocketManager;
 import com.tencent.liteav.demo.cap.socket.CapResponse;
@@ -77,10 +78,10 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
                 stopPusher();
             } else if (CapConstants.RES_CMD_SERVER_PUSH_OPEN_VIDEO_CALL.equals(resp.cmd)) {
                 CLog.d(TAG, "onOpenVideo");
-                mRTCRoomImpl.onStartChat(resp.room_id, null);
+                mRTCRoomImpl.onStartChat(resp.room_id, null, false);
             } else if (CapConstants.RES_CMD_SERVER_PUSH_APP_ASK_FOR_HELP.equals(resp.cmd)) {
                 CLog.d(TAG, "onCreateRoom : " + resp.user_ids);
-                mRTCRoomImpl.onStartChat(null, resp.user_ids);
+                mRTCRoomImpl.onStartChat(null, resp.user_ids, false);
             }
         }
     };
@@ -255,7 +256,7 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
     }
 
     public void startChat() {
-        mRTCRoomImpl.onStartChat(null, null);
+        mRTCRoomImpl.onStartChat(null, null, false);
     }
 
     public void stopChat() {
@@ -268,6 +269,7 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
 
     public void doSos() {
         CapSocketManager.getInstance().onSend(CapInfoManager.getInstance().getSosReqMsg());
+        CapAudioManager.getInstance().playSos();
     }
 
     public void doVideoShot() {
@@ -278,6 +280,7 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
     }
 
     public void doChat() {
-        mRTCRoomImpl.onStartChat(null, null);
+        mRTCRoomImpl.onStartChat(null, null, true);
+        CapAudioManager.getInstance().playWaitReceiveVoice();
     }
 }

@@ -85,6 +85,13 @@ public class CapInfoManager {
 		return new Gson().toJson(req);
 	}
 
+	public String getBtnCallMsg(String roomId) {
+		CapRequest req = new CapRequest();
+		req.act = CapConstants.REQ_ACT_CA_CALL_MANAGER;
+		req.room_id = roomId;
+		return new Gson().toJson(req);
+	}
+
 	public String getReportRoomStatusMsg(String roomId, String type, String userID) {
 		CapRequest req = new CapRequest();
 		req.act = CapConstants.REQ_ACT_CA_REPORT_ROOM_STATUS;

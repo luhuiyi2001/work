@@ -1,9 +1,10 @@
 adb shell am broadcast -a com.ty.action.test --ei api 0
 adb uninstall com.tencent.liteav.demo
 adb push C:\runde\app-debug\app-debug.apk system/priv-app/app-debug/app-debug.apk
+adb install C:\runde\work\Demo\app\build\outputs\apk\debug\app-debug.apk
 adb push W:\luhuiyi\RD_AQM01\alsp_n0.mp1_v1.76\vendor\runde\app-debug\app-debug.apk system/priv-app/app-debug/app-debug.apk
 adb push W:\luhuiyi\RD_AQM01\alsp_n0.mp1_v1.76\out\target\product\rd_aqm01\system\framework\services.jar system/framework/services.jar
-adb install C:\runde\work\Demo\app\build\outputs\apk\debug\app-debug.apk
+
 adb shell am start -n com.tencent.liteav.demo/.cap.CapActivity
 adb shell am force-stop  com.tencent.liteav.demo
 git config --global user.email "luhuiyi2001@163.com"
@@ -94,6 +95,8 @@ app-----------------------------------------------------------------------------
 {"act":"app_reply_for_help","type":0,"user_id":"1001"}
 // type: 0表示拒绝；1表示同意 
 
+6 app取消求助
+{"act":"app_cancel_ask_for_help"}
 
 --------------------------------------------------------------------------------------
 
@@ -127,6 +130,7 @@ app-----------------------------------------------------------------------------
 {"act":"ca_report_room_status","room_id":xxx,"type":"0","user_id":"xxx"}     
 //type : 0用户加入；1用户退出；-1超时没有用户加入，关闭房间（type为负值不需要device_id 字段）；-2所有用户都退出，关闭房间
 
-
+8 帽子主动呼叫后台
+{"act":"ca_call_manager","room_id":xxx}
 
 --------------------------------------------------------------------------------------

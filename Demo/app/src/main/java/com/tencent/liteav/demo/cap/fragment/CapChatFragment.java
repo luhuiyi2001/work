@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.tencent.liteav.demo.R;
 import com.tencent.liteav.demo.cap.common.CLog;
 import com.tencent.liteav.demo.cap.callback.CapActivityInterface;
+import com.tencent.liteav.demo.cap.manager.CapAudioManager;
 import com.tencent.liteav.demo.cap.manager.CapInfoManager;
 import com.tencent.liteav.demo.cap.manager.CapSharedPrefMgr;
 import com.tencent.liteav.demo.cap.manager.CapSocketManager;
@@ -42,6 +43,7 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
     private RoomInfo                            mRoomInfo;
     private ArrayList<String>                   mUserIDs;
     private List<RoomVideoView>                 mPlayerViews    = new ArrayList<>();
+    private boolean                             mIsBtnCall;
 
     private int                                 mBeautyStyle    = TXLiveConstants.BEAUTY_STYLE_SMOOTH;
     private int                                 mBeautyLevel    = 5;
@@ -63,7 +65,7 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
         }
     };
 
-    public static CapChatFragment newInstance(RoomInfo config, String userID, boolean createRoom, ArrayList<String> userIds) {
+    public static CapChatFragment newInstance(RoomInfo config, String userID, boolean createRoom, ArrayList<String> userIds, boolean isBtnCall) {
         CLog.d(TAG, "newInstance");
         CapChatFragment fragment = new CapChatFragment();
         Bundle bundle = new Bundle();
@@ -71,6 +73,7 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
         bundle.putString("userID", userID);
         bundle.putBoolean("createRoom", createRoom);
         bundle.putStringArrayList("userIDs", userIds);
+        bundle.putBoolean("btnCall", isBtnCall);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -135,6 +138,7 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
         String  selfUserName = CapSharedPrefMgr.getInstance().getUserName();
         boolean createRoom   = bundle.getBoolean("createRoom");
         mUserIDs             = bundle.getStringArrayList("userIDs");
+        mIsBtnCall           = bundle.getBoolean("btnCall");
 
         if (selfUserID == null || ( !createRoom && mRoomInfo == null)) {
             return;
@@ -160,8 +164,14 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
                 public void onSuccess(String roomId) {
                     CLog.i(TAG, "roomId : " + roomId);
                     mRoomInfo.roomID = roomId;
-                    CapSocketManager.getInstance().onSend(CapInfoManager.getInstance().getCreateRoomMsg(roomId, mUserIDs));
+                    if (mIsBtnCall) {
+                        CapSocketManager.getInstance().onSend(CapInfoManager.getInstance().getBtnCallMsg(roomId));
+                    } else {
+                        CapSocketManager.getInstance().onSend(CapInfoManager.getInstance().getCreateRoomMsg(roomId, mUserIDs));
+                    }
+
                     mHandler.postDelayed(mPusherJoinTimeout, 60000);
+                    CapAudioManager.getInstance().playReceivedVoice();
                 }
 
                 @Override
@@ -179,7 +189,7 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
 
                 @Override
                 public void onSuccess() {
-
+                    CapAudioManager.getInstance().playReceivedVoice();
                 }
             });
         }

@@ -52,7 +52,7 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
 
     final Thread mStopRecorderThread = new Thread() {
         @Override public void run() {
-            stopMediaRecorder();
+            stopRecord();
         }
     };
     public static CapRecorderFragment newInstance() {
@@ -154,7 +154,7 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
     }
     private void destroy() {
         CLog.d(TAG, "destroy");
-        stopMediaRecorder();
+        stopRecord();
     }
 
     private void backStack(){
