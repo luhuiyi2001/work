@@ -58,10 +58,15 @@ public class CapStorageManager {
 	}
 
 	public static boolean isExternalStorageSpaceEnough() {
-		StatFs statFs = new StatFs(CapConfig.PATH_EXT_SDCARD);
-		long availableSize = CapUtils.getAvailableSize(statFs);
-		CLog.d(TAG, "availableSize : " + availableSize);
-		return availableSize > CapConfig.MIN_STORAGE_SIZE;
+		try {
+			StatFs statFs = new StatFs(CapConfig.PATH_EXT_SDCARD);
+			long availableSize = CapUtils.getAvailableSize(statFs);
+			CLog.d(TAG, "availableSize : " + availableSize);
+			return availableSize > CapConfig.MIN_STORAGE_SIZE;
+		} catch (Exception e) {
+			CLog.e(TAG, "isExternalStorageSpaceEnough : " + e.getMessage());
+			return false;
+		}
 	}
 
 }

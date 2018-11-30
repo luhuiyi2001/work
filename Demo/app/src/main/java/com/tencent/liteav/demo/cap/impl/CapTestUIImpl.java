@@ -50,12 +50,12 @@ public class CapTestUIImpl {
         mBtnRecorder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendLocation();
+                doRecorder();
             }
         });
 
         mBtnPusher = (Button)mActivity.findViewById(R.id.btn_pusher);
-        mBtnRecorder.setText("Start Pusher");
+        mBtnPusher.setText("Start Pusher");
         mBtnPusher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

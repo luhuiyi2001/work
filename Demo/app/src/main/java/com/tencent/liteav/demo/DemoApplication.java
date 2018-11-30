@@ -20,8 +20,8 @@ public class DemoApplication extends MultiDexApplication {
 
         instance = this;
 
-        TXLiveBase.setConsoleEnabled(true);
-        TXLiveBase.setLogLevel(TXLiveConstants.LOG_LEVEL_DEBUG);
+//        TXLiveBase.setConsoleEnabled(true);
+//        TXLiveBase.setLogLevel(TXLiveConstants.LOG_LEVEL_DEBUG);
         TXLiveBase.setAppID("1252463788");
         CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(getApplicationContext());
         strategy.setAppVersion(TXLiveBase.getSDKVersionStr());

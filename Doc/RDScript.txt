@@ -18,6 +18,9 @@ adb shell am broadcast -a com.runde.test.action_send_location
 copy /Y C:\runde\work\Demo\app\build\outputs\apk\debug\app-debug.apk W:\luhuiyi\RD_AQM01\alsp_n0.mp1_v1.76\vendor\runde\app-debug\app-debug.apk
 adb push W:\luhuiyi\RD_AQM01\alsp_n0.mp1_v1.76\out\target\product\rd_aqm01\system\priv-app\app-debug\app-debug.apk system/priv-app/app-debug/app-debug.apk
 
+copy /Y C:\runde\work\Demo\app\build\outputs\apk\debug\app-debug.apk W:\luhuiyi\mtk6735_7_0\vendor\runde\app-debug\app-debug.apk
+adb push W:\luhuiyi\mtk6735_7_0\out\target\product\aeon6735_36g_d_n\system\priv-app\app-debug\app-debug.apk system/priv-app/app-debug/app-debug.apk
+
 cat xxx.tar.bz2.* | tar jxvf -
 https://pan.baidu.com/s/1Y4phlVsHl09Y8BFF_GQRYA 提取码 提取码: 2hg4
 

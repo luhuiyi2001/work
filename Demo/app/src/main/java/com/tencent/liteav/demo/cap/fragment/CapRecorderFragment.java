@@ -210,7 +210,7 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
 //            mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.MPEG_4_SP);
             // 设置视频的采样率，每秒4帧
 //            mediaRecorder.setVideoFrameRate(4);
-            mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_LOW));
+            mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_720P));
             // 设置录制视频文件的输出路径
             mediaRecorder.setOutputFile(getOutputMediaFile(MEDIA_TYPE_VIDEO).toString());
             // 设置捕获视频图像的预览界面
