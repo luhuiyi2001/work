@@ -77,15 +77,24 @@ public class CapWifiImpl implements CapSocketManager.OnResponseCallback{
                 CLog.d(TAG, "onConnWifi : null");
                 return;
             }
-            String ssid = resp.data.spot;
-            String pwd = resp.data.pwd;
-            CLog.d(TAG, "onConnWifi = [ " + ssid + ", " + pwd + " ]");
-            mWifiMgr.openWifi();
-            boolean isSuccess = mWifiMgr.addNetwork(mWifiMgr.CreateWifiInfo(ssid, pwd, 3));
-            if (isSuccess) {
-                mWifiMgr.saveConfiguration();
+
+            if (!CapConstants.ACT_KEY_APP_SET_WIFI.equals(resp.data.act)) {
+                return;
             }
-            CapSocketManager.getInstance().onSend(CapInfoManager.getInstance().getWifiConnStateReqMsg(ssid, isSuccess));
+            int wifiEnabled = resp.data.wifi_enabled;
+            if (wifiEnabled == 0) {
+                mWifiMgr.closeWifi();
+            } else if (wifiEnabled == 1) {
+                String ssid = resp.data.spot;
+                String pwd = resp.data.pwd;
+                CLog.d(TAG, "onConnWifi = [ " + ssid + ", " + pwd + " ]");
+                mWifiMgr.openWifi();
+                boolean isSuccess = mWifiMgr.addNetwork(mWifiMgr.CreateWifiInfo(ssid, pwd, 3));
+                if (isSuccess) {
+                    mWifiMgr.saveConfiguration();
+                }
+                CapSocketManager.getInstance().onSend(CapInfoManager.getInstance().getWifiConnStateReqMsg(ssid, isSuccess));
+            }
         }
     }
 
@@ -97,6 +106,8 @@ public class CapWifiImpl implements CapSocketManager.OnResponseCallback{
         if (scanWifiList.size() == 0) {
             return null;
         }
+        String curSSID = mWifiMgr.getCurSSID().replace("\"","");
+        CLog.i(TAG, "curSSID = " + curSSID);
         List<CapWifi> wifiList = new ArrayList<CapWifi>();
         for (int i = 0; i < scanWifiList.size(); i++) {
             ScanResult curResult = scanWifiList.get(i);
@@ -104,7 +115,7 @@ public class CapWifiImpl implements CapSocketManager.OnResponseCallback{
             wifiInfo.spot = curResult.SSID;
             wifiInfo.pwd = curResult.capabilities.contains("WPA") ? 1 : 0;
             wifiInfo.intensity = WifiManager.calculateSignalLevel(curResult.level, 5);
-            wifiInfo.status = mWifiMgr.isExsits(curResult.SSID) != null ? 1 : 0;
+            wifiInfo.status = curResult.SSID.equals(curSSID) ? 1 : 0;
             wifiList.add(wifiInfo);
         }
         return wifiList;

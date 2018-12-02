@@ -12,5 +12,6 @@ public interface CapActivityInterface {
 //    void    showGlobalLog(boolean enable);
 //    void    printGlobalLog(String format, Object... args);
     void backToStartRecord();
+    void releaseRecorder();
     void    setTitle(String s);
 }

@@ -22,6 +22,8 @@ public class CapConstants {
     public static final String REQ_ACT_CA_REPORT_ROOM_STATUS = "ca_report_room_status";
     public static final String REQ_ACT_CA_CALL_MANAGER = "ca_call_manager";
 
+    public static final String ACT_KEY_APP_SET_WIFI = "app_set_wifi";
+
     public static final String ACTION_UPDATE_STATE_INFO = "com.android.runde.ACTION_UPDATE_STATE_INFO";
     public static final String ACTION_START_PUBLISH = "com.android.runde.ACTION_START_PUBLISH";
     public static final String ACTION_STOP_PUBLISH = "com.android.runde.ACTION_STOP_PUBLISH";

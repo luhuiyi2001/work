@@ -14,6 +14,7 @@ import com.tencent.liteav.demo.common.utils.VideoUtil;
 import java.io.File;
 
 public class CapUtils {
+    private static final String TAG = CapUtils.class.getSimpleName();
     public static boolean checkExtSdcard() {
         if (new File(CapConfig.PATH_EXT_SDCARD).exists()) {
             return true;
@@ -42,6 +43,7 @@ public class CapUtils {
             if (imei == null) imei = "";
         } catch (Exception e) {
         }
+        CLog.e(TAG, "getDeviceId = " + imei);
         return CapConfig.IS_TEST ? CapConfig.TEST_IMEI : imei;
     }
 

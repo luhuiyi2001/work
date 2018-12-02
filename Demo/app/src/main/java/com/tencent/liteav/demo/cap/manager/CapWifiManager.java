@@ -33,6 +33,18 @@ public class CapWifiManager {
         mWifiInfo = mWifiManager.getConnectionInfo();
     }
 
+    public WifiInfo getWifiInfo() {
+        return mWifiManager.getConnectionInfo();
+    }
+
+    public String getCurSSID() {
+        WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+        if (wifiInfo != null) {
+            return wifiInfo.getSSID();
+        }
+        return null;
+    }
+
     // 打开WIFI
     public void openWifi() {
         if (!mWifiManager.isWifiEnabled()) {
@@ -115,12 +127,12 @@ public class CapWifiManager {
 
     // 得到MAC地址
     public String getMacAddress() {
-        return (mWifiInfo == null) ? "NULL" : mWifiInfo.getMacAddress();
+        return (mWifiInfo == null) ? null : mWifiInfo.getMacAddress();
     }
 
     // 得到接入点的BSSID
     public String getBSSID() {
-        return (mWifiInfo == null) ? "NULL" : mWifiInfo.getBSSID();
+        return (mWifiInfo == null) ? null : mWifiInfo.getBSSID();
     }
 
     // 得到IP地址
@@ -134,8 +146,8 @@ public class CapWifiManager {
     }
 
     // 得到WifiInfo的所有信息包
-    public String getWifiInfo() {
-        return (mWifiInfo == null) ? "NULL" : mWifiInfo.toString();
+    public String getWifiMsg() {
+        return (mWifiInfo == null) ? null : mWifiInfo.toString();
     }
 
     // 添加一个网络并连接

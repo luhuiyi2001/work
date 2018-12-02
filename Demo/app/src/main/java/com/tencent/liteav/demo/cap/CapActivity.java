@@ -4,9 +4,14 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.Service;
+import android.content.ComponentName;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -28,6 +33,7 @@ import com.tencent.liteav.demo.cap.callback.CapActivityInterface;
 import com.tencent.liteav.demo.cap.manager.CapAudioManager;
 import com.tencent.liteav.demo.cap.manager.CapInfoManager;
 import com.tencent.liteav.demo.cap.manager.CapSocketManager;
+import com.tencent.liteav.demo.cap.service.CapRecorderService;
 import com.tencent.liteav.demo.cap.socket.CapResponse;
 import com.tencent.liteav.demo.common.misc.CommonAppCompatActivity;
 import com.tencent.liteav.demo.common.misc.NameGenerator;
@@ -54,12 +60,32 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
     private TextView        titleTextView;
 
     final Runnable mRecorderTimeout = new Runnable() {
-        @Override public void run() {
+        @Override public
+        void run() {
             startRecorder();
         }
     };
     private CapTestUIImpl mTestUIImpl;
     private CapWifiImpl mWifiImpl;
+
+    CapRecorderService mRecordService=null;
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            CLog.d(TAG, "onServiceDisconnected");
+            mRecordService = null;
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            CLog.d(TAG, "onServiceConnected : " + service.getClass().toString());
+            // 获取服务上的IBinder对象，调用IBinder对象中定义的自定义方法，获取Service对象
+            CapRecorderService.RecordBinder binder=(CapRecorderService.RecordBinder)service;
+            mRecordService = binder.getService();
+            mRecordService.startRecord();
+        }
+    };
 
     private CapSocketManager.OnResponseCallback mPushRtmpRespCallback = new CapSocketManager.OnResponseCallback(){
 
@@ -113,7 +139,7 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
 
         mNetWorkImpl = new CapNetWorkImpl(this);
         mNetWorkImpl.create();
-
+        bindService(new Intent(this,CapRecorderService.class),mConnection, Service.BIND_AUTO_CREATE);
 //        mImeiMonitor = new CapImeiMonitor();
 //        mImeiMonitor.setOnImeiCallback(mImeiCallback);
 
@@ -127,13 +153,14 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
     @Override
     protected void onResume() {
         super.onResume();
-        mMainHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startRecorder();
-            }
-        }, 1000);
+//        mMainHandler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                startRecorder();
+//            }
+//        }, 1000);
 //        mImeiMonitor.start();
+//        startRecorder();
     }
 
     @Override
@@ -151,6 +178,7 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
         CapSocketManager.getInstance().removeOnConnectStateCallback(mLoginServerImpl);
         mNetWorkImpl.destroy();
         mTestUIImpl.destroy();
+        unbindService(mConnection);
     }
 
     @Override
@@ -208,7 +236,13 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
 
     @Override
     public void backToStartRecord() {
-        this.startRecorder();
+        //this.startRecorder();
+        startRecorder();
+    }
+
+    @Override
+    public void releaseRecorder() {
+        stopRecorder();
     }
 
     public void startPusher(String url) {
@@ -216,6 +250,7 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
             CLog.e(TAG, "推流地址不合法，目前支持rtmp推流!");
             return;
         }
+        mRecordService.stopRecord();
         CapPusherFragment pusherFragment = CapPusherFragment.newInstance(url);
         FragmentManager fm = this.getFragmentManager();
         FragmentTransaction ts = fm.beginTransaction();
@@ -240,19 +275,20 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
             return;
         }
         mMainHandler.removeCallbacks(mRecorderTimeout);
-        CapRecorderFragment pusherFragment = CapRecorderFragment.newInstance();
-        FragmentManager fm = this.getFragmentManager();
-        FragmentTransaction ts = fm.beginTransaction();
-        ts.replace(R.id.rtmproom_fragment_container, pusherFragment);
-//        ts.addToBackStack(null);
-        ts.commit();
+        mRecordService.startRecord();
+//        CapRecorderFragment pusherFragment = CapRecorderFragment.newInstance();
+//        FragmentManager fm = this.getFragmentManager();
+//        FragmentTransaction ts = fm.beginTransaction();
+//        ts.replace(R.id.rtmproom_fragment_container, pusherFragment);
+//        ts.commit();
     }
 
     public void stopRecorder() {
-        Fragment fragment = this.getFragmentManager().findFragmentById(R.id.rtmproom_fragment_container);
-        if (fragment instanceof CapRecorderFragment && fragment.isVisible()){
-            ((CapRecorderFragment) fragment).onBackPressed();
-        }
+        mRecordService.stopRecord();
+//        Fragment fragment = this.getFragmentManager().findFragmentById(R.id.rtmproom_fragment_container);
+//        if (fragment instanceof CapRecorderFragment && fragment.isVisible()){
+//            ((CapRecorderFragment) fragment).onBackPressed();
+//        }
     }
 
     public void startChat() {
@@ -273,10 +309,11 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
     }
 
     public void doVideoShot() {
-        Fragment fragment = this.getFragmentManager().findFragmentById(R.id.rtmproom_fragment_container);
-        if (fragment instanceof CapRecorderFragment && fragment.isVisible()){
-            ((CapRecorderFragment) fragment).takePicture();
-        }
+        mRecordService.takePicture();
+//        Fragment fragment = this.getFragmentManager().findFragmentById(R.id.rtmproom_fragment_container);
+//        if (fragment instanceof CapRecorderFragment && fragment.isVisible()){
+//            ((CapRecorderFragment) fragment).takePicture();
+//        }
     }
 
     public void doChat() {

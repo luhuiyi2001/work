@@ -37,7 +37,7 @@ public class CapConfig {
     public static final int TIME_CAMERA_RECORD =300000;// 10s
     public static final int MIN_STORAGE_SIZE = 104857600 * 5;//100M : 52428800(50M)
 
-    public static final String PATH_EXT_SDCARD = /*IS_TEST ? "/mnt/sdcard" : */"/mnt/m_external_sd";//"/mnt/sdcard2";//"/mnt/m_external_sd";
+    public static final String PATH_EXT_SDCARD = IS_TEST ? "/mnt/sdcard" : "/mnt/m_external_sd";//"/mnt/sdcard2";//"/mnt/m_external_sd";
     public static final String PATH_VIDEO_RECORD = PATH_EXT_SDCARD + File.separator + FILE_NAME_VIDEO_RECORD;
     public static final String PATH_PHOTO = PATH_EXT_SDCARD + File.separator + FILE_NAME_PICTURE;
 

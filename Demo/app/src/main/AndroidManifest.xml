@@ -65,9 +65,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!--<service android:name=".cap.record.CapRecordSerivice"/>
         <service android:name=".cap.service.CapRecorderService"/>
+        <!--<service android:name=".cap.record.CapRecordSerivice"/>
+
         <service android:name=".cap.service.CapClientService"/>-->
         <activity
             android:name=".cap.ui.AllAppActivity"
