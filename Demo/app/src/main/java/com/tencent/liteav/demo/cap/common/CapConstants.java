@@ -45,4 +45,10 @@ public class CapConstants {
     public static final String KEY_URL = "url";
     public static final String KEY_LATITUDE = "latitude";
     public static final String KEY_LONGITUDE = "longitude";
+
+    public static final int MODE_IDLE = 0;
+    public static final int MODE_RECORDING = 1;
+    public static final int MODE_START_PUSHER = 2;
+    public static final int MODE_CHAT = 3;
+
 }

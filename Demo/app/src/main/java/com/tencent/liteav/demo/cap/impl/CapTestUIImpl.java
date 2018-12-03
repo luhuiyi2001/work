@@ -10,12 +10,10 @@ import android.widget.Button;
 import com.tencent.liteav.demo.R;
 import com.tencent.liteav.demo.cap.CapActivity;
 import com.tencent.liteav.demo.cap.common.CLog;
-import com.tencent.liteav.demo.cap.common.CapConstants;
-import com.tencent.liteav.demo.cap.service.CapRecorderService;
-import com.tencent.liteav.demo.cap.ui.AllAppActivity;
 import com.tencent.liteav.demo.cap.manager.CapInfoManager;
 import com.tencent.liteav.demo.cap.manager.CapSharedPrefMgr;
 import com.tencent.liteav.demo.cap.manager.CapSocketManager;
+import com.tencent.liteav.demo.cap.ui.AllAppActivity;
 
 public class CapTestUIImpl {
     private static final String TAG = CapTestUIImpl.class.getSimpleName();
@@ -110,15 +108,15 @@ public class CapTestUIImpl {
     private void doRecorder() {
         CLog.d(TAG, "doRecorder");
         if (isRecorderStart) {
-            Intent intentOne = new Intent(mActivity, CapRecorderService.class);
-            intentOne.putExtra(CapConstants.EXTRA_CMD_RECORDER, CapConstants.CMD_STOP);
-            mActivity.startService(intentOne);
+//            Intent intentOne = new Intent(mActivity, CapRecorderService.class);
+//            intentOne.putExtra(CapConstants.EXTRA_CMD_RECORDER, CapConstants.CMD_STOP);
+//            mActivity.startService(intentOne);
 //            mActivity.stopRecorder();
             mBtnRecorder.setText("Start Recorder");
         } else {
-            Intent intentOne = new Intent(mActivity, CapRecorderService.class);
-            intentOne.putExtra(CapConstants.EXTRA_CMD_RECORDER, CapConstants.CMD_START);
-            mActivity.startService(intentOne);
+//            Intent intentOne = new Intent(mActivity, CapRecorderService.class);
+//            intentOne.putExtra(CapConstants.EXTRA_CMD_RECORDER, CapConstants.CMD_START);
+//            mActivity.startService(intentOne);
 //            mActivity.startRecorder();
             mBtnRecorder.setText("Stop Recorder");
         }

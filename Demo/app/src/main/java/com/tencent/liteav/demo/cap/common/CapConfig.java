@@ -19,6 +19,7 @@ public class CapConfig {
     public static final int DURATION_RELOGIN_SERVER = 30000;
     public static final int DURATION_RECONNECT_SERVER = 30000;
     public static final int DURATION_RESPONSE_MSG= 5000;
+    public static final int DURATION_RECORDER_MONITOR= 3000;
 
     // 单个CPU线程池大小
     public static final int POOL_SIZE = 5;

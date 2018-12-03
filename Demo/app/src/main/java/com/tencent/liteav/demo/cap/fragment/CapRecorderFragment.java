@@ -243,7 +243,7 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
         } catch (Exception e) {
             e.printStackTrace();
             CLog.e(TAG, e.getMessage());
-            isRecording = false;
+            releaseMediaRecorder();
         }
     }
 
@@ -251,19 +251,25 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
         CLog.d(TAG, "stopMediaRecorder");
         if (isRecording) {
             // 如果正在录制，停止并释放资源
-            try {
+            releaseMediaRecorder();
+            // 为后续使用锁定摄像头
+            if (mCamera != null) {
+                mCamera.lock();
+            }
+            isRecording = false;
+        }
+    }
+
+    private synchronized void releaseMediaRecorder() {
+        try {
+            if (mediaRecorder != null) {
                 mediaRecorder.stop();
                 mediaRecorder.release();
                 mediaRecorder = null;
-                // 为后续使用锁定摄像头
-                if (mCamera != null) {
-                    mCamera.lock();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                CLog.e(TAG, e.getMessage());
             }
-            isRecording = false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            CLog.e(TAG, e.getMessage());
         }
     }
     private File getOutputMediaFile(int type) {
@@ -281,7 +287,7 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
         sb.append(type == MEDIA_TYPE_VIDEO ? ".mp4" : ".jpg");
         return new File(mediaStorageDir.getPath() + File.separator + sb.toString());
     }
-    public void startRecord() {
+    public synchronized void startRecord() {
         CLog.d(TAG, "startRecord");
         if (!CapUtils.checkExtSdcard()) {
             CLog.e(TAG, "Ext SDCard isn't exist");
@@ -302,10 +308,15 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
 //        this.mHandler.post(mStartRecorderRunable);
         mCamera = getCameraInstance(); // 解锁camera
 
-        mStartRecorderThread.start();
+//        mStartRecorderThread.start();
+        new Thread() {
+            @Override public void run() {
+                startMediaRecorder();
+            }
+        }.start();
     }
 
-    public void stopRecord() {
+    public synchronized void stopRecord() {
         CLog.d(TAG, "stopRecord");
         stopMediaRecorder();
         if (mCamera != null) {

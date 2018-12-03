@@ -87,10 +87,10 @@ public class CapPusherFragment extends Fragment implements ITXLivePushListener {
         mLivePusher     = new TXLivePusher(mActivity);
         mLivePushConfig = new TXLivePushConfig();
         mLivePushConfig.setVideoEncodeGop(5);
-        mLivePushConfig.setHomeOrientation(TXLiveConstants.VIDEO_ANGLE_HOME_RIGHT);
+//        mLivePushConfig.setHomeOrientation(TXLiveConstants.VIDEO_ANGLE_HOME_RIGHT);
 //        mLivePushConfig.setBeautyFilter(mBeautyLevel, mWhiteningLevel, mRuddyLevel);
         mLivePusher.setConfig(mLivePushConfig);
-        mLivePusher.setRenderRotation(90);
+//        mLivePusher.setRenderRotation(90);
         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         Bundle bundle = getArguments();
