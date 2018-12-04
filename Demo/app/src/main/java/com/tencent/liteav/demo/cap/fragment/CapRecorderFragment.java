@@ -42,11 +42,11 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
     private SurfaceView mRecordSV;
     private boolean isRecording;
     private MediaRecorder mediaRecorder;
-//    private Handler mHandler = new Handler();
+    private Handler mHandler = new Handler();
     private Camera mCamera;
     final Thread mStartRecorderThread = new Thread() {
         @Override public void run() {
-            startMediaRecorder();
+            startRecord();
         }
     };
 
@@ -96,9 +96,7 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
         CLog.d(TAG,"onActivityCreated");
 
         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
         mActivityInterface.setTitle("Video Recording");
-
     }
 
     @Override
@@ -111,14 +109,6 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
     public void onResume() {
         super.onResume();
         CLog.d(TAG,"onResume");
-
-//        Handler mainHandler = new Handler(Looper.getMainLooper());
-//        mainHandler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                startRecord();
-//            }
-//        }, 1000);
     }
 
     @Override
@@ -152,6 +142,16 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
         CLog.d(TAG,"onBackPressed");
         backStack();
     }
+
+    private  void onRecordError() {
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startRecord();
+            }
+        }, 30000);
+    }
+
     private void destroy() {
         CLog.d(TAG, "destroy");
         stopRecord();
@@ -182,6 +182,7 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
         } catch (Exception e) {
             // 打开摄像头错误
             CLog.e(TAG, "打开摄像头错误");
+            onRecordError();
         }
         return c;
     }
@@ -210,7 +211,7 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
 //            mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.MPEG_4_SP);
             // 设置视频的采样率，每秒4帧
 //            mediaRecorder.setVideoFrameRate(4);
-            mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_720P));
+            mediaRecorder.setProfile(CamcorderProfile.get(CapConfig.IS_TEST ? CamcorderProfile.QUALITY_LOW : CamcorderProfile.QUALITY_720P));
             // 设置录制视频文件的输出路径
             mediaRecorder.setOutputFile(getOutputMediaFile(MEDIA_TYPE_VIDEO).toString());
             // 设置捕获视频图像的预览界面
@@ -222,6 +223,7 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
                     CLog.e(TAG, "onError = [ " + what + ", " + extra + " ]");
                     // 发生错误，停止录制
                     stopRecord();
+                    onRecordError();
                 }
             });
 
@@ -244,6 +246,7 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
             e.printStackTrace();
             CLog.e(TAG, e.getMessage());
             releaseMediaRecorder();
+            onRecordError();
         }
     }
 
@@ -289,26 +292,16 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
     }
     public synchronized void startRecord() {
         CLog.d(TAG, "startRecord");
-        if (!CapUtils.checkExtSdcard()) {
-            CLog.e(TAG, "Ext SDCard isn't exist");
-            return;
-        }
-        if (!checkCameraHardware(mActivity)) {
-            CLog.e(TAG, "checkCameraHardware = false");
-            return;
-        }
         if (!CapStorageManager.getInstance().checkExternalStorageSpaceEnough()) {
             CLog.e(TAG, "checkExternalStorageSpaceEnough = false");
             stopRecord();
             return;
         }
-        //startMediaRecorder();
-        //startRecordTimer();
-//        mHandler.removeCallbacks(mStartRecorderRunable);
-//        this.mHandler.post(mStartRecorderRunable);
         mCamera = getCameraInstance(); // 解锁camera
 
-//        mStartRecorderThread.start();
+        if (mCamera == null) {
+            return;
+        }
         new Thread() {
             @Override public void run() {
                 startMediaRecorder();
@@ -323,18 +316,6 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
             mCamera.release();
             mCamera = null;
         }
-//        mHandler.removeCallbacks(mStopRecorderRunable);
-//        this.mHandler.post(mStopRecorderRunable);
-    }
-
-    /**
-     * 检测摄像头硬件 如果应用程序未使用manifest声明对摄像头需求进行特别指明，则应该在运行时检查一下摄像头是否可用
-     */
-    public boolean checkCameraHardware(Context context) {
-        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-            return true;
-        }
-        return false;
     }
 
     @Override

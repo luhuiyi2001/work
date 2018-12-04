@@ -44,7 +44,7 @@ public class CapUtils {
         } catch (Exception e) {
         }
         CLog.e(TAG, "getDeviceId = " + imei);
-        return CapConfig.IS_TEST ? CapConfig.TEST_IMEI : imei;
+        return imei;
     }
 
     public static boolean isNetworkAvailable(Context context) {

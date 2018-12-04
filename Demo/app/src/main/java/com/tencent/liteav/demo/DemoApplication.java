@@ -10,8 +10,8 @@ public class DemoApplication extends MultiDexApplication {
     private static final String TAG = DemoApplication.class.getSimpleName();
 //    private RefWatcher mRefWatcher;
     private static DemoApplication instance;
-    String ugcLicenceUrl = "http://download-1252463788.cossh.myqcloud.com/xiaoshipin/licence_android/TXUgcSDK.licence";
-    String ugcKey = "731ebcab46ecc59ab1571a6a837ddfb6";
+//    String ugcLicenceUrl = "http://download-1252463788.cossh.myqcloud.com/xiaoshipin/licence_android/TXUgcSDK.licence";
+//    String ugcKey = "731ebcab46ecc59ab1571a6a837ddfb6";
 
     @Override
     public void onCreate() {
@@ -22,12 +22,15 @@ public class DemoApplication extends MultiDexApplication {
 
 //        TXLiveBase.setConsoleEnabled(true);
 //        TXLiveBase.setLogLevel(TXLiveConstants.LOG_LEVEL_DEBUG);
+
+        /*
         TXLiveBase.setAppID("1252463788");
         CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(getApplicationContext());
         strategy.setAppVersion(TXLiveBase.getSDKVersionStr());
         CrashReport.initCrashReport(getApplicationContext(),strategy);
 
         TXLiveBase.getInstance().setLicence(instance, ugcLicenceUrl, ugcKey);
+        */
 
 //        File file = getFilesDir();
 //        Log.w("DemoApplication", "load:" + file.getAbsolutePath());

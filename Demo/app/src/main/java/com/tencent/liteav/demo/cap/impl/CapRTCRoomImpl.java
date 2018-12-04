@@ -5,6 +5,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.text.TextUtils;
 
+import com.google.gson.Gson;
 import com.tencent.liteav.demo.R;
 import com.tencent.liteav.demo.cap.CapActivity;
 import com.tencent.liteav.demo.cap.common.CLog;
@@ -12,14 +13,23 @@ import com.tencent.liteav.demo.cap.common.CapConfig;
 import com.tencent.liteav.demo.cap.common.CapUtils;
 import com.tencent.liteav.demo.cap.fragment.CapChatFragment;
 import com.tencent.liteav.demo.cap.manager.CapSharedPrefMgr;
+import com.tencent.liteav.demo.cap.socket.CapResponse;
+import com.tencent.liteav.demo.cap.socket.CapUser;
 import com.tencent.liteav.demo.roomutil.commondef.LoginInfo;
 import com.tencent.liteav.demo.roomutil.commondef.PusherInfo;
 import com.tencent.liteav.demo.roomutil.commondef.RoomInfo;
 import com.tencent.liteav.demo.rtcroom.IRTCRoomListener;
 import com.tencent.liteav.demo.rtcroom.RTCRoom;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 import static com.tencent.liteav.demo.rtcroom.RTCRoom.*;
 
@@ -55,6 +65,10 @@ public class CapRTCRoomImpl {
         mRoomID = roomId;
         mUserIDs = userIDs;
         mIsBtnCall = isBtnCall;
+        if (TextUtils.isEmpty( CapSharedPrefMgr.getInstance().getUserSig())) {
+            requestUserSig();
+            return;
+        }
         internalInitializeRTCRoom();
     }
 
@@ -65,6 +79,34 @@ public class CapRTCRoomImpl {
         }
     }
 
+    private void requestUserSig() {
+        String userID = CapSharedPrefMgr.getInstance().getUserID();
+        final Request request = new Request.Builder()
+                .url(CapConfig.URL_REQ_USER_SIG + userID)
+                .build();
+
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(5, TimeUnit.SECONDS)
+                .readTimeout(5, TimeUnit.SECONDS)
+                .writeTimeout(5, TimeUnit.SECONDS)
+                .build();
+
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, final IOException e) {
+                CLog.d(TAG, "onFailure");
+            }
+
+            @Override
+            public void onResponse(final Call call, final okhttp3.Response response) throws IOException {
+                String json = response.body().string();
+                CLog.d(TAG, "onResponse = " + json);
+                CapResponse resp = new Gson().fromJson(json, CapResponse.class);
+                CapSharedPrefMgr.getInstance().putUserSig(resp.userSig);
+                internalInitializeRTCRoom();
+            }
+        });
+    }
 
     private void internalInitializeRTCRoom() {
         LoginInfo loginInfo       = new LoginInfo();
@@ -128,12 +170,7 @@ public class CapRTCRoomImpl {
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                CapChatFragment roomFragment = CapChatFragment.newInstance(roomInfo, userID, requestCreateRoom, userIds, isBtnCall);
-                FragmentManager fm = mActivity.getFragmentManager();
-                FragmentTransaction ts = fm.beginTransaction();
-                ts.replace(R.id.rtmproom_fragment_container, roomFragment);
-//                ts.addToBackStack(null);
-                ts.commit();
+                mActivity.replaceFragement(CapChatFragment.newInstance(roomInfo, userID, requestCreateRoom, userIds, isBtnCall));
             }
         });
     }

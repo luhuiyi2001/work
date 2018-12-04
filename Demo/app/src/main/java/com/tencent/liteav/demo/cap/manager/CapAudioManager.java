@@ -11,6 +11,8 @@ public class CapAudioManager {
     private static final int TYPE_SOS = 1;
     private static final int TYPE_WAIT_RECEIVE = 2;
     private static final int TYPE_RECEIVED_VOICE = 3;
+    private static final int TYPE_VIDEO_SHOT = 4;
+    private static final int TYPE_KEY_VOLUMN = 5;
 
     private static CapAudioManager sMgr;
     private MediaPlayer mMediaPlayer;
@@ -42,6 +44,14 @@ public class CapAudioManager {
         play(TYPE_RECEIVED_VOICE);
     }
 
+    public void playVideoShotVoice() {
+        play(TYPE_VIDEO_SHOT);
+    }
+
+    public void playVolumnKeyVoice() {
+        play(TYPE_KEY_VOLUMN);
+    }
+
     private void play(int type) {
         if (mMediaPlayer != null) {
             stop();
@@ -51,6 +61,10 @@ public class CapAudioManager {
             audioResId = R.raw.wait_receive_voice;
         } else if (TYPE_RECEIVED_VOICE == type) {
             audioResId = R.raw.received_voice;
+        } else if (TYPE_VIDEO_SHOT == type) {
+            audioResId = R.raw.video_shot;
+        } else if (TYPE_KEY_VOLUMN == type) {
+            audioResId = R.raw.volumn_key;
         }
 
         this.mMediaPlayer = MediaPlayer.create(DemoApplication.getApplication(), audioResId);

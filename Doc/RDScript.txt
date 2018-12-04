@@ -75,7 +75,7 @@ app端测试账号	device_id:123450123456789			user_name:test1			pwd:123456
 --------------------------------------------------------------------------------------
 
 
-
+1008 352309068508117 runde_13
 app--------------------------------------------------------------------------------
 
 1 app登陆   ok
@@ -84,12 +84,16 @@ app-----------------------------------------------------------------------------
 {"act":"app_login","user_name":"runde_02","pwd":"123456","udid":"reyyreec"}
 
 {"act":"app_login","user_name":"runde_03","pwd":"123456","udid":"reyyreec11"}
+{"act":"app_login","user_name":"runde_13","pwd":"123456","udid":"reyyreecdd11"}
 
 2 app请求wifi列表  ok
 {"act":"app_get_wifi_list"}
 
 3 app设置wifi ok 
 {"act":"app_set_wifi","wifi_enabled":1,"spot":"XY","pwd":"12341234"}
+{"act":"app_set_wifi","wifi_enabled":1,"spot":"XYJY","pwd":"wgqrcfg3"}
+{"act":"app_set_wifi","wifi_enabled":1,"spot":"XYJY_5G","pwd":"wgqrcfg3"}
+{"act":"app_set_wifi","wifi_enabled":0}
 
 4 控制帽子进行求助
 {"act":"app_control_ca_ask_for_help","user_ids":["1000","1001"]}

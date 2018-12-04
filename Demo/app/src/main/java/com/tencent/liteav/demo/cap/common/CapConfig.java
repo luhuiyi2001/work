@@ -20,12 +20,14 @@ public class CapConfig {
     public static final int DURATION_RECONNECT_SERVER = 30000;
     public static final int DURATION_RESPONSE_MSG= 5000;
     public static final int DURATION_RECORDER_MONITOR= 3000;
+    public static final int DURATION_CHECK_EXT_SDCARD= 5000;
+    public static final int TIME_OUT_CHECK_EXT_SDCARD= 60 * 1000;
 
     // 单个CPU线程池大小
     public static final int POOL_SIZE = 5;
 
 
-    public static final boolean IS_TEST = true;
+    public static final boolean IS_TEST = false;
     public static final String TEST_USER_ID = "1004";//1000
     public static final String TEST_IMEI = "123451234512345";//255533366988887
     //return "123451234512345";

@@ -157,6 +157,7 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
         mActivityInterface.getRTCRoom().setPauseImage(BitmapFactory.decodeResource(getResources(), R.drawable.pause_publish));
         mActivityInterface.getRTCRoom().setBitrateRange(200, 400);
         mActivityInterface.getRTCRoom().setBeautyFilter(mBeautyStyle, mBeautyLevel, mWhiteningLevel, mRuddyLevel);
+        mActivityInterface.getRTCRoom().setMirror(true);
 
         if (createRoom){
             mActivityInterface.getRTCRoom().createRoom("", mRoomInfo.roomInfo, new RTCRoom.CreateRoomCallback() {
