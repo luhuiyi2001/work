@@ -27,7 +27,7 @@ public class CapConfig {
     public static final int POOL_SIZE = 5;
 
 
-    public static final boolean IS_TEST = false;
+    public static final boolean IS_TEST = true;
     public static final String TEST_USER_ID = "1004";//1000
     public static final String TEST_IMEI = "123451234512345";//255533366988887
     //return "123451234512345";

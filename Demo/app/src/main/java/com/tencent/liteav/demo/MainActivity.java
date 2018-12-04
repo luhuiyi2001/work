@@ -26,8 +26,6 @@ import com.tencent.liteav.demo.rtcroom.ui.double_room.RTCDoubleRoomActivity;
 import com.tencent.liteav.demo.rtcroom.ui.multi_room.RTCMultiRoomActivity;
 //import com.tencent.liteav.demo.videocall.VideoCallActivity;
 import com.tencent.liteav.demo.ugccommon.TCVideoJoinChooseActivity;
-import com.tencent.liteav.demo.videoediter.TCVideoEditChooseActivity;
-import com.tencent.liteav.demo.videorecord.TCVideoSettingActivity;
 import com.tencent.liteav.demo.webrtc.WebRTCActivity;
 import com.tencent.rtmp.TXLiveBase;
 
@@ -200,8 +198,8 @@ public class MainActivity extends Activity {
 
         // 短视频
         List<ChildBean> shortVideoChildList = new ArrayList<>();
-        shortVideoChildList.add(new ChildBean("视频录制", R.drawable.video, TCVideoSettingActivity.class));
-        shortVideoChildList.add(new ChildBean("特效编辑", R.drawable.cut, TCVideoEditChooseActivity.class));
+//        shortVideoChildList.add(new ChildBean("视频录制", R.drawable.video, TCVideoSettingActivity.class));
+//        shortVideoChildList.add(new ChildBean("特效编辑", R.drawable.cut, TCVideoEditChooseActivity.class));
         shortVideoChildList.add(new ChildBean("视频拼接", R.drawable.composite, TCVideoJoinChooseActivity.class));
         shortVideoChildList.add(new ChildBean("图片转场", R.drawable.short_video_picture, TCVideoJoinChooseActivity.class));
         shortVideoChildList.add(new ChildBean("视频上传", R.drawable.update, TCVideoJoinChooseActivity.class));
