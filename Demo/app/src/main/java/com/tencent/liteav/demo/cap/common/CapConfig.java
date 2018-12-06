@@ -1,5 +1,7 @@
 package com.tencent.liteav.demo.cap.common;
 
+import android.os.Build;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 
@@ -13,13 +15,11 @@ public class CapConfig {
     public static final int SDK_APP_ID = 1400160417;
     public static final String ACC_TYPE = "36862";
 
-    public static final int TIME_OUT = 30000;
     public static final int DURATION_SEND_LOCATION_MSG = 10000;// 10s
     public static final int TIMER_IMEI_MONITOR = 5000;// 5s
     public static final int DURATION_RELOGIN_SERVER = 30000;
     public static final int DURATION_RECONNECT_SERVER = 30000;
     public static final int DURATION_RESPONSE_MSG= 5000;
-    public static final int DURATION_RECORDER_MONITOR= 3000;
     public static final int DURATION_CHECK_EXT_SDCARD= 5000;
     public static final int TIME_OUT_CHECK_EXT_SDCARD= 60 * 1000;
 
@@ -30,12 +30,7 @@ public class CapConfig {
     public static final int POOL_SIZE = 5;
 
 
-    public static final boolean IS_TEST = true;
-    public static final String TEST_USER_ID = "1004";//1000
-    public static final String TEST_IMEI = "123451234512345";//255533366988887
-    //return "123451234512345";
-    //return "255533366988887";
-    //return "123450123456789";
+    public static final boolean IS_TEST = Build.BRAND.equals("HUAWEI") || Build.BRAND.equals("samsung") ? true : false;
 
     public static final String FILE_NAME_VIDEO_RECORD = "CapCamera";
     public static final String FILE_NAME_PICTURE = "CapPicture";

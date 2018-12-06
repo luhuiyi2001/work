@@ -24,11 +24,14 @@ import com.tencent.liteav.demo.cap.manager.CapSocketManager;
 
 public class CapProxSensorImpl implements SensorEventListener {
     private static final String TAG = CapProxSensorImpl.class.getSimpleName();
-
+    private static final int STATE_NEAR = 1;
+    private static final int STATE_FAR= 0;
+    private static final int STATE_UNKNOWN= -1;
     private Activity mActivity;
     private SensorManager  mSensorManager;
     private Sensor mSensor;
     private CapTimer mTimer;
+    private int mCurState = STATE_UNKNOWN;
 
     public CapProxSensorImpl(Activity context) {
         mActivity = context;
@@ -59,15 +62,30 @@ public class CapProxSensorImpl implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        CLog.d(TAG, "onSensorChanged : " + event.values[0]);
-        if (event.values[0] == 0) {
+        int newState = getState(event.values[0]);
+        CLog.d(TAG, "onSensorChanged : " + event.values[0] + ", newState = " + newState + ", mCurState = " + mCurState);
+        if (newState == mCurState) {
+            return;
+        }
+        mCurState = newState;
+        if (mCurState == STATE_NEAR) {
             //贴近手机
             mTimer.exit();
-        } else {
+        } else if (mCurState == STATE_FAR) {
             //离开手机
-            mTimer.exit();
             mTimer.startTimer(CapConfig.TIME_THIRTY_SECONDS, CapConfig.TIME_TEN_SECONDS);
+        } else {
+            CLog.d(TAG, "do nothing!");
         }
+    }
+
+    private int getState(float sensorValue) {
+        if (sensorValue == 0) {
+            return STATE_NEAR;
+        } else if (sensorValue > 0) {
+            return STATE_FAR;
+        }
+        return STATE_UNKNOWN;
     }
 
     @Override

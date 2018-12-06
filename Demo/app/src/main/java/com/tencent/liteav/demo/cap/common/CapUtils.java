@@ -36,9 +36,14 @@ public class CapUtils {
 
     //IMEI：
     public static String getImei() {
+        return getImei(DemoApplication.getApplication());
+    }
+
+    //IMEI：
+    public static String getImei(Context context) {
         String imei = "";
         try {
-            TelephonyManager tm = (TelephonyManager) DemoApplication.getApplication().getSystemService(Context.TELEPHONY_SERVICE);
+            TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
             if (tm != null)  imei = tm.getDeviceId();
             if (imei == null) imei = "";
         } catch (Exception e) {
