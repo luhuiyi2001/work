@@ -25,6 +25,7 @@ import com.tencent.liteav.demo.cap.fragment.CapRecorderFragment;
 import com.tencent.liteav.demo.cap.impl.CapFragmentImpl;
 import com.tencent.liteav.demo.cap.impl.CapLoginServerImpl;
 import com.tencent.liteav.demo.cap.impl.CapNetWorkImpl;
+import com.tencent.liteav.demo.cap.impl.CapProxSensorImpl;
 import com.tencent.liteav.demo.cap.impl.CapRTCRoomImpl;
 import com.tencent.liteav.demo.cap.impl.CapRecorderImpl;
 import com.tencent.liteav.demo.cap.impl.CapTestUIImpl;
@@ -70,6 +71,7 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
     private CapTestUIImpl mTestUIImpl;
     private CapWifiImpl mWifiImpl;
     private CapFragmentImpl mFragmentImpl;
+    private CapProxSensorImpl mProxSensorImpl;
 //    private int mMode = CapConstants.MODE_IDLE;
 //    private CapTimer mRecorderTimer;
 
@@ -145,6 +147,8 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
         mNetWorkImpl = new CapNetWorkImpl(this);
         mNetWorkImpl.create();
         mFragmentImpl = new CapFragmentImpl(this);
+        mProxSensorImpl = new CapProxSensorImpl(this);
+        mProxSensorImpl.create();
 //        mRecorderImpl = new CapRecorderImpl(this);
 //        mRecorderImpl.initView();
 //        bindService(new Intent(this,CapRecorderService.class),mConnection, Service.BIND_AUTO_CREATE);
@@ -181,6 +185,7 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
     protected void onDestroy() {
         super.onDestroy();
 //        stopRecorderTimer();
+        mProxSensorImpl.destroy();
         mRTCRoomImpl.destroy();
         CapSocketManager.getInstance().removeOnResponseCallback(mWifiImpl);
         CapSocketManager.getInstance().removeOnResponseCallback(mPushRtmpRespCallback);

@@ -23,6 +23,9 @@ public class CapConfig {
     public static final int DURATION_CHECK_EXT_SDCARD= 5000;
     public static final int TIME_OUT_CHECK_EXT_SDCARD= 60 * 1000;
 
+    public static final int TIME_THIRTY_SECONDS= 30 * 1000;
+    public static final int TIME_TEN_SECONDS= 10 * 1000;
+
     // 单个CPU线程池大小
     public static final int POOL_SIZE = 5;
 

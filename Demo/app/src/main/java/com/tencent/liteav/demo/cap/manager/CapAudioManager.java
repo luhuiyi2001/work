@@ -52,7 +52,15 @@ public class CapAudioManager {
         play(TYPE_KEY_VOLUMN);
     }
 
+    public void playNotWearingAlarm() {
+        play(TYPE_SOS);
+    }
+
     private void play(int type) {
+        play(type, false);
+    }
+
+    private void play(int type, boolean looping) {
         if (mMediaPlayer != null) {
             stop();
         }
@@ -68,6 +76,7 @@ public class CapAudioManager {
         }
 
         this.mMediaPlayer = MediaPlayer.create(DemoApplication.getApplication(), audioResId);
+        this.mMediaPlayer.setLooping(looping);
         this.mMediaPlayer.start();
     }
 

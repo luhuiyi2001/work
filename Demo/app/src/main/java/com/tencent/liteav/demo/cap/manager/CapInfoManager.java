@@ -58,6 +58,16 @@ public class CapInfoManager {
 		req.y_point = CapSharedPrefMgr.getInstance().getLongitude();
 		return new Gson().toJson(req);
 	}
+
+	public String getNotWearingReqMsg() {
+		CapRequest req = new CapRequest();
+		req.act = CapConstants.REQ_ACT_CA_SOS;
+		req.device_id = CapUtils.getImei();
+		req.x_point = CapSharedPrefMgr.getInstance().getLatitude();
+		req.y_point = CapSharedPrefMgr.getInstance().getLongitude();
+		req.type = "1";
+		return new Gson().toJson(req);
+	}
 	
 	public String getWifiListReqMsg(List<CapWifi> wifiList) {
 		CapRequest req = new CapRequest();
