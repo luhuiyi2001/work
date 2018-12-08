@@ -22,6 +22,7 @@ import com.tencent.liteav.demo.cap.common.CapUtils;
 import com.tencent.liteav.demo.cap.fragment.CapChatFragment;
 import com.tencent.liteav.demo.cap.fragment.CapPusherFragment;
 import com.tencent.liteav.demo.cap.fragment.CapRecorderFragment;
+import com.tencent.liteav.demo.cap.impl.CapDebugImpl;
 import com.tencent.liteav.demo.cap.impl.CapFragmentImpl;
 import com.tencent.liteav.demo.cap.impl.CapLoginServerImpl;
 import com.tencent.liteav.demo.cap.impl.CapNetWorkImpl;
@@ -72,6 +73,7 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
     private CapWifiImpl mWifiImpl;
     private CapFragmentImpl mFragmentImpl;
     private CapProxSensorImpl mProxSensorImpl;
+    private CapDebugImpl mDebugImpl;
 //    private int mMode = CapConstants.MODE_IDLE;
 //    private CapTimer mRecorderTimer;
 
@@ -149,6 +151,7 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
         mFragmentImpl = new CapFragmentImpl(this);
         mProxSensorImpl = new CapProxSensorImpl(this);
         mProxSensorImpl.create();
+        mDebugImpl = new CapDebugImpl(this);
 //        mRecorderImpl = new CapRecorderImpl(this);
 //        mRecorderImpl.initView();
 //        bindService(new Intent(this,CapRecorderService.class),mConnection, Service.BIND_AUTO_CREATE);
@@ -220,7 +223,8 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        CLog.d(TAG, "keyCode = " + keyCode);
+        CLog.d(TAG, "onKeyDown = " + keyCode);
+        mDebugImpl.keyDown(keyCode, event);
         if (keyCode == KeyEvent.KEYCODE_F10) {
             doSos();
             return true;
@@ -234,6 +238,12 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
             CapAudioManager.getInstance().playVolumnKeyVoice();
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        CLog.d(TAG, "onKeyUp  = " + keyCode);
+        mDebugImpl.keyUp(keyCode, event);
+        return super.onKeyUp(keyCode, event);
     }
 
     @Override
