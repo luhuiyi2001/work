@@ -36,13 +36,16 @@ import com.tencent.liteav.demo.cap.manager.CapExtSdcardManager;
 import com.tencent.liteav.demo.cap.manager.CapInfoManager;
 import com.tencent.liteav.demo.cap.manager.CapSocketManager;
 import com.tencent.liteav.demo.cap.socket.CapResponse;
+import com.tencent.liteav.demo.cap.websocket.AbsWebSocketActivity;
+import com.tencent.liteav.demo.cap.websocket.ErrorResponse;
+import com.tencent.liteav.demo.cap.websocket.Response;
 import com.tencent.liteav.demo.common.misc.CommonAppCompatActivity;
 import com.tencent.liteav.demo.common.misc.NameGenerator;
 import com.tencent.liteav.demo.rtcroom.RTCRoom;
 
 import java.util.ArrayList;
 
-public class CapActivity extends CommonAppCompatActivity implements CapActivityInterface,CapExtSdcardManager.OnMountedListener {
+public class CapActivity extends AbsWebSocketActivity implements CapActivityInterface,CapExtSdcardManager.OnMountedListener {
 
     private static final String TAG = CapActivity.class.getSimpleName();
 
@@ -52,49 +55,14 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
     private CapRTCRoomImpl mRTCRoomImpl;
     private CapLoginServerImpl mLoginServerImpl;
     private CapNetWorkImpl mNetWorkImpl;
-//    private CapRecorderImpl mRecorderImpl;
-//    private CapImeiMonitor mImeiMonitor;
-//    private OnImeiCallback mImeiCallback = new OnImeiCallback() {
-//        @Override
-//        public void notifyDataChanged() {
-//            CapSocketManager.getInstance().connect();
-//        }
-//    };
 
     private TextView        titleTextView;
 
-//    final Runnable mRecorderTimeout = new Runnable() {
-//        @Override public
-//        void run() {
-//            startRecorder();
-//        }
-//    };
     private CapTestUIImpl mTestUIImpl;
     private CapWifiImpl mWifiImpl;
     private CapFragmentImpl mFragmentImpl;
     private CapProxSensorImpl mProxSensorImpl;
     private CapDebugImpl mDebugImpl;
-//    private int mMode = CapConstants.MODE_IDLE;
-//    private CapTimer mRecorderTimer;
-
-//    CapRecorderService mRecordService=null;
-//    private ServiceConnection mConnection = new ServiceConnection() {
-//
-//        @Override
-//        public void onServiceDisconnected(ComponentName name) {
-//            CLog.d(TAG, "onServiceDisconnected");
-////            mRecordService = null;
-//        }
-//
-//        @Override
-//        public void onServiceConnected(ComponentName name, IBinder service) {
-//            CLog.d(TAG, "onServiceConnected : " + service.getClass().toString());
-//            // 获取服务上的IBinder对象，调用IBinder对象中定义的自定义方法，获取Service对象
-//            CapRecorderService.RecordBinder binder=(CapRecorderService.RecordBinder)service;
-////            mRecordService = binder.getService();
-////            mRecordService.startRecord();
-//        }
-//    };
 
     private CapSocketManager.OnResponseCallback mPushRtmpRespCallback = new CapSocketManager.OnResponseCallback(){
 
@@ -152,12 +120,6 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
         mProxSensorImpl = new CapProxSensorImpl(this);
         mProxSensorImpl.create();
         mDebugImpl = new CapDebugImpl(this);
-//        mRecorderImpl = new CapRecorderImpl(this);
-//        mRecorderImpl.initView();
-//        bindService(new Intent(this,CapRecorderService.class),mConnection, Service.BIND_AUTO_CREATE);
-//        mImeiMonitor = new CapImeiMonitor();
-//        mImeiMonitor.setOnImeiCallback(mImeiCallback);
-
     }
 
     @Override
@@ -168,15 +130,12 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
     @Override
     protected void onResume() {
         super.onResume();
-//        startRecorderTimer();
         mMainHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 startRecorder();
             }
         }, 1000);
-//        mImeiMonitor.start();
-//        startRecorder();
     }
 
     @Override
@@ -187,7 +146,6 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        stopRecorderTimer();
         mProxSensorImpl.destroy();
         mRTCRoomImpl.destroy();
         CapSocketManager.getInstance().removeOnResponseCallback(mWifiImpl);
@@ -196,30 +154,11 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
         CapSocketManager.getInstance().removeOnConnectStateCallback(mLoginServerImpl);
         mNetWorkImpl.destroy();
         mTestUIImpl.destroy();
-//        mRecorderImpl.destroy();
-//        unbindService(mConnection);
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-    }
-
-    @Override
-    public void onPermissionDisable() {
-        new AlertDialog.Builder(this, R.style.RtmpRoomDialogTheme)
-                .setMessage("需要录音和摄像头权限，请到【设置】【应用】打开")
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                });
-    }
-
-    @Override
-    public void onPermissionGranted() {
-
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -265,20 +204,8 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
 
     @Override
     public void backToStartRecord() {
-        //this.startRecorder();
         startRecorder();
     }
-
-//    public void setMode(int mode) {
-//        if (mode == CapConstants.MODE_IDLE) {
-//            if (!this.mRecorderImpl.isRecording()) {
-//                mRecorderImpl.startRecord();
-//            }
-//        } else if () {
-//
-//        }
-//    }
-
     public void startPusher(String url) {
         if (TextUtils.isEmpty(url) || (!url.trim().toLowerCase().startsWith("rtmp://"))) {
             CLog.e(TAG, "推流地址不合法，目前支持rtmp推流!");
@@ -289,7 +216,6 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
             CLog.e(TAG, "正在进行视频通话!");
             return;
         }
-//        mRecordService.stopRecord();
         replaceFragement(CapPusherFragment.newInstance(url));
     }
 
@@ -306,15 +232,6 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
             CapExtSdcardManager.getInstance().setOnMountedListener(this);
             return;
         }
-//        if (!CapUtils.checkExtSdcard()) {
-//            CLog.e(TAG, CapConfig.PATH_EXT_SDCARD + " isn't exist");
-//            mMainHandler.removeCallbacks(mRecorderTimeout);
-//            mMainHandler.postDelayed(mRecorderTimeout, 10000);
-//            return;
-//        }
-//        mMainHandler.removeCallbacks(mRecorderTimeout);
-//        this.mRecorderImpl.startRecord();
-//        mRecordService.startRecord();
         replaceFragement(CapRecorderFragment.newInstance());
     }
 
@@ -323,8 +240,6 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
     }
 
     public void stopRecorder() {
-//        this.mRecorderImpl.stopRecord();
-//        mRecordService.stopRecord();
         Fragment fragment = this.getFragmentManager().findFragmentById(R.id.rtmproom_fragment_container);
         if (fragment instanceof CapRecorderFragment && fragment.isVisible()){
             ((CapRecorderFragment) fragment).onBackPressed();
@@ -343,18 +258,12 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
         mRTCRoomImpl.onStopChat();
     }
 
-    public Handler getMainHandler() {
-        return mMainHandler;
-    }
-
     public void doSos() {
         CapSocketManager.getInstance().onSend(CapInfoManager.getInstance().getSosReqMsg());
         CapAudioManager.getInstance().playSos();
     }
 
     public void doVideoShot() {
-//        this.mRecorderImpl.takePicture();
-//        mRecordService.takePicture();
         CapAudioManager.getInstance().playVideoShotVoice();
         Fragment fragment = this.getFragmentManager().findFragmentById(R.id.rtmproom_fragment_container);
         if (fragment instanceof CapRecorderFragment && fragment.isVisible()){
@@ -372,39 +281,13 @@ public class CapActivity extends CommonAppCompatActivity implements CapActivityI
         startRecorder();
     }
 
-//    /**
-//     * launcher timer
-//     */
-//    private void startRecorderTimer() {
-//        CLog.d(TAG, "startRecorderTimer");
-//        if (mRecorderTimer == null) {
-//            mRecorderTimer = new CapTimer();
-//        }
-//        mRecorderTimer.setOnScheduleListener(new CapTimer.OnScheduleListener() {
-//            @Override
-//            public void onSchedule() {
-//            CLog.d(TAG, "check mode : " + mMode);
-////            if (mMode == CapConstants.MODE_IDLE) {
-//
-//                Fragment fragment = getFragmentManager().findFragmentById(R.id.rtmproom_fragment_container);
-//                if (fragment instanceof CapChatFragment){
-//
-//                } else if (fragment instanceof CapPusherFragment) {
-//
-//                } else {
-//                    startRecorder();
-//                }
-////            }
-//            }
-//        });
-//        mRecorderTimer.startTimer(CapConfig.DURATION_RECORDER_MONITOR, CapConfig.DURATION_RECORDER_MONITOR);
-//    }
-//
-//    private void stopRecorderTimer() {
-//        CLog.d(TAG, "stopRecorderTimer");
-//        if (mRecorderTimer != null) {
-//            mRecorderTimer.exit();
-//            mRecorderTimer = null;
-//        }
-//    }
+    @Override
+    public void onMessageResponse(Response message) {
+        CLog.d(TAG, "onMessageResponse");
+    }
+
+    @Override
+    public void onSendMessageError(ErrorResponse error) {
+        CLog.e(TAG, "onSendMessageError");
+    }
 }

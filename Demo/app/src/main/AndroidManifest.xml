@@ -65,6 +65,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name=".cap.websocket.WebSocketService"/>
+        <receiver android:name=".cap.websocket.NetworkChangedReceiver"/>
         <!--<service android:name=".cap.service.CapRecorderService"/>-->
         <!--<service android:name=".cap.record.CapRecordSerivice"/>
 

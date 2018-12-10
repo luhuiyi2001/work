@@ -38,6 +38,10 @@ adb shell input keyevent 140
 合并某分支到当前分支：git merge <name>
 删除分支：git branch -d <name>
 
+服务器地址
+ws://47.106.114.236:9511
+可以在这个网站模拟发送和接受websocket
+http://coolaf.com/tool/chattest
 
 测试json
 
@@ -56,10 +60,10 @@ app端测试账号	device_id:123450123456789			user_name:test1			pwd:123456
 {"act":"ma_login","user_name":"bruce","pwd":"123456","udid":"asdfghjkdddd"}
 
 2 管理员请求推流  ok
-{"act":"ma_open_rtsp","device_id":"123451234512345"}
+{"act":"ma_open_rtsp","device_id":"352309068508117"}
 
 3 管理员关闭推流  ok
-{"act":"ma_stop_rtsp","device_id":"123451234512345"}
+{"act":"ma_stop_rtsp","device_id":"352309068508117"}
 
 4 管理员发起音频聊天
 {"act":"ma_open_video_call","room_id":"room_1542798542227_73a3","device_id":"123451234512345"}

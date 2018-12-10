@@ -8,6 +8,10 @@ public class CLog {
 	public static void e(String tag, String msg) {
 		Log.e(TAG, toLogMsg(tag, msg));
 	}
+
+	public static void e(String tag, String msg, Throwable tr) {
+		Log.e(TAG, toLogMsg(tag, msg), tr);
+	}
 	
 	public static void v(String tag, String msg) {
 		Log.v(TAG, toLogMsg(tag, msg));

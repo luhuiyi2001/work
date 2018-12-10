@@ -15,6 +15,8 @@ public class CapConfig {
     public static final int SDK_APP_ID = 1400160417;
     public static final String ACC_TYPE = "36862";
 
+    public static final boolean USE_WEB_SOCKECT = true;
+
     public static final int DURATION_SEND_LOCATION_MSG = 10000;// 10s
     public static final int TIMER_IMEI_MONITOR = 5000;// 5s
     public static final int DURATION_RELOGIN_SERVER = 30000;

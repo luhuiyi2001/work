@@ -1,8 +1,12 @@
 package com.tencent.liteav.demo;
 
+import android.content.Intent;
 import android.support.multidex.MultiDexApplication;
 
 import com.tencent.bugly.crashreport.CrashReport;
+import com.tencent.liteav.demo.cap.websocket.WebSocketService;
+import com.tencent.liteav.demo.cap.websocket.WebSocketSetting;
+import com.tencent.liteav.demo.cap.websocket.impl.AppResponseDispatcher;
 import com.tencent.rtmp.TXLiveBase;
 import com.tencent.rtmp.TXLiveConstants;
 
@@ -39,6 +43,17 @@ public class DemoApplication extends MultiDexApplication {
 //        TCHttpEngine.getInstance().initContext(getApplicationContext());
 //        mRefWatcher = LeakCanary.install(this);
 //        CapStateInfoManager.getInstance().setContext(this);
+        startWebSockect();
+    }
+
+    private void startWebSockect() {
+        //配置 WebSocket，必须在 WebSocket 服务启动前设置
+//        WebSocketSetting.setConnectUrl("ws://47.106.114.236:9511");//必选
+//        WebSocketSetting.setResponseProcessDelivery(new AppResponseDispatcher());
+//        WebSocketSetting.setReconnectWithNetworkChanged(true);
+//
+//        //启动 WebSocket 服务
+//        startService(new Intent(this, WebSocketService.class));
     }
 
 //    public static RefWatcher getRefWatcher(Context context) {

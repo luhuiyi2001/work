@@ -9,6 +9,7 @@ import com.tencent.liteav.demo.cap.common.CapConfig;
 import com.tencent.liteav.demo.cap.callback.OnSocketCallback;
 import com.tencent.liteav.demo.cap.socket.CapResponse;
 import com.tencent.liteav.demo.cap.socket.CapSocket;
+import com.tencent.liteav.demo.cap.websocket.impl.CapWebSocketManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,26 +24,22 @@ public class CapSocketManager implements OnSocketCallback {
 
 	private ExecutorService mThreadPool;
 	private CapSocket mClient;
-	private List<OnResponseCallback> mRespCallbackList = new ArrayList<OnResponseCallback>();
+	protected List<OnResponseCallback> mRespCallbackList = new ArrayList<OnResponseCallback>();
 	private List<OnConnectStateCallback> mConnectStateCallbackList = new ArrayList<OnConnectStateCallback>();
 	private int mNullDataCount;
 
-//	private Handler mHandler = new Handler(Looper.myLooper());
-//	final Runnable mWaitTimeout = new Runnable() {
-//		@Override public void run() {
-//			CLog.d(TAG, "ReceiveTimeout");
-//			reconnect();
-//		}
-//	};
-
 	public static CapSocketManager getInstance() {
 		if (sMgr == null) {
-			sMgr = new CapSocketManager();
+			if (CapConfig.USE_WEB_SOCKECT) {
+				sMgr = new CapWebSocketManager();
+			} else {
+				sMgr = new CapSocketManager();
+			}
 		}
 		return sMgr;
 	}
 
-	private CapSocketManager() {
+	protected CapSocketManager() {
 		mClient = new CapSocket();
 		mClient.setOnReceiveMsgListener(this);
 		// 根据CPU数目初始化线程池
@@ -77,11 +74,6 @@ public class CapSocketManager implements OnSocketCallback {
 		mConnectStateCallbackList.remove(callback);
 	}
 
-//	public void reconnect() {
-//		disconnect();
-//		connect();
-//	}
-
 	public void connect() {
 		CLog.d(TAG, "connect = " + (mClient == null ? "null" : mClient.isConnected()));
 		startConnectThread();
@@ -90,15 +82,16 @@ public class CapSocketManager implements OnSocketCallback {
 	public void disconnect() {
 		CLog.d(TAG, "disconnect");
 		try {
-//			if (mThreadPool != null) {
-//				mThreadPool.shutdownNow();
-//				mThreadPool = null;
-//			}
 			mClient.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 			CLog.e(TAG, e.getMessage());
 		}
+	}
+
+	public void destroy() {
+		CLog.d(TAG, "destroy");
+
 	}
 
 	@Override
@@ -112,8 +105,6 @@ public class CapSocketManager implements OnSocketCallback {
 			}
 			return;
 		}
-//		mHandler.removeCallbacks(mWaitTimeout);
-//		mHandler.postDelayed(mWaitTimeout, CapConfig.TIME_OUT);
 		mNullDataCount = 0;
         try {
 			CapResponse resp = new Gson().fromJson(msg, CapResponse.class);
@@ -166,13 +157,6 @@ public class CapSocketManager implements OnSocketCallback {
 			@Override
 			public void run() {
 				mClient.connect();
-//			if (mClient.connect()) {
-//				CLog.d(TAG, "Connect Success!");
-//				startReceiveThread();
-//				notifyConnected();
-//			} else {
-//				CLog.d(TAG, "Connect Failed!");
-//			}
 			}
 		});
 	}
@@ -193,16 +177,14 @@ public class CapSocketManager implements OnSocketCallback {
 		});
 	}
 
-	private void notifyConnected() {
+	protected void notifyConnected() {
 		CLog.d(TAG, "notifyConnected");
-//		mHandler.removeCallbacks(mWaitTimeout);
-//		mHandler.postDelayed(mWaitTimeout, CapConfig.TIME_OUT);
 		for (int i = 0; i < mConnectStateCallbackList.size(); i++) {
 			mConnectStateCallbackList.get(i).notifyConnected();
 		}
 	}
 
-	private void notifyDisconnected() {
+	protected void notifyDisconnected() {
 		CLog.d(TAG, "notifyDisconnected");
 		for (int i = 0; i < mConnectStateCallbackList.size(); i++) {
 			mConnectStateCallbackList.get(i).notifyDisconnected();
