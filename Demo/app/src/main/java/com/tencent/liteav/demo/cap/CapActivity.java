@@ -1,13 +1,10 @@
 package com.tencent.liteav.demo.cap;
 
-import android.app.AlertDialog;
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.widget.TextView;
@@ -15,11 +12,7 @@ import android.widget.TextView;
 import com.tencent.liteav.demo.R;
 import com.tencent.liteav.demo.cap.callback.CapActivityInterface;
 import com.tencent.liteav.demo.cap.common.CLog;
-import com.tencent.liteav.demo.cap.common.CapConfig;
 import com.tencent.liteav.demo.cap.common.CapConstants;
-import com.tencent.liteav.demo.cap.common.CapTimer;
-import com.tencent.liteav.demo.cap.common.CapUtils;
-import com.tencent.liteav.demo.cap.fragment.CapChatFragment;
 import com.tencent.liteav.demo.cap.fragment.CapPusherFragment;
 import com.tencent.liteav.demo.cap.fragment.CapRecorderFragment;
 import com.tencent.liteav.demo.cap.impl.CapDebugImpl;
@@ -28,7 +21,6 @@ import com.tencent.liteav.demo.cap.impl.CapLoginServerImpl;
 import com.tencent.liteav.demo.cap.impl.CapNetWorkImpl;
 import com.tencent.liteav.demo.cap.impl.CapProxSensorImpl;
 import com.tencent.liteav.demo.cap.impl.CapRTCRoomImpl;
-import com.tencent.liteav.demo.cap.impl.CapRecorderImpl;
 import com.tencent.liteav.demo.cap.impl.CapTestUIImpl;
 import com.tencent.liteav.demo.cap.impl.CapWifiImpl;
 import com.tencent.liteav.demo.cap.manager.CapAudioManager;
@@ -36,16 +28,12 @@ import com.tencent.liteav.demo.cap.manager.CapExtSdcardManager;
 import com.tencent.liteav.demo.cap.manager.CapInfoManager;
 import com.tencent.liteav.demo.cap.manager.CapSocketManager;
 import com.tencent.liteav.demo.cap.socket.CapResponse;
-import com.tencent.liteav.demo.cap.websocket.AbsWebSocketActivity;
-import com.tencent.liteav.demo.cap.websocket.ErrorResponse;
-import com.tencent.liteav.demo.cap.websocket.Response;
-import com.tencent.liteav.demo.common.misc.CommonAppCompatActivity;
 import com.tencent.liteav.demo.common.misc.NameGenerator;
 import com.tencent.liteav.demo.rtcroom.RTCRoom;
 
 import java.util.ArrayList;
 
-public class CapActivity extends AbsWebSocketActivity implements CapActivityInterface,CapExtSdcardManager.OnMountedListener {
+public class CapActivity extends AppCompatActivity implements CapActivityInterface,CapExtSdcardManager.OnMountedListener {
 
     private static final String TAG = CapActivity.class.getSimpleName();
 
@@ -281,13 +269,4 @@ public class CapActivity extends AbsWebSocketActivity implements CapActivityInte
         startRecorder();
     }
 
-    @Override
-    public void onMessageResponse(Response message) {
-        CLog.d(TAG, "onMessageResponse");
-    }
-
-    @Override
-    public void onSendMessageError(ErrorResponse error) {
-        CLog.e(TAG, "onSendMessageError");
-    }
 }

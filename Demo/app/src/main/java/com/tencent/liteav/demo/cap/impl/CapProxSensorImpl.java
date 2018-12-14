@@ -32,6 +32,14 @@ public class CapProxSensorImpl implements SensorEventListener {
     private Sensor mSensor;
     private CapTimer mTimer;
     private int mCurState = STATE_UNKNOWN;
+    private CapTimer.OnScheduleListener mTimerListener = new CapTimer.OnScheduleListener() {
+        @Override
+        public void onSchedule() {
+            CLog.d(TAG, "onSchedule");
+            CapAudioManager.getInstance().playNotWearingAlarm();
+            CapSocketManager.getInstance().onSend(CapInfoManager.getInstance().getNotWearingReqMsg());
+        }
+    };
 
     public CapProxSensorImpl(Activity context) {
         mActivity = context;
@@ -43,21 +51,13 @@ public class CapProxSensorImpl implements SensorEventListener {
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         if (mSensor != null)
             mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        mTimer = new CapTimer();
-        mTimer.setOnScheduleListener(new CapTimer.OnScheduleListener() {
-            @Override
-            public void onSchedule() {
-                CLog.d(TAG, "onSchedule");
-                CapAudioManager.getInstance().playNotWearingAlarm();
-                CapSocketManager.getInstance().onSend(CapInfoManager.getInstance().getNotWearingReqMsg());
-            }
-        });
+
     }
 
     public void destroy() {
         CLog.d(TAG, "destroy");
         mSensorManager.unregisterListener(this);
-        mTimer.exit();
+        exitTimer();
     }
 
     @Override
@@ -70,12 +70,26 @@ public class CapProxSensorImpl implements SensorEventListener {
         mCurState = newState;
         if (mCurState == STATE_NEAR) {
             //贴近手机
-            mTimer.exit();
+            exitTimer();
         } else if (mCurState == STATE_FAR) {
             //离开手机
-            mTimer.startTimer(CapConfig.TIME_THIRTY_SECONDS, CapConfig.TIME_TEN_SECONDS);
+            startTimer();
         } else {
             CLog.d(TAG, "do nothing!");
+        }
+    }
+
+    private void startTimer() {
+        exitTimer();
+        mTimer = new CapTimer();
+        mTimer.setOnScheduleListener(mTimerListener);
+        mTimer.startTimer(CapConfig.TIME_THIRTY_SECONDS, CapConfig.TIME_TEN_SECONDS);
+    }
+
+    private void exitTimer() {
+        if (mTimer != null) {
+            mTimer.exit();
+            mTimer = null;
         }
     }
 
