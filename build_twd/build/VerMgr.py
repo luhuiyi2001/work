@@ -61,7 +61,7 @@ class VerMgr():
             elif cmp(value, 'no') == 0:
                 return HY_PART_TYPE_DOUBLE
         
-        if cmp(Model.platform, HY_PLATFORM_MT6582) == 0 or cmp(Model.platform, HY_PLATFORM_MT6582_92) == 0:
+        if cmp(Model.platform, HY_PLATFORM_MT6582) == 0 or cmp(Model.platform, HY_PLATFORM_MT6582_92) == 0 or cmp(Model.platform, HY_PLATFORM_MT6592_92) == 0:
             ptType = HY_PART_TYPE_SINGLE
         else:
             ptType = HY_PART_TYPE_DOUBLE
@@ -69,17 +69,17 @@ class VerMgr():
         
     @staticmethod
     def getNgName():
-        if cmp(Model.platform, HY_PLATFORM_MT6582_92) == 0:
-            if cmp(Model.customBoard, 'K1001_800X1280_Support_3G') == 0 or cmp(Model.customBoard, 'K1001_800X1280_Support_PG_3G') == 0:
+        if cmp(Model.platform, HY_PLATFORM_MT6582_92) == 0 or cmp(Model.platform, HY_PLATFORM_MT6592_92) == 0:
+            if cmp(Model.customBoard, 'K1001P9_800X1280_Support_PG') == 0 or cmp(Model.customBoard, 'K1001P9_800X1280_Support') == 0 or cmp(Model.customBoard, 'K1001_1200X1920_M101WUB151_04A_NT51021_BOE_170710') == 0:
                 ngName = HY_NG_TYPE_3G
             else:
                 ngName = HY_NG_TYPE_2G
         else:
             ngName = HY_NG_TYPE_3G
             
-        if cmp(Model.ng, HY_NG_TYPE_2G) == 0 or cmp(Model.ng, HY_K1001_COM_MODEM_2G) == 0:
+        if cmp(Model.ng, HY_NG_TYPE_2G) == 0 or cmp(Model.ng, HY_K1001_COM_MODEM_2G) == 0 or cmp(Model.ng, HY_K1001P8_2G_MODEM) == 0 or cmp(Model.ng, HY_K1003_2G_MODEM) == 0:
             ngName = HY_NG_TYPE_2G
-        elif cmp(Model.ng, HY_K1001_MODEM_3G) == 0:
+        elif cmp(Model.ng, HY_K1001_MODEM_3G) == 0 or cmp(Model.ng, HY_K1001P8_3G_MODEM) == 0:
             ngName = HY_NG_TYPE_3G
             
         return ngName

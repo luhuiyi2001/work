@@ -16,6 +16,7 @@ TyProduct = ratech82_cwet_rlk_kk
 TyResolution = 1280x800
 
 #TyMisc = K1001-800X1280-9.6WXBP096WX1-HUAWEI-SAMSUNG-170624
+TyModemName = [HY_NG]
 
 [Base New]
 TyBoardName = [HY_BOARD]
