@@ -44,6 +44,7 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
     private ArrayList<String>                   mUserIDs;
     private List<RoomVideoView>                 mPlayerViews    = new ArrayList<>();
     private boolean                             mIsBtnCall;
+    private boolean                             mIsAudioChat;
 
     private int                                 mBeautyStyle    = TXLiveConstants.BEAUTY_STYLE_SMOOTH;
     private int                                 mBeautyLevel    = 5;
@@ -65,7 +66,7 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
         }
     };
 
-    public static CapChatFragment newInstance(RoomInfo config, String userID, boolean createRoom, ArrayList<String> userIds, boolean isBtnCall) {
+    public static CapChatFragment newInstance(RoomInfo config, String userID, boolean createRoom, ArrayList<String> userIds, boolean isBtnCall, boolean isAudioChat) {
         CLog.d(TAG, "newInstance");
         CapChatFragment fragment = new CapChatFragment();
         Bundle bundle = new Bundle();
@@ -74,6 +75,7 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
         bundle.putBoolean("createRoom", createRoom);
         bundle.putStringArrayList("userIDs", userIds);
         bundle.putBoolean("btnCall", isBtnCall);
+        bundle.putBoolean("isAudioChat", isAudioChat);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -139,6 +141,7 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
         boolean createRoom   = bundle.getBoolean("createRoom");
         mUserIDs             = bundle.getStringArrayList("userIDs");
         mIsBtnCall           = bundle.getBoolean("btnCall");
+        mIsAudioChat         = bundle.getBoolean("isAudioChat");
 
         if (selfUserID == null || ( !createRoom && mRoomInfo == null)) {
             return;
@@ -153,6 +156,7 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
             return;
         }
 
+        mActivityInterface.getRTCRoom().setPureAudioPushEnable(mIsAudioChat);
         mActivityInterface.getRTCRoom().startLocalPreview(videoView.videoView);
         mActivityInterface.getRTCRoom().setPauseImage(BitmapFactory.decodeResource(getResources(), R.drawable.pause_publish));
         mActivityInterface.getRTCRoom().setBitrateRange(200, 400);

@@ -69,10 +69,14 @@ public class CapActivity extends AppCompatActivity implements CapActivityInterfa
                 stopPusher();
             } else if (CapConstants.RES_CMD_SERVER_PUSH_OPEN_VIDEO_CALL.equals(resp.cmd)) {
                 CLog.d(TAG, "onOpenVideo");
-                startChat(resp.room_id, null, false);
+                startChat(resp.room_id, null, false, false
+                );
+            } else if (CapConstants.RES_CMD_SERVER_PUSH_OPEN_AUDIO_CALL.equals(resp.cmd)) {
+                CLog.d(TAG, "onOpenAudio");
+                startChat(resp.room_id, null, false, true);
             } else if (CapConstants.RES_CMD_SERVER_PUSH_APP_ASK_FOR_HELP.equals(resp.cmd)) {
                 CLog.d(TAG, "onCreateRoom : " + resp.user_ids);
-                startChat(null, resp.user_ids, false);
+                startChat(null, resp.user_ids, false, false);
             }
         }
     };
@@ -234,12 +238,12 @@ public class CapActivity extends AppCompatActivity implements CapActivityInterfa
         }
     }
 
-    public void startChat(String roomId, ArrayList<String> userIDs, boolean isBtnCall) {
+    public void startChat(String roomId, ArrayList<String> userIDs, boolean isBtnCall, boolean isAudioChat) {
         if (mFragmentImpl.isChatUI()) {
             CLog.e(TAG, "正在进行视频通话!");
             return;
         }
-        mRTCRoomImpl.onStartChat(roomId, userIDs, isBtnCall);
+        mRTCRoomImpl.onStartChat(roomId, userIDs, isBtnCall, isAudioChat);
     }
 
     public void stopChat() {
@@ -260,7 +264,7 @@ public class CapActivity extends AppCompatActivity implements CapActivityInterfa
     }
 
     public void doChat() {
-        startChat(null, null, true);
+        startChat(null, null, true, false);
         CapAudioManager.getInstance().playWaitReceiveVoice();
     }
 

@@ -141,7 +141,7 @@ public class CapTestUIImpl {
             mActivity.stopChat();
             mBtnChat.setText("Start Chat");
         } else {
-            mActivity.startChat(null, null, false);
+            mActivity.startChat(null, null, false, false);
             mBtnChat.setText("Stop Chat");
         }
         isChatStart = !isChatStart;
