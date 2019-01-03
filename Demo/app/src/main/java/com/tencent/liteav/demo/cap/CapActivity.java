@@ -13,6 +13,7 @@ import com.tencent.liteav.demo.R;
 import com.tencent.liteav.demo.cap.callback.CapActivityInterface;
 import com.tencent.liteav.demo.cap.common.CLog;
 import com.tencent.liteav.demo.cap.common.CapConstants;
+import com.tencent.liteav.demo.cap.fragment.CapChatFragment;
 import com.tencent.liteav.demo.cap.fragment.CapPusherFragment;
 import com.tencent.liteav.demo.cap.fragment.CapRecorderFragment;
 import com.tencent.liteav.demo.cap.impl.CapDebugImpl;
@@ -238,12 +239,13 @@ public class CapActivity extends AppCompatActivity implements CapActivityInterfa
         }
     }
 
-    public void startChat(String roomId, ArrayList<String> userIDs, boolean isBtnCall, boolean isAudioChat) {
+    public boolean startChat(String roomId, ArrayList<String> userIDs, boolean isBtnCall, boolean isAudioChat) {
         if (mFragmentImpl.isChatUI()) {
             CLog.e(TAG, "正在进行视频通话!");
-            return;
+            return false;
         }
         mRTCRoomImpl.onStartChat(roomId, userIDs, isBtnCall, isAudioChat);
+        return true;
     }
 
     public void stopChat() {
@@ -264,7 +266,13 @@ public class CapActivity extends AppCompatActivity implements CapActivityInterfa
     }
 
     public void doChat() {
-        startChat(null, null, true, false);
+        boolean isNewChat = startChat(null, null, true, false);
+        if (!isNewChat) {
+            Fragment curFragement = mFragmentImpl.getCurFragment();
+            if (curFragement instanceof CapChatFragment) {
+                ((CapChatFragment)curFragement).sendBtnCallMsg();
+            }
+        }
         CapAudioManager.getInstance().playWaitReceiveVoice();
     }
 

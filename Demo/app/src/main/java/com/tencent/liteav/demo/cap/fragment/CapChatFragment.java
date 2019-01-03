@@ -175,7 +175,7 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
                         CapSocketManager.getInstance().onSend(CapInfoManager.getInstance().getCreateRoomMsg(roomId, mUserIDs));
                     }
 
-                    mHandler.postDelayed(mPusherJoinTimeout, 60000);
+                    mHandler.postDelayed(mPusherJoinTimeout, 30000);
                     CapAudioManager.getInstance().playReceivedVoice();
                 }
 
@@ -258,6 +258,12 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
         backStack();
     }
 
+    public void sendBtnCallMsg() {
+        if (mIsBtnCall) {
+            CapSocketManager.getInstance().onSend(CapInfoManager.getInstance().getBtnCallMsg(mRoomInfo.roomID));
+        }
+    }
+
     private void errorGoBack(String title, int errCode, String errInfo){
         CLog.e(TAG, "ErrorInfo : [ " + title + ", " + errCode + ", " + errInfo + " ]");
         mActivityInterface.getRTCRoom().exitRoom(null);
@@ -324,7 +330,7 @@ public class CapChatFragment extends Fragment implements IRTCRoomListener {
         mPusherList.remove(pusher.userID);
         CapSocketManager.getInstance().onSend(CapInfoManager.getInstance().getReportRoomStatusMsg(mRoomInfo.roomID, "1", pusher.userID));
         if (mPusherList.size() == 0) {
-            mHandler.postDelayed(mAllPusherExitTimeout, 30000);
+            mHandler.postDelayed(mAllPusherExitTimeout, 3000);
         }
     }
 
