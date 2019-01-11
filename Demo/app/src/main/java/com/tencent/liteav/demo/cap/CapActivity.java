@@ -85,7 +85,7 @@ public class CapActivity extends AppCompatActivity implements CapActivityInterfa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+        CLog.d(TAG, "onCreate");
         setContentView(R.layout.activity_cap);
 
         mTestUIImpl = new CapTestUIImpl(this);
@@ -118,11 +118,13 @@ public class CapActivity extends AppCompatActivity implements CapActivityInterfa
     @Override
     protected void onPause() {
         super.onPause();
+        CLog.d(TAG, "onPause");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        CLog.d(TAG, "onResume");
         mMainHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -134,11 +136,13 @@ public class CapActivity extends AppCompatActivity implements CapActivityInterfa
     @Override
     public void onStop(){
         super.onStop();
+        CLog.d(TAG, "onStop");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        CLog.d(TAG, "onDestroy");
         mProxSensorImpl.destroy();
         mRTCRoomImpl.destroy();
         CapSocketManager.getInstance().removeOnResponseCallback(mWifiImpl);
@@ -197,9 +201,11 @@ public class CapActivity extends AppCompatActivity implements CapActivityInterfa
 
     @Override
     public void backToStartRecord() {
+        CLog.d(TAG, "backToStartRecord");
         startRecorder();
     }
     public void startPusher(String url) {
+        CLog.d(TAG, "startPusher = " + url);
         if (TextUtils.isEmpty(url) || (!url.trim().toLowerCase().startsWith("rtmp://"))) {
             CLog.e(TAG, "推流地址不合法，目前支持rtmp推流!");
             return;
@@ -213,6 +219,7 @@ public class CapActivity extends AppCompatActivity implements CapActivityInterfa
     }
 
     public void stopPusher() {
+        CLog.d(TAG, "stopPusher");
         //removeCurFragment();
         Fragment fragment = this.getFragmentManager().findFragmentById(R.id.rtmproom_fragment_container);
         if (fragment instanceof CapPusherFragment && fragment.isVisible()){
@@ -221,6 +228,7 @@ public class CapActivity extends AppCompatActivity implements CapActivityInterfa
     }
 
     public void startRecorder() {
+        CLog.d(TAG, "startRecorder");
         if (!CapExtSdcardManager.getInstance().isMounted()) {
             CapExtSdcardManager.getInstance().setOnMountedListener(this);
             return;
@@ -229,10 +237,12 @@ public class CapActivity extends AppCompatActivity implements CapActivityInterfa
     }
 
     public void replaceFragement(Fragment fragment) {
+        CLog.d(TAG, "replaceFragement");
         mFragmentImpl.replaceFragement(fragment);
     }
 
     public void stopRecorder() {
+        CLog.d(TAG, "stopRecorder");
         Fragment fragment = this.getFragmentManager().findFragmentById(R.id.rtmproom_fragment_container);
         if (fragment instanceof CapRecorderFragment && fragment.isVisible()){
             ((CapRecorderFragment) fragment).onBackPressed();
@@ -240,6 +250,7 @@ public class CapActivity extends AppCompatActivity implements CapActivityInterfa
     }
 
     public boolean startChat(String roomId, ArrayList<String> userIDs, boolean isBtnCall, boolean isAudioChat) {
+        CLog.d(TAG, "startChat");
         if (mFragmentImpl.isChatUI()) {
             CLog.e(TAG, "正在进行视频通话!");
             return false;
@@ -249,15 +260,18 @@ public class CapActivity extends AppCompatActivity implements CapActivityInterfa
     }
 
     public void stopChat() {
+        CLog.d(TAG, "stopChat");
         mRTCRoomImpl.onStopChat();
     }
 
     public void doSos() {
+        CLog.d(TAG, "doSos");
         CapSocketManager.getInstance().onSend(CapInfoManager.getInstance().getSosReqMsg());
         CapAudioManager.getInstance().playSos();
     }
 
     public void doVideoShot() {
+        CLog.d(TAG, "doVideoShot");
         CapAudioManager.getInstance().playVideoShotVoice();
         Fragment fragment = this.getFragmentManager().findFragmentById(R.id.rtmproom_fragment_container);
         if (fragment instanceof CapRecorderFragment && fragment.isVisible()){
@@ -266,6 +280,7 @@ public class CapActivity extends AppCompatActivity implements CapActivityInterfa
     }
 
     public void doChat() {
+        CLog.d(TAG, "doChat");
         boolean isNewChat = startChat(null, null, true, false);
         if (!isNewChat) {
             Fragment curFragement = mFragmentImpl.getCurFragment();
@@ -278,6 +293,7 @@ public class CapActivity extends AppCompatActivity implements CapActivityInterfa
 
     @Override
     public void onMounted() {
+        CLog.d(TAG, "onMounted");
         startRecorder();
     }
 

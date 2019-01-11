@@ -12,6 +12,8 @@ git config --global user.name "luhuiyi2001"
 telnet 47.106.114.236 9510
 logcat -v time |grep luhuiyi
 
+telnet fzd.xcloudtech.com 9000
+
 adb shell am broadcast -a com.runde.test.action_send_login
 adb shell am broadcast -a com.runde.test.action_send_location
 

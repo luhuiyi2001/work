@@ -52,4 +52,6 @@ public class CapConstants {
     public static final int MODE_START_PUSHER = 2;
     public static final int MODE_CHAT = 3;
 
+    public static final String NAME_RUNDE = "runde";
+    public static final String NAME_WEB = "web";
 }

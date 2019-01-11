@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
@@ -20,10 +19,9 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import com.tencent.liteav.demo.R;
+import com.tencent.liteav.demo.cap.callback.CapActivityInterface;
 import com.tencent.liteav.demo.cap.common.CLog;
 import com.tencent.liteav.demo.cap.common.CapConfig;
-import com.tencent.liteav.demo.cap.common.CapUtils;
-import com.tencent.liteav.demo.cap.callback.CapActivityInterface;
 import com.tencent.liteav.demo.cap.manager.CapStorageManager;
 
 import java.io.File;
@@ -46,6 +44,13 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
     private Camera mCamera;
     final Thread mStartRecorderThread = new Thread() {
         @Override public void run() {
+            startRecord();
+        }
+    };
+
+    final Runnable mStartRecordTimeout = new Runnable() {
+        @Override
+        public void run() {
             startRecord();
         }
     };
@@ -144,21 +149,21 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
     }
 
     private  void onRecordError() {
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startRecord();
-            }
-        }, 30000);
+        launchStartRecordTimeout();
     }
 
+    private void launchStartRecordTimeout() {
+        mHandler.removeCallbacks(mStartRecordTimeout);
+        mHandler.postDelayed(mStartRecordTimeout, 30000);
+    }
     private void destroy() {
         CLog.d(TAG, "destroy");
+        mHandler.removeCallbacks(mStartRecordTimeout);
         stopRecord();
     }
 
     private void backStack(){
-        CLog.d(TAG, "destroy");
+        CLog.d(TAG, "backStack");
         if (mActivity != null) {
             mActivity.runOnUiThread(new Runnable() {
                 @Override
@@ -242,6 +247,7 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
             mediaRecorder.prepare();
             mediaRecorder.start();
             isRecording = true;
+            mHandler.removeCallbacks(mStartRecordTimeout);
         } catch (Exception e) {
             e.printStackTrace();
             CLog.e(TAG, e.getMessage());
