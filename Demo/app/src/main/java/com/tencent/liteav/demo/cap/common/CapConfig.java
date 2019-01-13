@@ -15,7 +15,7 @@ public class CapConfig {
     public static final int SDK_APP_ID = 1400160417;
     public static final String ACC_TYPE = "36862";
 
-    public static final boolean USE_WEB_SOCKECT = true;
+    public static final boolean USE_WEB_SOCKECT = CapConstants.NAME_WEB.equals(CapSystemProperties.getSocketType());
 
     public static final int DURATION_SEND_LOCATION_MSG = 10000;// 10s
     public static final int TIMER_IMEI_MONITOR = 5000;// 5s
@@ -47,5 +47,5 @@ public class CapConfig {
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd_HHmmss");
 
     public static final String URL_REQ_USER_SIG = "https://live.runde.pro/WebRtcSignApi.php?user_id=";
-    public static final String URL_LOGIN_RTC_ROOM = "https://room.qcloud.com/weapp/multi_room";
+    public static final String URL_LOGIN_RTC_ROOM = CapConstants.NAME_RUNDE.equals(CapSystemProperties.getRtcUrlType()) ? "http://aqm.runde.pro:5757/weapp/multi_room" : "https://room.qcloud.com/weapp/multi_room";
 }

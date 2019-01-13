@@ -184,8 +184,9 @@ public class RTCMultiRoomActivity extends CommonAppCompatActivity implements RTC
     private void internalInitializeRTCRoom(LoginInfoResponse resp) {
         LoginInfo loginInfo       = new LoginInfo();
         loginInfo.sdkAppID       = CapConfig.SDK_APP_ID;
-        loginInfo.userID         = CapSharedPrefMgr.getInstance().getUserID();
-        loginInfo.userSig        = CapSharedPrefMgr.getInstance().getUserSig();
+        loginInfo.userID         = "1008";//CapSharedPrefMgr.getInstance().getUserID();
+        loginInfo.userSig        = "eJxFzttugkAQgOF34damzB5YsIkXolIPNWWDxGhICLJru7EiXRZb0-TdCwTT2-*bmcyPtXmJHrM8v9SFSc2tlNaTRZjHsPXQkRKyMOqopG4AAXh9z8pSiTQzKdGiEehzJU5pR*00BUAMKHJ7lN*l0jLNjqa7hp0hBrhvXqWu1KVoOyAHYQLwj0ad28eQQxkZUuLdv6jUW5PXMz5ZBNfP-b6aEJXYzP3g3tKd4mgajFfnAfGD1a3g29eA7d5nMjqMlU9DUouvxHaZ3rF6sOCb0-owj8IljUHkzx7bhnUs53HhJzYfjazfPydaVgA_";
+        //CapSharedPrefMgr.getInstance().getUserSig();
         loginInfo.accType        = CapConfig.ACC_TYPE;
         loginInfo.userName       = userName;
         loginInfo.userAvatar     = userAvatar;

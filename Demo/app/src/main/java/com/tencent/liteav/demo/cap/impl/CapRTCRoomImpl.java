@@ -43,6 +43,7 @@ public class CapRTCRoomImpl {
     private String mRoomID;
     private ArrayList<String> mUserIDs;
     private boolean mIsBtnCall;
+    private boolean mIsAudioChat;
 
     private CapActivity mActivity;
     public CapRTCRoomImpl(CapActivity context) {
@@ -61,7 +62,12 @@ public class CapRTCRoomImpl {
         mRTCRoom.logout();
     }
 
-    public void onStartChat(String roomId, ArrayList<String> userIDs, boolean isBtnCall) {
+    public void onStartChat(String roomId, ArrayList<String> userIDs, boolean isBtnCall, boolean isAudioChat) {
+        mIsAudioChat = isAudioChat;
+        onStartChat(roomId, userIDs, isBtnCall);
+    }
+
+    private void onStartChat(String roomId, ArrayList<String> userIDs, boolean isBtnCall) {
         mRoomID = roomId;
         mUserIDs = userIDs;
         mIsBtnCall = isBtnCall;
@@ -163,14 +169,14 @@ public class CapRTCRoomImpl {
         RoomInfo roomInfo = new RoomInfo();
         roomInfo.roomInfo = CapUtils.getImei();
         roomInfo.roomID = mRoomID;
-        enterRoom(roomInfo, getUserID(), TextUtils.isEmpty(roomInfo.roomID) ? true : false, mUserIDs, mIsBtnCall);
+        enterRoom(roomInfo, getUserID(), TextUtils.isEmpty(roomInfo.roomID) ? true : false, mUserIDs, mIsBtnCall, mIsAudioChat);
     }
 
-    private void enterRoom(final RoomInfo roomInfo, final String userID, final boolean requestCreateRoom, final ArrayList<String> userIds, final boolean isBtnCall) {
+    private void enterRoom(final RoomInfo roomInfo, final String userID, final boolean requestCreateRoom, final ArrayList<String> userIds, final boolean isBtnCall, final boolean isAudioChat) {
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mActivity.replaceFragement(CapChatFragment.newInstance(roomInfo, userID, requestCreateRoom, userIds, isBtnCall));
+                mActivity.replaceFragement(CapChatFragment.newInstance(roomInfo, userID, requestCreateRoom, userIds, isBtnCall, isAudioChat));
             }
         });
     }

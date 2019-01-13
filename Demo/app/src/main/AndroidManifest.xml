@@ -5,6 +5,10 @@
     android:versionCode="1"
     android:versionName="1.0">
 
+    <!-- 这个权限用于进行网络定位-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
+    <!--用于申请调用A-GPS模块-->
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"></uses-permission>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_MEDIA_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -20,6 +24,7 @@
     <uses-permission android:name="android.permission.CAPTURE_VIDEO_OUTPUT" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"></uses-permission>
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-feature android:name="android.hardware.camera" />
@@ -40,6 +45,15 @@
         android:largeHeap="true"
         android:theme="@style/AppTheme">
 
+        <!--<meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="8utgeIdkl5K5BbUkYIGk0HTbgtOzaVH2" >
+        </meta-data>-->
+        <!--<service android:name="com.baidu.location.f" android:enabled="true" android:process=":remote"> </service>-->
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="423f1e8e4dfe58d4c9a33ef2f1fb5905"/>
+        <service android:name="com.amap.api.location.APSService"></service>
         <!--<activity android:name=".cap.home.Home"
             android:theme="@android:style/Theme.Wallpaper.NoTitleBar"
             android:launchMode="singleInstance"

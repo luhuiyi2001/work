@@ -12,6 +12,8 @@ git config --global user.name "luhuiyi2001"
 telnet 47.106.114.236 9510
 logcat -v time |grep luhuiyi
 
+telnet fzd.xcloudtech.com 9000
+
 adb shell am broadcast -a com.runde.test.action_send_login
 adb shell am broadcast -a com.runde.test.action_send_location
 
@@ -43,6 +45,10 @@ ws://47.106.114.236:9511
 可以在这个网站模拟发送和接受websocket
 http://coolaf.com/tool/chattest
 
+http://www.gpsspg.com/maps.htm
+
+22.603669,113.82992
+
 测试json
 
 管理员端测试账号    user_name:bruce   pwd:123456
@@ -54,6 +60,8 @@ app端测试账号	device_id:123450123456789			user_name:test1			pwd:123456
 
 {"act":"ma_open_group_video_call","room_id":"room_1542548390885_ba30","device_ids":["255533366988887"]}
 {"act":"ma_open_group_video_call","room_id":"","device_ids":["255533366988887"]}
+
+
 管理员--------------------------------------------------------------------------------
 
 1 管理员登陆  ok
@@ -67,10 +75,10 @@ app端测试账号	device_id:123450123456789			user_name:test1			pwd:123456
 {"act":"ma_stop_rtsp","device_id":"352309068508117"}
 
 4 管理员发起音频聊天
-{"act":"ma_open_video_call","room_id":"room_1542798542227_73a3","device_id":"123451234512345"}
+{"act":"ma_open_video_call","room_id":"room_1545359309034_5e03","device_id":"862828044006410"}
 
 5 管理员发起视频群聊
-{"act":"ma_open_group_video_call","room_id":"room_1542798542227_73a3","device_ids":["123451234512345","12345123456789"]}
+{"act":"ma_open_group_video_call","room_id":"room_1545371569002_26f3","device_ids":["352309068508117","862828044006410"]}
 
 6 管理员发起音频群聊
 {"act":"ma_open_group_audio_call","room_id":"xxx","device_ids":["123451234512345","12345-12345-12345"]}
@@ -89,6 +97,8 @@ app-----------------------------------------------------------------------------
 {"act":"app_login","user_name":"runde_02","pwd":"123456","udid":"reyyreec"}
 
 {"act":"app_login","user_name":"runde_03","pwd":"123456","udid":"reyyreec11"}
+
+
 {"act":"app_login","user_name":"runde_13","pwd":"123456","udid":"reyyreecdd11"}
 
 2 app请求wifi列表  ok

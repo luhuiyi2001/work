@@ -10,6 +10,7 @@ public class CapConstants {
     public static final String RES_CMD_SERVER_PULL_WIFI_LIST = "server_pull_wifi_list";
     public static final String RES_CMD_SERVER_PUSH_CONNECT_WIFI = "server_push_set_wifi";
     public static final String RES_CMD_SERVER_PUSH_OPEN_VIDEO_CALL = "server_push_open_video_call";
+    public static final String RES_CMD_SERVER_PUSH_OPEN_AUDIO_CALL = "server_push_open_audio_call";
     public static final String RES_CMD_SERVER_PUSH_APP_ASK_FOR_HELP = "server_push_app_ask_for_help";
 
 
@@ -51,4 +52,6 @@ public class CapConstants {
     public static final int MODE_START_PUSHER = 2;
     public static final int MODE_CHAT = 3;
 
+    public static final String NAME_RUNDE = "runde";
+    public static final String NAME_WEB = "web";
 }

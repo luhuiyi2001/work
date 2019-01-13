@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.tencent.liteav.demo.cap.common.CLog;
 import com.tencent.liteav.demo.roomutil.http.HttpRequests;
 import com.tencent.liteav.demo.roomutil.http.HttpResponse;
 import com.tencent.liteav.demo.roomutil.im.IMMessageMgr;
@@ -38,7 +39,7 @@ import java.util.Iterator;
  */
 
 public abstract class BaseRoom implements IMMessageMgr.IMMessageListener {
-
+    public static final String TAG = BaseRoom.class.getSimpleName();
     public static String                    ROOM_SERVICE_DOMAIN = "https://room.qcloud.com/weapp/";;
 
     protected Context                       mContext;
@@ -61,7 +62,7 @@ public abstract class BaseRoom implements IMMessageMgr.IMMessageListener {
     protected ArrayList<RoomInfo>           mRoomList               = new ArrayList<>();
 
     protected boolean                       mScreenAutoEnable       = false;
-
+    protected boolean                       mPureAudioPushEnable    = false;
 
     public BaseRoom(Context context) {
         mContext = context.getApplicationContext();
@@ -518,6 +519,8 @@ public abstract class BaseRoom implements IMMessageMgr.IMMessageListener {
         if (mTXLivePusher == null) {
             TXLivePushConfig config = new TXLivePushConfig();
             config.enableScreenCaptureAutoRotate(mScreenAutoEnable);// 是否开启屏幕自适应
+            config.enablePureAudioPush(mPureAudioPushEnable);
+            CLog.d(TAG, "initLivePusher - mPureAudioPushEnable = " + mPureAudioPushEnable);
             config.setPauseFlag(TXLiveConstants.PAUSE_FLAG_PAUSE_VIDEO | TXLiveConstants.PAUSE_FLAG_PAUSE_AUDIO);
             mTXLivePusher = new TXLivePusher(this.mContext);
             mTXLivePusher.setConfig(config);
@@ -530,12 +533,18 @@ public abstract class BaseRoom implements IMMessageMgr.IMMessageListener {
     protected void unInitLivePusher() {
         if (mTXLivePusher != null) {
             mSelfPushUrl = "";
+//            mPureAudioPushEnable = false;
             mTXLivePushListener = null;
             mTXLivePusher.setPushListener(null);
             mTXLivePusher.stopCameraPreview(true);
             mTXLivePusher.stopPusher();
             mTXLivePusher = null;
         }
+    }
+
+    public void setPureAudioPushEnable(boolean pureAudioPushEnable) {
+        CLog.d(TAG, "setPureAudioPushEnable = " + pureAudioPushEnable);
+        mPureAudioPushEnable = pureAudioPushEnable;
     }
 
     protected interface PusherStreamCallback {

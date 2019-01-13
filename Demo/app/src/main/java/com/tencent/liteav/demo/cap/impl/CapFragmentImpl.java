@@ -75,4 +75,8 @@ public class CapFragmentImpl {
         CLog.d(TAG, "getCurFragmentIndex = " + index);
         return index;
     }
+
+    public Fragment getCurFragment() {
+        return mActivity.getFragmentManager().findFragmentById(R.id.rtmproom_fragment_container);
+    }
 }
