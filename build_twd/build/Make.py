@@ -41,7 +41,7 @@ class Make():
                 res = subprocess.call("./mkt_user.sh n ", shell = True)
             elif cmp(Model.platform, HY_PLATFORM_MT6577) == 0 or cmp(Model.platform, HY_PLATFORM_MT6582_92) == 0 or cmp(Model.platform, HY_PLATFORM_MT6592_92) == 0:
                 res = subprocess.call("./tyMk.py user n ", shell = True)
-            elif cmp(Model.platform, HY_PLATFORM_MT6580) == 0 or cmp(Model.platform, HY_PLATFORM_MT6582_L0) == 0:
+            elif cmp(Model.platform, HY_PLATFORM_MT6580) == 0 or cmp(Model.platform, HY_PLATFORM_MT6582_L0) == 0 or cmp(Model.platform, HY_PLATFORM_MT6797) == 0:
                 hyMkFile = os.path.join(Model.srcPath, 'hyMkAll.sh')
                 tmplHyMkFile = os.path.join(BUILD_PATH, Model.makeLmnoPath)
                 subprocess.call('cp -vf ' + tmplHyMkFile + ' ' + hyMkFile, shell = True)
