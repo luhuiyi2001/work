@@ -1,5 +1,11 @@
 #!/usr/bin/python
 # coding:utf-8
+import os
+import Constants
+
+BUILD_PATH = os.getcwd()
+PATH_DB = os.path.join(BUILD_PATH, 'db')
+PATH_COL_INFO = os.path.join(PATH_DB, Constants.COL_INFO)
 
 API_TOKEN = '21f7872bf07e7a2ff06a31dc62e41ca3d8bcb73e5b205f1f282d94a1'
 # DB INFO

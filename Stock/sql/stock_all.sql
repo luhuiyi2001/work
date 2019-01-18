@@ -110,6 +110,7 @@ CREATE TABLE `stock_company` (
 DROP TABLE IF EXISTS `namechange`;
 CREATE TABLE `namechange` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `ts_code` VARCHAR(45) NOT NULL  COMMENT '证券名称',
   `name` VARCHAR(100) NOT NULL COMMENT '证券名称',
   `start_date` VARCHAR(45) NOT NULL COMMENT '开始日期',
   `end_date` VARCHAR(45) COMMENT '结束日期',
