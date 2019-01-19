@@ -7,10 +7,11 @@ import ConfigUtil
 import Constants
 import DB
 import pymysql
-import Common
+import TuShare
 
 
 class DbMgr:
+
     @staticmethod
     def connect():
         db = pymysql.connect(host=Config.DB_URL,
@@ -22,8 +23,13 @@ class DbMgr:
 
     @staticmethod
     def get_col_info(col_name):
-        cur_index = DbMgr.allColName.index(col_name)
-        return DbMgr.allColDetail[cur_index]
+        tmp_index = DbMgr.allColName.index(col_name)
+        return DbMgr.allColDetail[tmp_index]
+
+    @staticmethod
+    def get_col_type(col_name):
+        tmp_dict = DbMgr.get_col_info(col_name)
+        return tmp_dict.get(DB.COL_TYPE_TYPE)
 
     @staticmethod
     def read_col_info():
@@ -54,7 +60,7 @@ class DbMgr:
                 db.commit()
                 # create table
                 cur_all_col_with_table = ConfigUtil.read_sections(os.path.join(Config.PATH_DB, cur_table))
-                cur_sql_create_table = DbMgr.create_table_sql(cur_table, cur_all_col_with_table)
+                cur_sql_create_table = DbMgr._create_table_sql(cur_table, cur_all_col_with_table)
                 # print(cur_sql_create_table)
                 cursor.execute(cur_sql_create_table)
                 db.commit()
@@ -65,25 +71,25 @@ class DbMgr:
         db.close()
 
     @staticmethod
-    def create_table_sql(table, col_arrays):
+    def _create_table_sql(table, col_arrays):
         col_num = len(col_arrays)
         sql_col_arrays = []
         for i in range(col_num):
             cur_col_name = col_arrays[i]
             cur_dict = DbMgr.get_col_info(cur_col_name)
-            cur_type = cur_dict.get(Constants.COL_TYPE_TYPE)
-            cur_max_num = cur_dict.get(Constants.COL_TYPE_MAX_NUM)
-            cur_comment = cur_dict.get(Constants.COL_TYPE_COMMENT)
+            cur_type = cur_dict.get(DB.COL_TYPE_TYPE)
+            cur_max_num = cur_dict.get(DB.COL_TYPE_MAX_NUM)
+            cur_comment = cur_dict.get(DB.COL_TYPE_COMMENT)
             cur_sql_col = DB.SQL_CREATE_COLUMN_FORMAT % (cur_col_name, cur_type, cur_max_num, cur_comment)
             sql_col_arrays.append(cur_sql_col)
-        sql_all_col = ''.join(sql_col_arrays)
+        sql_all_col = Constants.SYMBOL_LF.join(sql_col_arrays)
         sql_create_table = DB.SQL_CREATE_TABLE_FORMAT % (table, sql_all_col)
         # print(sql_create_table)
         return sql_create_table
 
     @staticmethod
-    def get_sql_insert(table, cols, value_type, values):
-        all_column = DB.SQL_COL_SEPARTOR.join(cols)
+    def _create_insert_sql(table, cols, value_type, values):
+        all_column = DB.SQL_INSERT_COL_SEPARTOR.join(cols)
         value_format = []
         type_len = len(value_type)
         # print(values)
@@ -103,7 +109,8 @@ class DbMgr:
         return sql_insert
 
     @staticmethod
-    def insert_to_db(data, table, cols, value_type):
+    def _insert_to_db(data, table, cols, value_type):
+        print(data.columns.values)
         c_len = data.shape[0]
         # 建立数据库连接,剔除已入库的部分
         db = DbMgr.connect()
@@ -112,8 +119,8 @@ class DbMgr:
             try:
                 currow = list(data.iloc[i])
                 # print(currow)
-                sql_insert = DbMgr.get_sql_insert(table, cols, value_type, currow)
-                print(sql_insert)
+                sql_insert = DbMgr._create_insert_sql(table, cols, value_type, currow)
+                # print(sql_insert)
                 cursor.execute(sql_insert)
                 db.commit()
             except Exception as err:
@@ -123,40 +130,22 @@ class DbMgr:
         db.close()
 
     @staticmethod
-    def import_stock_basic():
-        data = Common.query_pro(DbMgr.pro, Constants.QUERY_INDEX_STOCK_BASIC)
-        # 建立数据库连接,剔除已入库的部分
-        DbMgr.insert_to_db(data, DB.TABLE_STOCK_BASIC, DB.STOCK_BASIC_COL_ALL, DB.STOCK_BASIC_COL_TYPE)
-        print('Import Stock Basic Finished!')
-
-    @staticmethod
-    def import_trade_cal():
-        data = Common.query_pro(DbMgr.pro, Constants.QUERY_INDEX_TRADE_CAL)
-        # print(data)
-        # 建立数据库连接,剔除已入库的部分
-        DbMgr.insert_to_db(data, DB.TABLE_TRADE_CAL, DB.TRADE_CAL_COL_ALL, DB.TRADE_CAL_COL_TYPE)
-        print('Import Trade Cal Finished!')
-
-    @staticmethod
-    def import_stock_company():
-        data = Common.query_pro(DbMgr.pro, Constants.QUERY_INDEX_STOCK_COMPANY)
-        # print(data)
-        # 建立数据库连接,剔除已入库的部分
-        DbMgr.insert_to_db(data, DB.TABLE_STOCK_COMPANY, DB.ALL_COL_STOCK_COMPANY, DB.ALL_TYPE_STOCK_COMPANY)
-        print('Import Stock Company Finished!')
-
-    @staticmethod
-    def import_name_change():
-        data = Common.query_pro(DbMgr.pro, Constants.QUERY_INDEX_NAMECHANGE)
-        # print(data)
-        # 建立数据库连接,剔除已入库的部分
-        DbMgr.insert_to_db(data, DB.TABLE_NAMECHANGE, DB.ALL_COL_NAMECHANGE, DB.ALL_TYPE_NAMECHANGE)
-        print('Import Name Change Finished!')
+    def import_data_from_tu_share():
+        pro = TuShare.pro_api()
+        for cur_table in DB.TABLE_ALL:
+            cur_all_col_with_table = ConfigUtil.read_sections(os.path.join(Config.PATH_DB, cur_table))
+            data = TuShare.query(pro, cur_table, cur_all_col_with_table)
+            # print(data)
+            cur_type_arrays = []
+            for cur_col in cur_all_col_with_table:
+                cur_type_arrays.append(DbMgr.get_col_type(cur_col))
+            # 建立数据库连接,剔除已入库的部分
+            DbMgr._insert_to_db(data, cur_table, cur_all_col_with_table, cur_type_arrays)
+            print('Import ' + cur_table + ' Finished!')
 
 
 if __name__ == "__main__":
     DbMgr.read_col_info()
     DbMgr.create_table_to_db()
-    DbMgr.pro = Common.pro_api()
-
+    DbMgr.import_data_from_tu_share()
 
