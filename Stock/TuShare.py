@@ -60,6 +60,8 @@ def query(pro, table, col_arrays):
         elif table == DB.TABLE_SUSPEND:
             return pro.suspend(ts_code='600848.SH', suspend_date='', resume_date='', fields=all_column)
             # return pro.query(table, ts_code='', suspend_date='20180720', resume_date='', fields=all_column)
+        elif table == DB.TABLE_INCOME:
+
     except Exception as err:
         print(err)
         print('No DATA Code of ' + table)

@@ -79,8 +79,13 @@ TABLE_DAILY_BASIC = 'daily_basic'
 # 描述：获取股票每日停复牌信息
 TABLE_SUSPEND = 'suspend'
 
+# 利润表
+# 接口：income
+# 描述：获取上市公司财务利润表数据
+TABLE_INCOME = 'income'
+
 # TABLE_ALL = [TABLE_STOCK_BASIC, TABLE_TRADE_CAL, TABLE_STOCK_COMPANY, TABLE_NAMECHANGE]
-TABLE_ALL = [TABLE_SUSPEND]
+TABLE_ALL = [TABLE_INCOME]
 
 
 SQL_INSERT_INTO = 'INSERT INTO `%s`(`%s`) VALUES (%s)'
