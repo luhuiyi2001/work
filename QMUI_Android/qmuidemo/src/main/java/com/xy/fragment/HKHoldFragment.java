@@ -69,6 +69,9 @@ import static com.qmuiteam.qmuidemo.QDApplication.getContext;
 @Widget(name = "沪深股通", iconRes = R.mipmap.icon_grid_tip_dialog)
 public class HKHoldFragment extends BaseFragment {
     @BindView(R.id.topbar) QMUITopBarLayout mTopBar;
+    @BindView(R.id.startDate)
+    Button mStartDateBtn;
+    @BindView(R.id.endDate) Button mEndDateBtn;
     @BindView(R.id.query) Button mQueryBtn;
     @BindView(R.id.listview)
     QMUIAnimationListView mListView;
@@ -102,13 +105,20 @@ public class HKHoldFragment extends BaseFragment {
                 popBackStack();
             }
         });
-        String startDate = TimeUtils.millis2String(TRuntime.getStartTime(), TUtils.SDF_SIMPLE_DATE);
-        String endDate = TimeUtils.millis2String(TRuntime.getEndTime(), TUtils.SDF_SIMPLE_DATE);
-        mTopBar.setTitle(TUtils.getExchageName(TRuntime.getExchage()) + " ( " + startDate + " ~ " + endDate + " )");
+        mTopBar.setTitle(TUtils.getExchageName(TRuntime.getExchage()) /*+ " ( " + startDate + " ~ " + endDate + " )"*/);
+
+        mTopBar.addRightImageButton(R.mipmap.icon_topbar_about, R.id.topbar_right_about_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                HKHoldSettingFragment fragment = new HKHoldSettingFragment();
+                startFragment(fragment);
+            }
+        });
     }
 
     private void initView() {
-
+        mStartDateBtn.setText(String.format(getResources().getString(R.string.start_date), TimeUtils.millis2String(TRuntime.getStartTime(), TUtils.SDF_DATE)));
+        mEndDateBtn.setText(String.format(getResources().getString(R.string.end_date), TimeUtils.millis2String(TRuntime.getEndTime(), TUtils.SDF_DATE)));
         mQueryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
