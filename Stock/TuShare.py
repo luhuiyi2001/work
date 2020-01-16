@@ -55,12 +55,16 @@ def query(pro, table, col_arrays):
             # return pro.adj_factor(ts_code='', trade_date='20180818')
             # return pro.query(table, trade_date='20180818', fields=all_column)
         elif table == DB.TABLE_DAILY_BASIC:
-            return pro.daily_basic(ts_code='', trade_date='20180726', fields=all_column)
+            return pro.daily_basic(ts_code='', trade_date='20191130', fields=all_column)
             # return pro.query(table, ts_code='', trade_date='20180721', fields=all_column)
         elif table == DB.TABLE_SUSPEND:
             return pro.suspend(ts_code='600848.SH', suspend_date='', resume_date='', fields=all_column)
+        elif table == DB.TABLE_HK_HOLD:
+            # return pro.hk_hold(trade_date='20190930', exchange='SZ')
+            return pro.hk_hold(trade_date='20190830', exchange='SZ')
+            # exchange='SZ'
             # return pro.query(table, ts_code='', suspend_date='20180720', resume_date='', fields=all_column)
-        elif table == DB.TABLE_INCOME:
+        #elif table == DB.TABLE_INCOME:
 
     except Exception as err:
         print(err)

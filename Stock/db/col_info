@@ -397,3 +397,13 @@ max_num=100
 comment=停牌原因类别
 type=VARCHAR
 max_num=45
+
+[code]
+comment=原始代码
+type=VARCHAR
+max_num=45
+
+[ratio]
+comment=持股占比
+type=DECIMAL
+max_num=20,2

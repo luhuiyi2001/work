@@ -55,13 +55,14 @@ class DbMgr:
                 cur_table = DB.TABLE_ALL[i]
                 # drop table
                 sql_drop_table = DB.SQL_DROP_TABLE_FORMAT % cur_table
-                # print(sql_drop_table)
+                print(sql_drop_table)
                 cursor.execute(sql_drop_table)
                 db.commit()
                 # create table
                 cur_all_col_with_table = ConfigUtil.read_sections(os.path.join(Config.PATH_DB, cur_table))
+                print(cur_all_col_with_table)
                 cur_sql_create_table = DbMgr._create_table_sql(cur_table, cur_all_col_with_table)
-                # print(cur_sql_create_table)
+                print(cur_sql_create_table)
                 cursor.execute(cur_sql_create_table)
                 db.commit()
             except Exception as err:
@@ -96,7 +97,7 @@ class DbMgr:
         # print(value_type)
         for i in range(type_len):
             cur_value = values[i]
-            if str(cur_value) == 'nan':
+            if str(cur_value) == 'nan' or str(cur_value) == 'None':
                 cur_value = -1
             if value_type[i] == DB.DATA_TYPE_STR:
                 value_format.append('"%s"' % str(cur_value).replace('"', '\\"'))
@@ -130,12 +131,28 @@ class DbMgr:
         db.close()
 
     @staticmethod
+    def _query_from_db(sql_query):
+        print(sql_query)
+        # 建立数据库连接,剔除已入库的部分
+        db = DbMgr.connect()
+        cursor = db.cursor()
+        try:
+            # 执行SQL语句
+            cursor.execute(sql_query)
+            # 获取所有记录列表
+            return cursor.fetchall()
+        except Exception as err:
+            print(err)
+        # 关闭数据库连接
+        db.close()
+
+    @staticmethod
     def import_data_from_tu_share():
         pro = TuShare.pro_api()
         for cur_table in DB.TABLE_ALL:
             cur_all_col_with_table = ConfigUtil.read_sections(os.path.join(Config.PATH_DB, cur_table))
             data = TuShare.query(pro, cur_table, cur_all_col_with_table)
-            # print(data)
+            print(data)
             cur_type_arrays = []
             for cur_col in cur_all_col_with_table:
                 cur_type_arrays.append(DbMgr.get_col_type(cur_col))
@@ -143,9 +160,51 @@ class DbMgr:
             DbMgr._insert_to_db(data, cur_table, cur_all_col_with_table, cur_type_arrays)
             print('Import ' + cur_table + ' Finished!')
 
+    @staticmethod
+    def import_hk_hold_data_from_tu_share(query_date):
+        pro = TuShare.pro_api()
+        cur_table = DB.TABLE_HK_HOLD
+        cur_all_col_with_table = ConfigUtil.read_sections(os.path.join(Config.PATH_DB, cur_table))
+        cur_type_arrays = []
+        for cur_col in cur_all_col_with_table:
+            cur_type_arrays.append(DbMgr.get_col_type(cur_col))
+        data = pro.hk_hold(trade_date=query_date)
+        print(data)
+        DbMgr._insert_to_db(data, cur_table, cur_all_col_with_table, cur_type_arrays)
+        print('Import ' + cur_table + '(' + query_date + ') :' + ' Finished!')
+
+    @staticmethod
+    def import_daily_basic_data_from_tu_share(query_date):
+        pro = TuShare.pro_api()
+        cur_table = DB.TABLE_DAILY_BASIC
+        cur_all_col_with_table = ConfigUtil.read_sections(os.path.join(Config.PATH_DB, cur_table))
+        cur_type_arrays = []
+        for cur_col in cur_all_col_with_table:
+            cur_type_arrays.append(DbMgr.get_col_type(cur_col))
+        data = pro.daily_basic(trade_date=query_date)
+        print(data)
+        DbMgr._insert_to_db(data, cur_table, cur_all_col_with_table, cur_type_arrays)
+        print('Import ' + cur_table + '(' + query_date + ') :' + ' Finished!')
+
+    @staticmethod
+    def import_hk_hold_data_from_tu_share_main():
+        DbMgr.read_col_info()
+        # DbMgr.create_table_to_db()
+        # DbMgr.import_data_from_tu_share()
+        DbMgr.import_hk_hold_data_from_tu_share('20200113')
+        DbMgr.import_hk_hold_data_from_tu_share('20200114')
+
+    @staticmethod
+    def import_daily_basic_data_from_tu_share_main():
+        DbMgr.read_col_info()
+        # DbMgr.create_table_to_db()
+        # DbMgr.import_data_from_tu_share()
+        DbMgr.import_daily_basic_data_from_tu_share('20200109')
+        DbMgr.import_daily_basic_data_from_tu_share('20200110')
+
 
 if __name__ == "__main__":
-    DbMgr.read_col_info()
-    DbMgr.create_table_to_db()
-    DbMgr.import_data_from_tu_share()
+    DbMgr.import_hk_hold_data_from_tu_share_main()
+    # DbMgr.import_daily_basic_data_from_tu_share_main()
+
 

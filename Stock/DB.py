@@ -84,8 +84,13 @@ TABLE_SUSPEND = 'suspend'
 # 描述：获取上市公司财务利润表数据
 TABLE_INCOME = 'income'
 
+# 沪深港股通持股明细
+# 接口：hk_hold
+# 描述：获取沪深港股通持股明细，数据来源港交所
+TABLE_HK_HOLD = 'hk_hold'
+
 # TABLE_ALL = [TABLE_STOCK_BASIC, TABLE_TRADE_CAL, TABLE_STOCK_COMPANY, TABLE_NAMECHANGE]
-TABLE_ALL = [TABLE_INCOME]
+TABLE_ALL = [TABLE_DAILY_BASIC]
 
 
 SQL_INSERT_INTO = 'INSERT INTO `%s`(`%s`) VALUES (%s)'
