@@ -23,6 +23,14 @@ public class HkHoldDBHelper {
 		return findCNByDate(beginDate, endDate);
 	}
 
+	private static String getLastDate() {
+		List<HkHold>  list = find("select max(trade_date) as trade_date from hk_hold", null, null);
+		if (list == null || list.size() == 0) {
+			return "";
+		}
+		return list.get(0).getTradeDate();
+	}
+
 	private static List<HkHold> findCYByDate(String beginDate, String endDate) {
 		String[] coulmn = { beginDate, endDate };
 		int[] type = { Types.CHAR, Types.CHAR };

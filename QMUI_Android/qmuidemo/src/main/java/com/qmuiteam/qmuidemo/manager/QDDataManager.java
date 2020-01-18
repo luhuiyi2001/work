@@ -51,10 +51,7 @@ import com.qmuiteam.qmuidemo.fragment.util.QDSpanFragment;
 import com.qmuiteam.qmuidemo.fragment.util.QDStatusBarHelperFragment;
 import com.qmuiteam.qmuidemo.fragment.util.QDViewHelperFragment;
 import com.qmuiteam.qmuidemo.model.QDItemDescription;
-import com.xy.fragment.CYHoldFragment;
 import com.xy.fragment.HKHoldFragment;
-import com.xy.fragment.SHHoldFragment;
-import com.xy.fragment.SZHoldFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,9 +91,6 @@ public class QDDataManager {
     private void initStatsDesc() {
         mStatsNames = new ArrayList<>();
         mStatsNames.add(HKHoldFragment.class);
-//        mStatsNames.add(SHHoldFragment.class);
-//        mStatsNames.add(SZHoldFragment.class);
-//        mStatsNames.add(CYHoldFragment.class);
     }
 
     /**

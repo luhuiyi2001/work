@@ -9,6 +9,7 @@ public class TRuntime {
     private long mStartTime;
     private long mEndTime;
     private int mExchage = TUtils.EXCHAGE_TYPE_CN;
+    private long mLastTimeOfHKHold;
 
     private static TRuntime sInstance;
 
@@ -53,4 +54,11 @@ public class TRuntime {
         getRuntime().mExchage = exchage;
     }
 
+    public static long getLastTimeOfHKHold() {
+        return getRuntime().mLastTimeOfHKHold;
+    }
+
+    public static void setLastTimeOfHKHold(long lastTimeOfHKHold) {
+        getRuntime().mLastTimeOfHKHold = lastTimeOfHKHold;
+    }
 }
