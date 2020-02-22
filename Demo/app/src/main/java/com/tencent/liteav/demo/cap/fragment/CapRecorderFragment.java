@@ -42,6 +42,7 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
     private MediaRecorder mediaRecorder;
     private Handler mHandler = new Handler();
     private Camera mCamera;
+    private boolean isResume;
     final Thread mStartRecorderThread = new Thread() {
         @Override public void run() {
             startRecord();
@@ -114,6 +115,7 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
     public void onResume() {
         super.onResume();
         CLog.d(TAG,"onResume");
+        isResume = true;
     }
 
     @Override
@@ -121,6 +123,7 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
         super.onPause();
         CLog.d(TAG,"onPause");
 //        this.stopRecord();
+        isResume = false;
     }
 
     @Override
@@ -153,8 +156,10 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
     }
 
     private void launchStartRecordTimeout() {
-        mHandler.removeCallbacks(mStartRecordTimeout);
-        mHandler.postDelayed(mStartRecordTimeout, 30000);
+        if (isResume) {
+            mHandler.removeCallbacks(mStartRecordTimeout);
+            mHandler.postDelayed(mStartRecordTimeout, 30000);
+        }
     }
     private void destroy() {
         CLog.d(TAG, "destroy");
@@ -181,6 +186,7 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
 
     /** * 获取摄像头实例对象 * * @return */
     public Camera getCameraInstance() {
+        CLog.d(TAG, "getCameraInstance");
         Camera c = null;
         try {
             c = Camera.open();
@@ -298,6 +304,10 @@ public class CapRecorderFragment extends Fragment implements SurfaceHolder.Callb
     }
     public synchronized void startRecord() {
         CLog.d(TAG, "startRecord");
+        if (!isResume) {
+            CLog.d(TAG, "isResume is false!");
+            return;
+        }
         if (!CapStorageManager.getInstance().checkExternalStorageSpaceEnough()) {
             CLog.e(TAG, "checkExternalStorageSpaceEnough = false");
             stopRecord();
